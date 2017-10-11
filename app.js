@@ -1,4 +1,4 @@
-// app.js
+// app.js -
 import config from './routes/conf/conf';
 import configLogin from './routes/conf/login.json';
 //Import express
