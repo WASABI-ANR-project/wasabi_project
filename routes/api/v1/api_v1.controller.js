@@ -240,12 +240,15 @@ var get_memberByName = (req, res) => {
         return res.json(artists);
     });
 };
+
+// juste updated animux_path => animux_paths | and add $ne
 var get_animuxAll = (req, res) => {
     var start = Number.parseInt(req.params.start);
     if (!Number.isInteger(start) || start < 0) return res.status(404).json(config.http.error.global_404);
     req.db.collection(COLLECTIONSONG).find({
-        animux_path: {
-            $exists: 1
+        animux_paths: {
+            $exists: 1,
+            $ne:[]
         }
     }, {
         wordCount: 0,
