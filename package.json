@@ -48,6 +48,8 @@
     "http-proxy": "^1.16.2",
     "jsonwebtoken": "^7.3.0",
     "languagedetect": "^1.1.1",
+    "levenshtein": "^1.0.5",
+    "line-reader": "^0.4.0",
     "mkdirp": "^0.5.1",
     "mongodb": "^2.1.0",
     "mongoose": "^4.8.1",

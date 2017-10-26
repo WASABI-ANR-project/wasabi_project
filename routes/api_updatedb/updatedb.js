@@ -599,6 +599,34 @@ router.get('/animux/count/song', animuxController.countSongAnimuxFileInDB);
 
 
 
+//--
+/**
+ * API permettant de comparer les animux_artist_not_found_log_2 aux artists existantes dans la base de données afin de trouver des similarités
+ */
+router.get('/animux/find_similar/artist',animuxController.findSimilarArtist);
+
+/**
+ * API permettant de comparer les animux_song_not_found aux song existantes dans la base de données afin de trouver des similarités
+ */
+router.get('/animux/find_similar/song',animuxController.findSimilarSong);
+
+/**
+ * API permettant de comparer les animux_song des artists_not_found aux song existantes dans la base de données afin de trouver des similarités
+ */
+router.get('/animux/find_similar_am/song',animuxController.findSimilarSong_animux_mongodb);
+
+/**
+ * API permettant d'enregistrer les animux_paths dans un fichier de log
+ * ---
+ */
+router.get('/animux/getUniqueAnimuxPaths/song',animuxController.getUniqueAnimuxPaths);
+//--
+
+
+
+
+
+
 
 /**
  * API permettant de detecter les langues des lyrics et d'ajouter un attribut language_detect pour chaque musique 

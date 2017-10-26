@@ -12,6 +12,10 @@ const FILENAME_ARTIST_NOT_FOUND_2 = "animux_artist_not_found_log_2.txt";
 const FILENAME_ARTIST_FOUND = "animux_artist_found_several_time_log.txt";
 const COLLECTIONSONG = config.database.collection_song;
 const COLLECTIONARTIST = config.database.collection_artist;
+
+const lr=require("line-reader");
+const Levenshtein=require("levenshtein");
+
 /**
  * 
  * @param {*} req 
@@ -149,7 +153,7 @@ var sanitizeAndRenameDirArtist = (req, res) => {
                     //artistName = Metallica On supprime le path ./mongo/animux/M/
                     artistName = pathArtist.substring(pathArtist.lastIndexOf("/") + 1),
                     artistNameDecode = decodeURIComponent(artistName);
-                pathToArtist = PATH_MAPPING_ANIMUX + '/' + artistName[0] + '/' + artistName;
+                pathToArtist = PATH_MAPPING_ANIMUX + '/' + (artistName[0]).toUpperCase() + '/' + artistName;
                 dirsSongs = readDirsSongs(pathToArtist);
                 //On va itérer sur les titres des musiques, les sanitize et les renommer
                 for (var j = 0, ll = dirsSongs.length; j < ll; j++) {
@@ -266,9 +270,10 @@ var getDirArtist = (req, res) => {
         if (i < l) {
             i++;
             //To avoid leak memory
-            setTimeout(() => loopArray(i), 5);
+            setTimeout(() => loopArray(i), 30);
         }
     })(i)
+    console.log("Traitement terminé");
     res.json(config.http.valid.send_message_ok);
 };
 
@@ -322,11 +327,12 @@ var getNotFoundLogArtist = (req, res) => {
             }
         })(i);
     });
+    console.log("Traitement terminé");
     res.json(config.http.valid.send_message_ok);
 }
 /**
  * 4ème étape pour traiter les fichiers animux
- * Permet de trouver les répertoires ne matchant pas avec les noms des musiques de notre BD: enregistré dans le fichier animux_song_not_found_log.txt.txt
+ * Permet de trouver les répertoires ne matchant pas avec les noms des musiques de notre BD: enregistré dans le fichier animux_song_not_found_log.txt
  * Les fichiers matchant avec notre BD
  * @param {*} req 
  * @param {*} res 
@@ -399,17 +405,18 @@ var getFileSong = (req, res) => {
                                         });
                                     } else {
                                         nbEnd++;
-                                        decodeURIComponent(filePathName).substring
+                                        decodeURIComponent(filePathName).substring;
                                         var name = filePathName.split('/')[4];
                                         var song = fileName;
-                                        loggerNotFound.write(decodeURIComponent(name) + "_-_" + decodeURIComponent(song) + "\n");
+                                        //loggerNotFound.write(decodeURIComponent(name) + "_-_" + decodeURIComponent(song) + "\n");
+                                        loggerNotFound.write(decodeURIComponent(name)+"\t"+decodeURIComponent(song)+"\t"+(filePathName)+"\n");
                                         if (nbEnd == nbTotal) console.log("END : " + nbMatch + '/' + nbTotal);
                                     }
                                 })
                             })(fileArray[j], fileName);
                         }
                     } catch (error) {
-                        console.log(error);
+                        console.log("=> ERROR ! :",error);
                     } finally {
 
                     }
@@ -417,6 +424,7 @@ var getFileSong = (req, res) => {
             }, 10 * i)
         }
     });
+    console.log("Traitement terminé");
     res.json(config.http.valid.send_message_ok);
 };
 /**
@@ -559,8 +567,7 @@ var getDirArtistWithNameVariations = (db, artistName) => {
             nameVariations_fold: new RegExp("^" + utilHandler.escapeRegExp(artistName) + "$", "i")
         }).toArray((err, tArtists) => {
             if (tArtists != null) {
-                let pathToArtist = [];
-                pathToArtist.push(PATH_MAPPING_ANIMUX + '/' + artistName[0].toUpperCase() + '/' + encodeURIComponent(artistName));
+                let pathToArtist = PATH_MAPPING_ANIMUX + '/' + artistName[0].toUpperCase() + '/' + encodeURIComponent(artistName);
                 if (tArtists.length == 1) {
                     console.log(tArtists.length + "-----" + artistName);
                     db.collection(COLLECTIONARTIST).updateOne({
@@ -678,7 +685,9 @@ var readContentFileSong = (filePath) => {
  * 
  * @param {*} rootPath 
  */
+/*
 var readFilesSongs = (rootPath) => {
+    
     var fileArray = [];
     var files = fs.readdirSync(rootPath);
     let l = files.length,
@@ -690,6 +699,26 @@ var readFilesSongs = (rootPath) => {
         }
     }
     return fileArray;
+}
+*/
+var readFilesSongs = (rootPath) => {
+    
+    var fileArray = [];
+    try{
+        var files = fs.readdirSync(rootPath);
+    }catch(err){
+        console.log("_ERROR_",err);
+    }finally{
+        let l = files.length,
+        i = 0;
+        for (i; i < l; i++) {
+            var pathFile = rootPath + '/' + files[i];
+            if (fs.lstatSync(pathFile).isFile()) {
+                fileArray.push(pathFile);
+            }
+        }
+        return fileArray;
+    }
 }
 /**
  * 
@@ -720,6 +749,7 @@ var readDirsSongs = (rootPath) => {
 }
 
 //We replace characters with a weird encoding by same characters with a normal encoding
+/*
 var sanitizeFilename = (filename) => {
     filename = filename.replace(/é/gi, "é")
         .replace(/ë/gi, "ë")
@@ -740,6 +770,394 @@ var sanitizeFilename = (filename) => {
     // return removeAccents.remove(filename).trim();
 }
 
+*/
+
+var sanitizeFilename = (filename) => {
+    filename = replace_strangeAccent(filename)
+        .replace(/´/gi, "'")
+        .replace(/’/gi, "'")
+        .replace(/_Animux\.txt/gi, '')
+        .replace(/[\,\-\?\!]/gi, '');
+    if (!filename.startsWith("("))
+        filename = filename.replace(/[\(\[][^\)\]]*[\)\]]/gi, '');
+    return utilHandler.removeDiacritic(filename).trim()
+    // return removeAccents.remove(filename).trim();
+}
+
+
+/**
+ * API permettant de comparer les animux_artist_not_found_log_2 aux artists existantes dans la base de données afin de trouver des similarités
+ * Les similaires trouvées et non trouvées sont enregistrées dans des fichiers de logs 
+ * ---
+ */
+var findSimilarArtist = (req, res) => {
+    var options = {
+            flags: 'w',
+            autoClose: true
+        },
+        loggerNotFound = fs.createWriteStream('animux_artist_not_found_log_3.txt', options),
+        loggerFound = fs.createWriteStream('animux_artist_found_log_3.txt', options);
+
+    var rootPath="./animux_artist_not_found_log_2.txt";
+    var line, artistName="";
+    var nbLine=0, nbLineUnique=0;
+    var objArtist={};
+    var tabArtistName=[];
+    var aresimilare="";
+
+    lr.eachLine(rootPath, function(line, last) {
+        if (tabArtistName.indexOf(line)===-1) {
+            tabArtistName.push(line);
+            nbLineUnique++;
+        }
+        nbLine++;
+        
+        if(last){
+            objArtist.namesArtistsFiles=tabArtistName;
+            objArtist.nbArtistsFiles=tabArtistName.length;
+
+            (async()=>{
+                try
+                {
+                    var contentArtists= await processGetArtistName(req.db);
+                }
+                catch(error)
+                {
+                   // console.log("============== ERROR : ",aartistName, error);
+                }
+                finally
+                {
+                    objArtist.namesArtistsDB=contentArtists;
+                    objArtist.nbArtistsDB=contentArtists.length;
+
+                    for(let n=0;n<objArtist.nbArtistsFiles;n++){
+                        for (let m=0;m<objArtist.nbArtistsDB;m++){
+                            aresimilare=are_similar(objArtist.namesArtistsFiles[n],objArtist.namesArtistsDB[m],0.85); //0.75
+                            line=objArtist.namesArtistsFiles[n]+"\t"+aresimilare.score+"\t"+(objArtist.namesArtistsDB[m]);
+                            if (aresimilare.isTrue) {
+                                loggerFound.write(line + "\n");
+                                console.log(line);
+                            }else{
+                                if (aresimilare.score>0.5) loggerNotFound.write(line + "\n");
+                            }
+                        }
+                    }
+                    console.log("Traitement terminé");
+                    return res.json(config.http.valid.send_message_ok);
+                }
+            })();
+        }
+    });
+}
+
+/**
+ * API permettant de comparer les animux_song_not_found aux song existantes dans la base de données afin de trouver des similarités
+ * Dans la base de données wasabi, les songs dont les noms sont similaires aux noms des songs animux not found auront le champ "animux_paths" avec comme contenu le path des songs animux 
+ * ---
+ */
+var findSimilarSong = (req, res) => {
+    var options = {
+            flags: 'w',
+            autoClose: true
+        },
+        loggerNotFound = fs.createWriteStream('animux_song_not_found_log_2.txt', options),
+        loggerFound = fs.createWriteStream('animux_song_found_log_2.txt', options);
+
+    var rootPath="./animux_song_not_found_log.txt";
+    var line, artistName, songName, animuxPath="";
+    var objSongsPerArtist={};    
+
+    lr.eachLine(rootPath, function(line, last) {
+        line=line.split('\t');
+        artistName=line[0];
+        songName=line[1];
+        animuxPath=line[2];
+        if (!objSongsPerArtist.hasOwnProperty(artistName)) {
+            objSongsPerArtist[artistName]={};
+            objSongsPerArtist[artistName].songsFromAnimuxFile=[];
+            objSongsPerArtist[artistName].songsFromMongoDB=[];
+        }
+        objSongsPerArtist[artistName].songsFromAnimuxFile.push([songName,animuxPath]);  
+        
+        if(last){            
+            var nbLine=0, nbArtists = Object.keys(objSongsPerArtist).length;
+            var contentSongs="";
+            var line="", aresimilare="";
+            for (let i =0;i<nbArtists;i++){
+                (async(i)=>{
+                    var aartistName=Object.keys(objSongsPerArtist)[i];
+                    try
+                    {
+                        contentSongs= await processGetSongByArtistName(req.db,aartistName);
+                        objSongsPerArtist[aartistName].songsFromMongoDB=(contentSongs);
+                    }
+                    catch(error)
+                    {
+                       // console.log("============== ERROR : ",aartistName, error);
+                    }
+                    finally
+                    {
+                        nbLine++;
+                        if (nbLine==nbArtists){
+
+                            for (let j=0;j<nbArtists;j++){
+                                var artistObjects=Object.keys(objSongsPerArtist)[j];
+                                var artistSongsFromAnimuxFile=objSongsPerArtist[artistObjects].songsFromAnimuxFile;    
+                                var artistSongsFromMongoDB=objSongsPerArtist[artistObjects].songsFromMongoDB;
+                                
+                                for(let n=0;n<artistSongsFromAnimuxFile.length;n++){
+                                    for (let m=0;m<artistSongsFromMongoDB.length;m++){
+                                        aresimilare=are_similar(artistSongsFromAnimuxFile[n][0],artistSongsFromMongoDB[m],0.5); //0.75
+                                        line=artistObjects+"\t"+aresimilare.score+"\t"+(artistSongsFromAnimuxFile[n][0])+"\t"+(artistSongsFromMongoDB[m])+"\t"+artistSongsFromAnimuxFile[n][1];
+                                        if (aresimilare.isTrue) {
+
+                                            req.db.collection(COLLECTIONSONG).updateOne({
+                                                name: artistObjects,
+                                                title: artistSongsFromMongoDB[m]
+                                            }, {
+                                                $addToSet: {
+                                                    animux_paths: artistSongsFromAnimuxFile[n][1]
+                                                }
+                                            });
+                                            // on écrit les songs similaires dans des fichiers de log
+                                            loggerFound.write(line + "\n");
+                                        }
+                                    }
+                                }                                
+                            }
+                            console.log("Traitement terminé");
+                            return res.json(config.http.valid.send_message_ok);
+                        }        
+                    }
+                })(i);
+            }
+            /**/
+        }
+    });
+}
+
+/**
+ * API permettant de comparer les animux_song des artists_not_found aux song existantes dans la base de données afin de trouver des similarités
+ * Dans la base de données wasabi, les songs dont les noms sont similaires aux noms des songs animux auront le champ "animux_paths" avec comme contenu le path des songs animux 
+ * ---
+ */
+var findSimilarSong_animux_mongodb=(req, res)=>{
+    var options = {
+            flags: 'w',
+            autoClose: true
+        },
+        loggerFound = fs.createWriteStream('animux_song_found_log_4.txt', options);
+
+    var rootPath="./animux_artist_found_log_3.txt";
+    var artistName, artistName_animux, songs_animux, animuxPath="";
+    var objSongsPerArtist={};
+
+    lr.eachLine(rootPath, function(line, last) {
+        line=line.split('\t');
+        artistName_animux=(line[0]);
+        artistName=(line[2]);
+        
+        if (!objSongsPerArtist.hasOwnProperty(artistName)) {
+            objSongsPerArtist[artistName]={};
+            objSongsPerArtist[artistName].artistName_animux=artistName_animux;
+            objSongsPerArtist[artistName].songsFromAnimuxFile=[];
+        }
+        songs_animux = readDirsSongs(PATH_MAPPING_ANIMUX + '/' + artistName_animux[0].toUpperCase() + '/' + encodeURIComponent(artistName_animux));
+        for (let i=0;i<songs_animux.length;i++){
+            objSongsPerArtist[artistName].songsFromAnimuxFile.push([decodeURI(songs_animux[i].split("/")[5]),songs_animux[i]]);
+        }
+        if(last){
+
+            var nbLine=0, nbArtists = Object.keys(objSongsPerArtist).length;
+            var contentSongs="";
+            var line="", aresimilare="";
+            for (let i =0;i<nbArtists;i++){
+                (async(i)=>{
+                    var aartistName=Object.keys(objSongsPerArtist)[i];
+                    try
+                    {
+                        contentSongs= await processGetSongByArtistName(req.db,aartistName);
+                        objSongsPerArtist[aartistName].songsFromMongoDB=(contentSongs);
+                    }
+                    catch(error)
+                    {
+                       // console.log("============== ERROR : ",aartistName, error);
+                    }
+                    finally
+                    {
+                        nbLine++;
+                        if (nbLine==nbArtists){
+                            for (let j=0;j<nbArtists;j++){
+                                var artistObjects=Object.keys(objSongsPerArtist)[j];
+                                var artistSongsFromAnimuxFile=objSongsPerArtist[artistObjects].songsFromAnimuxFile;    
+                                var artistSongsFromMongoDB=objSongsPerArtist[artistObjects].songsFromMongoDB;
+                                
+                                for(let n=0;n<artistSongsFromAnimuxFile.length;n++){
+                                    for (let m=0;m<artistSongsFromMongoDB.length;m++){
+                                        aresimilare=are_similar(artistSongsFromAnimuxFile[n][0],artistSongsFromMongoDB[m],0.75); //0.75
+                                        line=artistObjects+"\t"+aresimilare.score+"\t"+(artistSongsFromAnimuxFile[n][0])+"\t"+(artistSongsFromMongoDB[m])+"\t"+artistSongsFromAnimuxFile[n][1];
+                                        if (aresimilare.isTrue) {
+
+                                            req.db.collection(COLLECTIONSONG).updateOne({
+                                                name: artistObjects,
+                                                title: artistSongsFromMongoDB[m]
+                                            }, {
+                                                $addToSet: {
+                                                    animux_paths: artistSongsFromAnimuxFile[n][1]
+                                                }
+                                            });
+                                            // on écrit les songs similaires dans des fichiers de log
+                                            loggerFound.write(line + "\n");
+                                        }
+                                    }
+                                }                        
+                            }                               
+                            console.log("Traitement terminé");
+                            return res.json(config.http.valid.send_message_ok);
+                        }        
+                    }
+                })(i);
+            }
+        }
+        
+    });
+}
+
+
+/**
+ * API permettant d'enregistrer les animux_paths dans un fichier de log
+ * ---
+ */
+var getUniqueAnimuxPaths=(req,res)=>{
+    var options = {
+            flags: 'w',
+            autoClose: true
+        },
+        loggerFound = fs.createWriteStream('animux_song_found_log_final_AnimuxPaths.txt', options);
+    var animuxPaths, line="";
+    
+    (async()=>{
+        try{
+            animuxPaths= await processGetAnimuxPaths(req.db);
+            //animuxPaths= await processGetAnimuxPath(req.db);
+        }
+        catch(error)
+        {
+           console.log("============== ERROR : ", error);
+        }
+        finally{
+            for (let i=0;i<animuxPaths.length;i++){
+                line+=animuxPaths[i]+"\n";
+            }
+            loggerFound.write(line);
+            console.log("Traitement terminé");
+            return res.json(config.http.valid.send_message_ok);
+        }
+    })();
+}
+
+var processGetAnimuxPaths= (db)=>{
+    return new Promise(function (resolve, reject) {
+        db.collection(COLLECTIONSONG).distinct("animux_paths",(err, tSongs) => {
+            if (err) return res.status(404).json(config.http.error.song_404);
+            if (tSongs.length>0) {
+                return resolve(tSongs);
+            } else {
+                return reject(tSongs);
+            }
+        });
+    });
+}
+var processGetAnimuxPath= (db)=>{
+    return new Promise(function (resolve, reject) {
+        db.collection(COLLECTIONSONG).distinct("animux_path",(err, tSongs) => {
+            if (err) return res.status(404).json(config.http.error.song_404);
+            if (tSongs.length>0) {
+                return resolve(tSongs);
+            } else {
+                return reject(tSongs);
+            }
+        });
+    });
+}
+
+var processGetArtistName = (db)=>{
+    return new Promise(function (resolve, reject) {
+        db.collection(COLLECTIONARTIST).distinct("name",(err, tArtists) => {
+            if (err) return res.status(404).json(config.http.error.artist_404);
+
+            if (tArtists.length>0) {
+                //On resolve le artistName
+                return resolve(tArtists);
+            } else {
+                return reject(tArtists);
+            }
+        });
+    });
+}
+var processGetSongByArtistName = (db, artistName) => {
+    return new Promise(function (resolve, reject) {
+        db.collection(COLLECTIONSONG).distinct("title",{name:artistName},{title:1},(err, tSongs) => {
+            if (err) return res.status(404).json(config.http.error.song_404);
+
+            if (tSongs.length>0) {
+                //On resolve le artistName
+                return resolve(tSongs);
+            } else {
+                return reject(tSongs);
+            }
+        });
+    });
+}
+var normalize_text = (text)=>{
+    text = text.replace(/<\/?[^>]*>/g, '');
+    text = text.replace(/[,\.:;\?!]/g, '');
+    text = text.replace(/\([^()]*\)/g, '');
+    text = text.replace(/( ){2,}/g, ' ');
+    
+    text = utilHandler.removeDiacritic(text);
+    text = text.toLowerCase();
+    text = replace_strangeAccent(text);
+    text = text.trim();
+    return text;
+}
+
+var replace_strangeAccent= (text)=>{
+    text= text
+        .replace(/é/gi, "é")
+        .replace(/ë/gi, "ë")
+        .replace(/ö/gi, "ö")
+        .replace(/á/gi, "á")
+        .replace(/í/gi, "i")
+        .replace(/ó/gi, "ó")
+        .replace(/ú/gi, "ú")
+        .replace(/ü/gi, "ü")
+        .replace(/è/gi, "è")
+        .replace(/à/gi, "a")
+        .replace(/ä/gi, "a")
+        .replace(/´/gi, "'")
+        .replace(/’/gi, "'")
+        .replace(/'/gi, "'");
+    return text;
+}
+
+
+var string_similarity = (some, other)=>{
+    if(!some || !other){
+        return 0.0
+    }    
+    return  1.0 - new Levenshtein(some, other) / Math.max(some.length, other.length)
+}
+var are_similar=(some, other, threshold)=>{
+    var _score = string_similarity(normalize_text(some), normalize_text(other));
+    var _response={
+        isTrue : (_score>threshold),
+        score :_score.toFixed(3)
+    }
+    return _response;
+}
+
+
 exports.sanitizeAndRenameDirArtist = sanitizeAndRenameDirArtist;
 exports.getDirArtist = getDirArtist;
 exports.getNotFoundLogArtist = getNotFoundLogArtist;
@@ -749,3 +1167,7 @@ exports.countSongAnimuxFileInDB = countSongAnimuxFileInDB;
 exports.removeAccentArtists = removeAccentArtists;
 exports.removeAccentSongs = removeAccentSongs;
 exports.getDirArtistWithNameVariations = getDirArtistWithNameVariations;
+exports.findSimilarSong = findSimilarSong;
+exports.findSimilarArtist = findSimilarArtist;
+exports.findSimilarSong_animux_mongodb = findSimilarSong_animux_mongodb;
+exports.getUniqueAnimuxPaths = getUniqueAnimuxPaths;
