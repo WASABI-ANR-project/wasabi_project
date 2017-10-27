@@ -851,8 +851,8 @@ router.get('/member/name/:memberName', apiV1Controller.get_memberByName);
  * @apiVersion 1.0.0
  * @apiName GetSongsWithAnAnimuxField
  * @apiGroup Api/v1
- * @apiDescription This api return the first 200 songs documents 
- *                 for instance wasabi.i3s.unice.fr/api/v1/animux_all/120 will return all songs between [120 and 320[ 
+ * @apiDescription This api return the first 200 songs documents for instance wasabi.i3s.unice.fr/api/v1/animux_all/120 will return all songs between [120 and 320[ 
+ *                 <br>The field "animux_path" (String) is deprecated. Use the new field "animux_paths" (Array of String) instead.
  *
  * @apiParam {Number} start Where we want to start the extraction.
  *
