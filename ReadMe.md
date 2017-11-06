@@ -240,19 +240,21 @@ Une collection artist une collection album et une collection song, il faudra don
 
  38. [doit être exécuté après 37 et en mode `development`.] Le web service `updatedb/animux/create_mapping/artist/not_found` permet d'améliorer le matching entre les artistes wasabi et les artistes animux.
 
- 39. [doit être exécuté après 38 et en mode `development`.] Le web service `updatedb/lyrics/language_detect` permet de créer un nouveau champ dans la collection 'song' contenant la langue de la musique.
+ 39. [doit être exécuté après 38 et en mode `development`.] Le web service `updatedb/animux/create_mapping/song` permet de faire le matching entre les songs wasabi et les songs animux.
 
- 40. [doit être exécuté après 39 et en mode `development`.] Le web service `updatedb/create_stats/lyrics/language/popularity` permet de créer une collection recensant les langues les plus utilisées dans wasabi.
+ 40. [doit être exécuté après 39 et en mode `development`.] Le web service `updatedb/lyrics/language_detect` permet de créer un nouveau champ dans la collection 'song' contenant la langue de la musique.
 
- 41. [doit être exécuté après 40 et en mode `development`.] Le web service `updatedb/create_stats/properties/artist/count` permet de créer une collection recensant les propriétés de la collection 'artist'
+ 41. [doit être exécuté après 40 et en mode `development`.] Le web service `updatedb/create_stats/lyrics/language/popularity` permet de créer une collection recensant les langues les plus utilisées dans wasabi.
 
- 42. [doit être exécuté après 41 et en mode `development`.] Le web service `updatedb/create_stats/properties/album/count` permet de créer une collection recensant les propriétés de la collection 'album'
+ 42. [doit être exécuté après 41 et en mode `development`.] Le web service `updatedb/create_stats/properties/artist/count` permet de créer une collection recensant les propriétés de la collection 'artist'
 
- 43. [doit être exécuté après 42 et en mode `development`.] Le web service `updatedb/create_stats/properties/song/count` permet de créer une collection recensant les propriétés de la collection 'song'
+ 43. [doit être exécuté après 42 et en mode `development`.] Le web service `updatedb/create_stats/properties/album/count` permet de créer une collection recensant les propriétés de la collection 'album'
 
- 44. [doit être exécuté après 43 et en mode `development`.] le web service `extractdbpedia/createfields/artist` transforme les propriétés de notre champ RDF en propriétés dans notre base de données
+ 44. [doit être exécuté après 43 et en mode `development`.] Le web service `updatedb/create_stats/properties/song/count` permet de créer une collection recensant les propriétés de la collection 'song'
+
+ 45. [doit être exécuté après 44 et en mode `development`.] le web service `extractdbpedia/createfields/artist` transforme les propriétés de notre champ RDF en propriétés dans notre base de données
  
- 45. TODO [doit être exécuté après 44 et en mode `development`.] le web service `extractdbpedia/createfields/album` transforme les propriétés de notre champ RDF en propriétés dans notre base de données
+ 46. TODO [doit être exécuté après 45 et en mode `development`.] le web service `extractdbpedia/createfields/album` transforme les propriétés de notre champ RDF en propriétés dans notre base de données
 
 #### mongo/sparql/
 **Contient les requêtes sparql utilisées par l'application pour l'extraction du RDF pour les :**  
