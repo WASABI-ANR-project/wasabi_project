@@ -143,7 +143,7 @@ if (process.env.NODE_ENV === config.launch.env.dev) {
     app.use('/mergedb', mergedb);
     app.use('/createdb', createdb);
     app.use('/extractdbpedia', extractdbpedia);
-    app.use('/extractdiscoveryhub', extractdiscoveryhub);
+    //app.use('/extractdiscoveryhub', extractdiscoveryhub);
     
     // development error handler
     // will print stacktrace
