@@ -35,6 +35,7 @@ import MT5 from './routes/api_MT5/MT5';
 import download from './routes/api_download/download';
 import jwt_api from './routes/api_jwt/jwt';
 import updatedb from './routes/api_updatedb/updatedb';
+import extractdiscoveryhub from './routes/api_extractdiscoveryhub/extractdiscoveryhub';
 import mergedb from './routes/api_mergedb/mergedb';
 import createdb from './routes/api_createdb/createdb';
 import extractdbpedia from './routes/api_extractdbpedia/extractdbpedia';
@@ -56,7 +57,9 @@ config.launch.env.dev_mode ? process.env.NODE_ENV = config.launch.env.dev : proc
 
 const server = process.env.NODE_ENV === config.launch.env.dev ? config.database.mongodb_option : {};
 // mongoose.Promise = global.Promise;
-const dbMongoose = mongoose.connect(config.launch.env.dev_mode ? config.database.mongodb_connect_v2 : config.database.mongodb_connect, {
+// const dbMongoose = mongoose.connect(config.launch.env.dev_mode ? config.database.mongodb_connect_v2 : config.database.mongodb_connect, {
+const dbMongoose = mongoose.connect(config.database.mongodb_connect, {
+    
     useMongoClient: true
 }, (err) => {
     if (err) console.error(err);
@@ -140,6 +143,8 @@ if (process.env.NODE_ENV === config.launch.env.dev) {
     app.use('/mergedb', mergedb);
     app.use('/createdb', createdb);
     app.use('/extractdbpedia', extractdbpedia);
+    app.use('/extractdiscoveryhub', extractdiscoveryhub);
+    
     // development error handler
     // will print stacktrace
     app.use(errorHandler());
