@@ -3,6 +3,7 @@ import RateLimit from 'express-rate-limit';
 import searchController from './search.controller';
 import config from '../conf/conf';
 const router = express.Router();
+
 //==========================================================================================================================\\
 //===========================WEBSERVICE REST POUR L'AFFICHAGE DU LISTING DES ARTISTES/ALBUMS/SONGS==========================\\
 //==========================================================================================================================\\
@@ -869,4 +870,53 @@ router.get('/more/:searchText', new RateLimit(config.http.limit_request.search),
 
 router.get('/auth', searchController.get_auth);
 
+
+/**
+ * API permettant de lister les songs multitracks
+ */
+//==========================================================================================================================\\
+//===================================== API REST POUR RECUPERER LES SONGS MULTITRACKS ======================================\\
+//==========================================================================================================================\\
+/**
+ * @api {get} search/song/multitrack Get multitracks songs
+ * @apiExample Example usage: 
+ *      wasabi.i3s.unice.fr/search/song/multitrack
+ * @apiVersion 1.0.0
+ * @apiName GetMultitracksSongs
+ * @apiGroup Search
+ *
+ *
+ * @apiSuccessExample Success-Response:
+    HTTP/1.1 200 OK
+    [{
+        _id: "5714dedb25ac0d8aee4ad816",
+        name: "Metallica",
+        title: "Battery",
+        albumTitle: "Master Of Puppets"
+    }]
+ *
+ */
+router.get('/song/multitrack/:skip', new RateLimit(config.http.limit_request.search), searchController.getSongsMultitrack);
+
+
+/**
+ * API permettant de retourner tous les songs multitracks
+ */
+router.get('/song/multitrackAll', new RateLimit(config.http.limit_request.search), searchController.getAllSongsMultitrack);
+
+/**
+ * API permettant de retourner le nombre de songs multitracks
+ */
+router.get('/song/count/multitrack', new RateLimit(config.http.limit_request.search), searchController.getCountSongsMultitrack);
+
+/**
+ * API permettant de lister les songs streams (urlYoutube preview deezer)
+ */
+router.get('/song/stream/:skip', new RateLimit(config.http.limit_request.search), searchController.getSongsStream);
+
+
+/**
+ * API permettant de lister les albums contenant le song de l'artist recherché
+ */
+router.get('/album/song/:artistName/:songName', new RateLimit(config.http.limit_request.search), searchController.getAlbumSong);
 export default router;

@@ -35,12 +35,12 @@ var get_collectionByCategoryAndLetter = (req, res, next) => {
             db.collection(COLLECTIONARTIST).find({
                 $or: tObjectRequest
             }, {
-                "name": 1
-            }).skip(skip).limit(LIMIT).toArray((err, artists) => {
-                if (err) return res.status(404).json(config.http.error.artist_404);
-                objSend.artists = artists;
-                return res.json(objSend);
-            });
+                    "name": 1
+                }).skip(skip).limit(LIMIT).toArray((err, artists) => {
+                    if (err) return res.status(404).json(config.http.error.artist_404);
+                    objSend.artists = artists;
+                    return res.json(objSend);
+                });
             break;
         case "album":
         case "albums":
@@ -124,14 +124,14 @@ var get_songByProducer = (req, res) => {
     req.db.collection(COLLECTIONSONG).find({
         producer: producerName
     }, {
-        name: 1,
-        title: 1,
-        albumTitle: 1
-    }).sort({
-        title: 1
-    }).limit(LIMIT).toArray((err, objs) => {
-        return res.json(objs);
-    })
+            name: 1,
+            title: 1,
+            albumTitle: 1
+        }).sort({
+            title: 1
+        }).limit(LIMIT).toArray((err, objs) => {
+            return res.json(objs);
+        })
 };
 
 var get_songByRecordLabel = (req, res) => {
@@ -140,14 +140,14 @@ var get_songByRecordLabel = (req, res) => {
     db.collection(COLLECTIONSONG).find({
         recordLabel: recordLabelName
     }, {
-        name: 1,
-        title: 1,
-        albumTitle: 1
-    }).sort({
-        title: 1
-    }).limit(LIMIT).toArray((err, objs) => {
-        return res.json(objs);
-    })
+            name: 1,
+            title: 1,
+            albumTitle: 1
+        }).sort({
+            title: 1
+        }).limit(LIMIT).toArray((err, objs) => {
+            return res.json(objs);
+        })
 };
 
 var get_songByGenre = (req, res) => {
@@ -155,14 +155,14 @@ var get_songByGenre = (req, res) => {
     req.db.collection(COLLECTIONSONG).find({
         genre: genreName
     }, {
-        name: 1,
-        title: 1,
-        albumTitle: 1
-    }).sort({
-        title: 1
-    }).limit(LIMIT).toArray((err, objs) => {
-        return res.json(objs);
-    })
+            name: 1,
+            title: 1,
+            albumTitle: 1
+        }).sort({
+            title: 1
+        }).limit(LIMIT).toArray((err, objs) => {
+            return res.json(objs);
+        })
 };
 
 var get_songByRecorded = (req, res) => {
@@ -170,14 +170,14 @@ var get_songByRecorded = (req, res) => {
     req.db.collection(COLLECTIONSONG).find({
         recorded: recordedName
     }, {
-        name: 1,
-        title: 1,
-        albumTitle: 1
-    }).sort({
-        title: 1
-    }).limit(LIMIT).toArray((err, objs) => {
-        return res.json(objs);
-    })
+            name: 1,
+            title: 1,
+            albumTitle: 1
+        }).sort({
+            title: 1
+        }).limit(LIMIT).toArray((err, objs) => {
+            return res.json(objs);
+        })
 };
 
 var get_songByAward = (req, res) => {
@@ -185,28 +185,28 @@ var get_songByAward = (req, res) => {
     req.db.collection(COLLECTIONSONG).find({
         award: awardName
     }, {
-        name: 1,
-        title: 1,
-        albumTitle: 1
-    }).sort({
-        title: 1
-    }).limit(LIMIT).toArray((err, objs) => {
-        return res.json(objs);
-    })
+            name: 1,
+            title: 1,
+            albumTitle: 1
+        }).sort({
+            title: 1
+        }).limit(LIMIT).toArray((err, objs) => {
+            return res.json(objs);
+        })
 };
 var get_songByWriter = (req, res) => {
     var writerName = req.params.writerName;
     req.db.collection(COLLECTIONSONG).find({
         writer: writerName
     }, {
-        name: 1,
-        title: 1,
-        albumTitle: 1
-    }).sort({
-        title: 1
-    }).limit(LIMIT).toArray((err, objs) => {
-        return res.json(objs);
-    })
+            name: 1,
+            title: 1,
+            albumTitle: 1
+        }).sort({
+            title: 1
+        }).limit(LIMIT).toArray((err, objs) => {
+            return res.json(objs);
+        })
 };
 
 var get_songByFormat = (req, res) => {
@@ -214,14 +214,14 @@ var get_songByFormat = (req, res) => {
     req.db.collection(COLLECTIONSONG).find({
         format: formatName
     }, {
-        name: 1,
-        title: 1,
-        albumTitle: 1
-    }).sort({
-        title: 1
-    }).limit(LIMIT).toArray((err, objs) => {
-        return res.json(objs);
-    })
+            name: 1,
+            title: 1,
+            albumTitle: 1
+        }).sort({
+            title: 1
+        }).limit(LIMIT).toArray((err, objs) => {
+            return res.json(objs);
+        })
 };
 var get_countByLetter = (req, res) => {
     // var db = req.db, collection= req.params.collection,lettre= req.params.lettre, tParamToFind, fieldCollection, tObjectRequest;
@@ -425,26 +425,26 @@ var put_album = (req, res) => {
                 db.collection(COLLECTIONSONG).update({
                     _id: new ObjectId(idSong)
                 }, {
-                    $set: song
-                }, (err) => {
-                    if (err) return res.status(404).json(config.http.error.song_404);
-                    searchHandler.updateSongES(req, name, albumTitle, song.title, idSong)
-                    //Quand toutes les musiques ont été update on update le document album. ainsi si il n'y a aucun risque que l'album soit update sans que les musiques le soit avant
-                    nbSongUpdated = nbSongUpdated + 1;
-                    if (totalSong == nbSongUpdated) {
-                        //On supprime le champ songs car il n'éxiste pas dans la collection album
-                        delete albumBody.songs; //FUTURE Si un album n'a pas encore d'attribut songs. Peut se produire lors de l'ajout d'un album
-                        var idAlbum = albumBody._id;
-                        // On supprime l'id car mongodb lance un avertissement si ce champ n'est pas supprimé (_id est immutable pas d'update possible)
-                        delete albumBody._id;
-                        delete albumBody.id_artist;
-                        db.collection(COLLECTIONALBUM).update({
-                            _id: new ObjectId(idAlbum)
-                        }, {
-                            $set: albumBody
-                        });
-                    }
-                })
+                        $set: song
+                    }, (err) => {
+                        if (err) return res.status(404).json(config.http.error.song_404);
+                        searchHandler.updateSongES(req, name, albumTitle, song.title, idSong)
+                        //Quand toutes les musiques ont été update on update le document album. ainsi si il n'y a aucun risque que l'album soit update sans que les musiques le soit avant
+                        nbSongUpdated = nbSongUpdated + 1;
+                        if (totalSong == nbSongUpdated) {
+                            //On supprime le champ songs car il n'éxiste pas dans la collection album
+                            delete albumBody.songs; //FUTURE Si un album n'a pas encore d'attribut songs. Peut se produire lors de l'ajout d'un album
+                            var idAlbum = albumBody._id;
+                            // On supprime l'id car mongodb lance un avertissement si ce champ n'est pas supprimé (_id est immutable pas d'update possible)
+                            delete albumBody._id;
+                            delete albumBody.id_artist;
+                            db.collection(COLLECTIONALBUM).update({
+                                _id: new ObjectId(idAlbum)
+                            }, {
+                                    $set: albumBody
+                                });
+                        }
+                    })
             })(idSong, albumBody.songs[j], albumBody.name, albumBody.title, albumBody.songs.length);
         }
         return res.json(config.http.valid.send_message_ok);
@@ -542,12 +542,12 @@ var put_songLyrics = (req, res) => {
         req.db.collection(COLLECTIONSONG).update({
             _id: ObjectId(idSong)
         }, {
-            $set: {
-                lyrics: songBody.lyrics
-            }
-        }, (err, song) => {
-            return res.json(config.http.valid.send_message_ok);
-        });
+                $set: {
+                    lyrics: songBody.lyrics
+                }
+            }, (err, song) => {
+                return res.json(config.http.valid.send_message_ok);
+            });
     })(req, res);
 };
 var put_songIsClassic = (req, res) => {
@@ -563,12 +563,12 @@ var put_songIsClassic = (req, res) => {
         req.db.collection(COLLECTIONSONG).update({
             _id: ObjectId(idSong)
         }, {
-            $set: {
-                isClassic: songBody.isClassic
-            }
-        }, (err) => {
-            return res.json(config.http.valid.send_message_ok);
-        });
+                $set: {
+                    isClassic: songBody.isClassic
+                }
+            }, (err) => {
+                return res.json(config.http.valid.send_message_ok);
+            });
     })(req, res);
 };
 var get_member_name_memberName = (req, res) => {
@@ -576,11 +576,11 @@ var get_member_name_memberName = (req, res) => {
     req.db.collection(COLLECTIONARTIST).find({
         "members.name": memberName
     }, {
-        name: 1
-    }).toArray((err, artists) => {
-        if (err) return res.status(404).json(config.http.error.internal_error_404);
-        return res.json(artists);
-    });
+            name: 1
+        }).toArray((err, artists) => {
+            if (err) return res.status(404).json(config.http.error.internal_error_404);
+            return res.json(artists);
+        });
 };
 
 var get_fullTextSearch = (req, res) => {
@@ -611,6 +611,98 @@ var get_moreSearchText = (req, res) => {
         return res.send(err);
     });
 };
+
+var getSongsMultitrack = (req, res) => {
+    let _limit=50;
+    console.log('_limit : '+_limit);
+    let _skip=(parseInt(req.params.skip)*_limit);
+    req.db.collection(COLLECTIONSONG).find({
+        multitrack_path: { $ne: "" }
+    }, {
+            name: 1,
+            albumTitle: 1,
+            title: 1
+        }).sort({
+            title: 1
+        }).skip(_skip).limit(_limit).toArray((err, songs) => {
+            if (err) return res.status(404).json(config.http.error.internal_error_404);
+            // if (req.params.count) {
+            //     return res.json({ count: songs.length });
+            // } else {
+            // }
+            return res.json(songs);
+        });
+}
+
+var getAllSongsMultitrack = (req, res) => {
+    req.db.collection(COLLECTIONSONG).find({
+        multitrack_path: { $ne: "" }
+    }, {
+            name: 1,
+            albumTitle: 1,
+            title: 1
+        }).sort({
+            title: 1
+        }).toArray((err, songs) => {
+            if (err) return res.status(404).json(config.http.error.internal_error_404);
+            // if (req.params.count) {
+            //     return res.json({ count: songs.length });
+            // } else {
+            // }
+            return res.json(songs);
+        });
+}
+
+var getCountSongsMultitrack=(req, res)=>{
+    req.db.collection(COLLECTIONSONG).count({
+        multitrack_path: { $ne: "" }
+    }, (err, countfield) => {
+        if (err) return res.status(404).json(config.http.error.global_404);
+        return res.json({
+            count: countfield
+        });
+    });
+}
+
+var getSongsStream = (req, res) => {
+    // $or:[{ urlYouTube:{$ne:""}, preview:{$ne:""}}]
+    let skip=parseInt(req.params.skip);
+    console.log('skip '+skip, 'limit '+LIMIT);
+    req.db.collection(COLLECTIONSONG).find({
+        preview: { $ne: "" }
+    }, {
+            name: 1,
+            title: 1,
+            albumTitle: 1,
+            preview: 1
+        }).sort({
+            title: 1
+        }).skip(skip).limit(LIMIT).toArray((err, songs) => {
+            if (err) return res.status(404).json(config.http.error.internal_error_404);
+            return res.json(songs);
+        });
+}
+
+
+var getAlbumSong=(req,res)=>{
+    let artistName = req.params.artistName;
+    let songName = req.params.songName;
+    console.log(artistName,songName);
+    req.db.collection(COLLECTIONSONG).find({
+        name:artistName, 
+        title:songName
+    }, {
+            name: 1,
+            title: 1,
+            albumTitle: 1
+        }).sort({
+            albumTitle: 1
+        }).toArray((err, songs) => {
+            if (err) return res.status(404).json(config.http.error.internal_error_404);
+            return res.json(songs);
+        });
+}
+
 exports.get_collectionByCategoryAndLetter = get_collectionByCategoryAndLetter;
 exports.get_category = get_category;
 exports.get_songByProducer = get_songByProducer;
@@ -635,3 +727,8 @@ exports.get_member_name_memberName = get_member_name_memberName;
 exports.get_fullTextSearch = get_fullTextSearch;
 exports.get_moreSearchText = get_moreSearchText;
 exports.get_auth = get_auth;
+exports.getAllSongsMultitrack = getAllSongsMultitrack;
+exports.getSongsMultitrack = getSongsMultitrack;
+exports.getCountSongsMultitrack = getCountSongsMultitrack;
+exports.getSongsStream = getSongsStream;
+exports.getAlbumSong =  getAlbumSong;

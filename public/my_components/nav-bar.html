@@ -8,6 +8,7 @@
 <link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
 <!--my_components-->
 <link rel="import" href="carbon-search-input.html">
+<link rel="import" href="show-feedback.html">
 <dom-module id="nav-bar">
     <template>
         <style>
@@ -77,8 +78,16 @@
             .linkMenuSelected {
                 background-color: #3f51b5;
             }
+
+            #bt_nav_goUp{
+                display: none;
+
+                position: fixed;
+                bottom: 0px;
+                right: 0px;
+            }
         </style>
-        <paper-toolbar justify="justified" middleJustify="justified">
+        <paper-toolbar id="top_menu" justify="justified" middleJustify="justified">
             <app-drawer id="appDrawer" swipe-open opened="{{isOpen}}">
                 <app-toolbar>Menu</app-toolbar>
                 <div class="drawer-contents">
@@ -100,6 +109,9 @@
                 </a>
             </div>
         </paper-toolbar>
+
+        <paper-button id="bt_nav_goUp" raised role="button" class="style-scope show-dialog x-scope paper-button-0" on-tap="goToUp" >up</paper-button>
+        <show-feedback></show-feedback>
     </template>
     <script>
         // element registration
@@ -135,7 +147,7 @@
                         }, {
                             label: "Github - Wasabi",
                             icon: "social:share",
-                            link: "https://github.com/fabrice126/wasabi_project",
+                            link: "https://github.com/ElmahdiK/wasabi_project",
                             target: "_blank"
                         }
                         // ,{
@@ -149,7 +161,16 @@
                     type: Object,
                 }
             },
-            ready: function (e) {},
+            ready: function (e) {
+                let bt_nav_goUp=document.querySelector("#bt_nav_goUp");
+                window.onscroll=()=>{
+                    if ((document.body.scrollTop || document.documentElement.scrollTop) > 80) {
+                        bt_nav_goUp.style.display = "inline-flex";
+                    } else {
+                        bt_nav_goUp.style.display = "none";
+                    }
+                }
+            },
             _closeAppDrawer: function (event) {
                 //Si il y a un element selectionné on lui enléve la class linkMenuSelected
                 if (this.elementSelected) {
@@ -172,6 +193,13 @@
             },
             menuAction: function () {
                 this.isOpen = !this.isOpen;
+            },
+            goToUp:()=>{
+                /*
+                document.body.scrollTop=0;
+                document.documentElement.scrollTop=0;
+                */
+                document.querySelector("#top_menu").scrollIntoView({behavior:'smooth',block: "start", inline: "nearest"});
             }
         });
     </script>

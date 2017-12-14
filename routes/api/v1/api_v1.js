@@ -13,10 +13,58 @@ const COLLECTIONSONG = config.database.collection_song;
 const LIMIT = config.request.limit;
 
 
+//==========================================================================================================================\\
+//==========================================API REST POUR RECUPERER UN ALBUM PAR ID=========================================\\
+//==========================================================================================================================\\
+router.get('/album/id/:id', apiV1Controller.get_albumById);
+/**
+ * @api {get} api/v1/album/id/:id Album - Get an album document by id
+ * @apiExample Example usage: 
+ *      wasabi.i3s.unice.fr/api/v1/album/id/5714debe25ac0d8aee36b664
+ * @apiVersion 1.0.0
+ * @apiName GetAlbumById
+ * @apiGroup Api/v1
+ * 
+ * @apiParam {Number} id album's id
+ *
+ * @apiSuccessExample Success-Response for an artist:
+    HTTP/1.1 200 OK
+    {
+        "_id": "5714debe25ac0d8aee36b664",
+        "name": "Metallica",
+        "title": "Master Of Puppets",
+        "publicationDate": "1986",
+        "urlWikipedia": "http://en.wikipedia.org/wiki/Master_of_Puppets",
+        "genre": "Thrash Metal",
+        "length": "54:46",
+        "urlAlbum": "http://lyrics.wikia.com/Metallica:Master_Of_Puppets_%281986%29",
+        "urlITunes": "https://itunes.apple.com/us/album/id167353139?i=167353334",
+        "urlAmazon": "http://www.amazon.com/exec/obidos/redirect?link_code=ur2&tag=wikia-20&camp=1789&creative=9325&path=http%3A%2F%2Fwww.amazon.com%2Fgp%2Fproduct%2FB0012235Q6%2Fsr%3D8-1%2Fqid%3D1147400297%2Fref%3Dpd_bbs_1%3F%255Fencoding%3DUTF8",
+        "urlGoEar": "http://goear.com/listen.php?v=c6e3d05",
+        "urlSpotify": "https://play.spotify.com/track/4hOohf45f0JtxYKNsEAIOV",
+        "urlAllmusic": "http://www.allmusic.com/song/mt0031988990",
+        "urlMusicBrainz": "http://musicbrainz.org/recording/0f65985f-4ab2-4416-87eb-ccfd1ac4eb89"
+        "id_artist": "56d93d84ce06f50c0fed8747"
+    }
+ * @apiError error The id is not valid.
+ * @apiErrorExample Error-Response invalid ObjectId:
+    HTTP/1.1 404 Not Found
+    {
+        "error": "You must type a valid ObjectId"
+    }
+ * @apiError error the database does not respond.
+ * @apiErrorExample Error-Response internal error:
+    HTTP/1.1 404 Not Found
+    {
+        "error": "An internal error occurred"
+    }
+ */
+
 
 //==========================================================================================================================\\
 //===========================API REST POUR RECUPERER LES MUSIQUES DE CHAQUE ALBUM DE CHAQUE ARTISTE=========================\\
 //==========================================================================================================================\\
+router.get('/artist_all/:start', apiV1Controller.get_artistAll);
 /**
  * @api {get} api/v1/artist_all/:start All - Get songs of each albums of each artists
  * @apiExample Example usage: 
@@ -159,11 +207,12 @@ const LIMIT = config.request.limit;
         "error": "An internal error occurred"
     }
  */
-router.get('/artist_all/:start', apiV1Controller.get_artistAll);
+
 
 //==========================================================================================================================\\
 //=====================API REST POUR RECUPERER LES MUSIQUES DE CHAQUE ALBUM D'UN ARTISTE PAR ID D'ARTIST====================\\
 //==========================================================================================================================\\
+router.get('/artist_all/id/:id', apiV1Controller.get_artistAllById);
 /**
  * @api {get} api/v1/artist_all/id/:id All - Get songs of each albums of the artists having this id
  * @apiExample Example usage: 
@@ -304,10 +353,12 @@ router.get('/artist_all/:start', apiV1Controller.get_artistAll);
         "error": "An internal error occurred"
     }
  */
-router.get('/artist_all/id/:id', apiV1Controller.get_artistAllById);
+
+
 //==========================================================================================================================\\
 //====================API REST POUR RECUPERER LES MUSIQUES DE CHAQUE ALBUM D'UN ARTISTE PAR NOM D'ARTISTE===================\\
 //==========================================================================================================================\\
+router.get('/artist_all/name/:name', apiV1Controller.get_artistAllByName);
 /**
  * @api {get} api/v1/artist_all/name/:name All - Get songs of each albums of the artists having this name
  * @apiExample Example usage: 
@@ -448,7 +499,7 @@ router.get('/artist_all/id/:id', apiV1Controller.get_artistAllById);
         "error": "An internal error occurred"
     }
  */
-router.get('/artist_all/name/:name', apiV1Controller.get_artistAllByName);
+
 
 //Une API pour tester si la ram est suffisante pour éxecuter l'api api/artist_all
 router.get('/api_test/artist_all', (req, res) => {
@@ -632,52 +683,7 @@ router.get('/artist/id/:id', apiV1Controller.get_artistById);
     }
  */
 router.get('/artist/name/:artistName', apiV1Controller.get_artistByName);
-//==========================================================================================================================\\
-//==========================================API REST POUR RECUPERER UN ALBUM PAR ID=========================================\\
-//==========================================================================================================================\\
-/**
- * @api {get} api/v1/album/id/:id Album - Get an album document by id
- * @apiExample Example usage: 
- *      wasabi.i3s.unice.fr/api/v1/album/id/5714debe25ac0d8aee36b664
- * @apiVersion 1.0.0
- * @apiName GetAlbumById
- * @apiGroup Api/v1
- * 
- * @apiParam {Number} id album's id
- *
- * @apiSuccessExample Success-Response for an artist:
-    HTTP/1.1 200 OK
-    {
-        "_id": "5714debe25ac0d8aee36b664",
-        "name": "Metallica",
-        "title": "Master Of Puppets",
-        "publicationDate": "1986",
-        "urlWikipedia": "http://en.wikipedia.org/wiki/Master_of_Puppets",
-        "genre": "Thrash Metal",
-        "length": "54:46",
-        "urlAlbum": "http://lyrics.wikia.com/Metallica:Master_Of_Puppets_%281986%29",
-        "urlITunes": "https://itunes.apple.com/us/album/id167353139?i=167353334",
-        "urlAmazon": "http://www.amazon.com/exec/obidos/redirect?link_code=ur2&tag=wikia-20&camp=1789&creative=9325&path=http%3A%2F%2Fwww.amazon.com%2Fgp%2Fproduct%2FB0012235Q6%2Fsr%3D8-1%2Fqid%3D1147400297%2Fref%3Dpd_bbs_1%3F%255Fencoding%3DUTF8",
-        "urlGoEar": "http://goear.com/listen.php?v=c6e3d05",
-        "urlSpotify": "https://play.spotify.com/track/4hOohf45f0JtxYKNsEAIOV",
-        "urlAllmusic": "http://www.allmusic.com/song/mt0031988990",
-        "urlMusicBrainz": "http://musicbrainz.org/recording/0f65985f-4ab2-4416-87eb-ccfd1ac4eb89"
-        "id_artist": "56d93d84ce06f50c0fed8747"
-    }
- * @apiError error The id is not valid.
- * @apiErrorExample Error-Response invalid ObjectId:
-    HTTP/1.1 404 Not Found
-    {
-        "error": "You must type a valid ObjectId"
-    }
- * @apiError error the database does not respond.
- * @apiErrorExample Error-Response internal error:
-    HTTP/1.1 404 Not Found
-    {
-        "error": "An internal error occurred"
-    }
- */
-router.get('/album/id/:id', apiV1Controller.get_albumById);
+
 //==========================================================================================================================\\
 //=========================================API REST POUR RECUPERER UNE MUSIQUE PAR ID=======================================\\
 //==========================================================================================================================\\

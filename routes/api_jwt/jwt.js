@@ -20,18 +20,27 @@ router.post('/signup', (req, res) => {
         return res.json(config.http.valid.user.user_created);
     });
 });
-// router.post('/logout', (req, res) => {
-//     if (!req.body.email || !req.body.password) return res.status(404).json(config.http.error.user.mail_exist);
-//     var newUser = new User({
-//         email: req.body.email.toLowerCase(),
-//         password: req.body.password
-//     });
-//     // Attempt to save the user
-//     newUser.save((err) => {
-//         if (err) return res.status(404).json(config.http.error.user.mail_exist);
-//         return res.json(config.http.valid.user.user_created);
-//     });
-// });
+router.post('/logout', (req, res) => {
+    // if (!req.body.email || !req.body.password) return res.status(404).json(config.http.error.user.mail_exist);
+    // var newUser = new User({
+    //     email: req.body.email.toLowerCase(),
+    //     password: req.body.password
+    // });
+    // // Attempt to save the user
+    // newUser.save((err) => {
+    //     if (err) return res.status(404).json(config.http.error.user.mail_exist);
+    //     return res.json(config.http.valid.user.user_created);
+    // });
+
+    //console.log(localStorage);
+    /*
+    token: {
+        type: String,
+        value: localStorage.getItem("token") || ""
+    },
+    */
+    res.json({message:'OK'});
+});
 router.post('/login', new RateLimit(config.http.limit_request.login), (req, res) => {
     User.findOne({
         email: req.body.email.toLowerCase().trim()

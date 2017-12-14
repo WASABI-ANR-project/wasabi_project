@@ -87,6 +87,9 @@
             <!--Page member contenant les groupes dans lesquels un artiste (au sens d'un membre d'un groupe) a joué)-->
             <app-route path="/search/member/name/:memberName" onUrlChange="updateModel" import="my_components/facet/page-group-member.html"></app-route>
             <!--<app-route path="public/my_components/MT5"  onUrlChange="updateModel" import="my_components/MT5/index.html"></app-route>-->
+
+            <!--Page format contenant les musiques ayant un lien multitrack -->
+            <app-route path="/search/song/multitrack/" onUrlChange="updateModel" import="my_components/facet/page-multitrack.html"></app-route>
             <!--Lorsqu'une mauvaise URL est saisie-->
             <app-route path="*" onUrlChange="updateModel" import="my_components/page-404.html"></app-route>
         </app-router>

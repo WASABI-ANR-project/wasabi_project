@@ -8,7 +8,7 @@
 <dom-module id="page-login">
     <template>
         <style>
-             :host {
+            :host {
                 display: flex;
                 justify-content: center;
             }
@@ -42,19 +42,22 @@
             }
         </style>
         <paper-material elevation="1">
-            <paper-toast id="toast" duration=5000 text="Wrong email or password"></paper-toast>
+            <paper-toast id="toast" duration=5000 text="Wrong email or password" class="fit-bottom"></paper-toast>
 
             <iron-ajax auto url="/search/auth" method="GET" headers="[[headers]]" handle-as="json" last-response="{{auth}}"></iron-ajax>
 
             <template id="templateForm" is="dom-if" if="{{!auth.isConnected}}">
                 <form is="iron-form" id="form" method="post" action="{{getURLLogin()}}" on-iron-form-response="responseHandler" on-iron-form-error="errorHandler">
-                    <paper-input type="email" name="email" label="email" required autofocus auto-validate error-message="Needs a valid email" autocomplete></paper-input>
+                    <paper-input type="email" name="email" label="email" required autofocus auto-validate error-message="Needs a valid email"
+                        autocomplete></paper-input>
                     <paper-input type="password" name="password" label="password" required></paper-input>
                     <paper-button raised on-click="submitForm">Submit</paper-button>
                 </form>
             </template>
             <template is="dom-if" if="{{auth.isConnected}}">
-                Se deconnecter
+                <form>
+                    <paper-button raised on-click="logoutUser">{{logout}}</paper-button>
+                </form>
             </template>
 
         </paper-material>
@@ -65,6 +68,10 @@
             is: "page-login",
             // add properties and methods on the element's prototype
             properties: {
+                logout: {
+                    type: String,
+                    value: "Déconnexion"
+                },
                 token: {
                     type: String,
                     value: localStorage.getItem("token") || ""
@@ -74,6 +81,10 @@
                 }
             },
             ready: function (e) {
+            },
+            logoutUser: function () {
+                localStorage.removeItem("token");
+                window.location.reload();
             },
             getURLLogin: function () {
                 return "/jwt/login";

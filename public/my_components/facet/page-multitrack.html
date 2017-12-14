@@ -1,0 +1,176 @@
+<link href="../../bower_components/polymer/polymer.html" rel="import">
+<link href="../../bower_components/iron-ajax/iron-ajax.html" rel="import">
+<link href="../../bower_components/paper-material/paper-material.html" rel="import">
+<link href="../../bower_components/paper-button/paper-button.html" rel="import">
+<link rel="import" href="../bower_components/paper-item/paper-icon-item.html">
+
+
+
+
+<dom-module id="page-multitrack">
+    <template>
+        <style>
+            .flex-wrap {
+                @apply(--layout-horizontal);
+                @apply(--layout-wrap);
+            }
+
+            paper-material {
+                margin-bottom: 5%;
+            }
+
+            .inherit {
+                color: inherit;
+                background-color: inherit;
+            }
+
+            paper-card {
+                width: 100%;
+                padding-left: 5%;
+                padding-top: 1%;
+                padding-bottom: 1%;
+                cursor: pointer;
+                color: black;
+            }
+
+            .search_title {
+                position: absolute;
+                margin-top: 10px;
+                margin-left: 10px;
+            }
+
+            .center {
+                text-align: center;
+            }
+
+            .searchText-info {
+                font-size: 1.5em;
+                padding: 25px;
+                color: #333333;
+            }
+
+            #ul_content {
+
+                list-style: none;
+                margin: 0px !important;
+                padding: 0px !important;
+            }
+
+            #ul_content li {
+                background: #fff;
+            }
+
+            #ul_content li a:hover {
+                background: #3f51b5;
+                color: #fff;
+                text-indent: 5px;
+            }
+
+            #ul_content li a {
+                color: #111;
+                border-bottom: 1px solid #ccc;
+
+                padding: 20px;
+
+                display: block;
+                text-decoration: none;
+                transition: 0.5s;
+            }
+        </style>
+        <paper-progress indeterminate class="blue"></paper-progress>
+        <iron-ajax id="get_count" on-response='_setNbElements' auto url="/search/song/count/multitrack" last-response="{{countField}}"
+            handleAs="json"></iron-ajax>
+        <iron-ajax id="get_content" auto url="/search/song/multitrack/0" on-response="_onResponse" last-response="{{multitrack}}"
+            handleAs="json"></iron-ajax>
+
+        <p class="center searchText-info">We have {{countField.count}} multitrack songs</p>
+        <progress id="progress_bar" min=0 max=100 value=0 style="width:100%"></progress>
+        <ul id="ul_content"></ul>
+    </template>
+
+    <script>
+        // element registration
+        Polymer({
+            is: "page-multitrack",
+            // add properties and methods on the element's prototype
+            properties: {
+                nbLoad: {
+                    type: Number,
+                    value: 1
+                },
+                numTotal: {
+                    type: Number,
+                    value: 2800
+                },
+                nbPart: {
+                    type: Number,
+                    value: 50
+                }
+            },
+            ready: function (e) {
+                console.log('ready');
+            },
+            _loadData: function (e) {
+                let self = this;
+                new Promise((resolve, reject) => {
+                    let nbL = self.nbLoad++;
+                    console.log('this.nbLoad : ' + nbL);
+                    let _urlAPI = "https://localhost/search/song/multitrack/" + nbL;
+                    var xhttp = new XMLHttpRequest();
+                    xhttp.open("GET", _urlAPI, true);
+                    xhttp.onreadystatechange = function (e) {
+                        if (this.readyState == 4 && this.status == 200) {
+                            console.log(nbL + " => " + (nbL * self.nbPart / self.numTotal) * 100);
+                            document.querySelector('#progress_bar').value = (nbL * self.nbPart / self.numTotal) * 100;
+                            let data = (JSON.parse(xhttp.responseText));
+                            let liHTML = '';
+                            for (d in data) {
+                                liHTML = `<li class="style-scope page-multitrack"><a href="#/search/artist/${encodeURIComponent(data[d].name)}/album/${encodeURIComponent(data[d].albumTitle)}/song/${encodeURIComponent(data[d].title)}" class="style-scope page-multitrack">${(data[d].name)} - ${(data[d].title)} - ${(data[d].albumTitle)}</a></li>`;
+                                document.querySelector('#ul_content').insertAdjacentHTML('beforeend', liHTML);
+                            }
+                            //this.nbLoad++;
+                            if (((nbL * self.nbPart / self.numTotal) * 100) > 100) {
+                                reject(false);
+                                alert('finished');
+                                return false;
+                            } else {
+                                // self._loadData();
+                                resolve(true);
+                            }
+                        }
+                    };
+
+                    xhttp.send();
+                }).then(function (valeur) {
+                    console.log(valeur);
+                    console.log('// Promesse tenue');
+                    self._loadData();
+                }, function (raison) {
+                    console.log(raison);
+                    console.log('// Rejet de la promesse');
+                })
+            },
+            _setNbElements: function (e) {
+                const data = e.detail.response;
+                console.log("---loaded : " + data.count);
+                this.numTotal = data.count;
+            },
+            _onResponse: function (e) {
+                const data = e.detail.response;
+                let liHTML = '';
+                //<img class="song_search_bar" src="../../img/song_search_bar.svg" alt="Band">
+                for (d in data) {
+                    liHTML = `<li class="style-scope page-multitrack"><a href="#/search/artist/${this._encodeUri(data[d].name)}/album/${this._encodeUri(data[d].albumTitle)}/song/${this._encodeUri(data[d].title)}" class="style-scope page-multitrack">${(data[d].name)} - ${(data[d].title)} - ${(data[d].albumTitle)}</a></li>`;
+                    this.$.ul_content.insertAdjacentHTML('beforeend', liHTML);
+                }
+                document.querySelector('#progress_bar').value = (1 * this.nbPart / this.numTotal) * 100;
+
+                this._loadData();
+            },
+            _encodeUri: function (nameArtist) {
+                return encodeURIComponent(nameArtist);
+            },
+        });
+
+    </script>
+</dom-module>
