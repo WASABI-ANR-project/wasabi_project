@@ -37,6 +37,7 @@ import jwt_api from './routes/api_jwt/jwt';
 import updatedb from './routes/api_updatedb/updatedb';
 import extractdiscoveryhub from './routes/api_extractdiscoveryhub/extractdiscoveryhub';
 import feedback from './routes/api_feedback/feedback';
+import helper from './routes/api_helper/helper';
 import mergedb from './routes/api_mergedb/mergedb';
 import createdb from './routes/api_createdb/createdb';
 import extractdbpedia from './routes/api_extractdbpedia/extractdbpedia';
@@ -118,6 +119,7 @@ app.use((req, res, next) => {
  * -------------------------------------------------------------------------------------------------------
  */
 app.use('/', express.static(path.join(__dirname, 'public')));
+app.use('/TER-Pedalboard-creation', express.static(path.join(__dirname, 'public/TER-Pedalboard-creation')));
 app.use('/AmpSimFA', express.static(path.join(__dirname, 'public/AmpSimFA')));
 app.use('/AmpSim3', express.static(path.join(__dirname, 'public/AmpSim3')));
 app.use('/MT5', MT5);
@@ -146,6 +148,7 @@ if (process.env.NODE_ENV === config.launch.env.dev) {
     app.use('/extractdbpedia', extractdbpedia);
     app.use('/extractdiscoveryhub', extractdiscoveryhub);
     app.use('/feedback', feedback);
+    app.use('/helper', helper);
     
     // development error handler
     // will print stacktrace
