@@ -119,7 +119,8 @@ app.use((req, res, next) => {
  * -------------------------------------------------------------------------------------------------------
  */
 app.use('/', express.static(path.join(__dirname, 'public')));
-app.use('/TER-Pedalboard-creation', express.static(path.join(__dirname, 'public/TER-Pedalboard-creation')));
+app.use('/plugins', express.static(path.join(__dirname, 'public/plugins')));
+app.use('/pedalboard', express.static(path.join(__dirname, 'public/pedalboard')));
 app.use('/AmpSimFA', express.static(path.join(__dirname, 'public/AmpSimFA')));
 app.use('/AmpSim3', express.static(path.join(__dirname, 'public/AmpSim3')));
 app.use('/MT5', MT5);
@@ -127,6 +128,8 @@ app.use('/search', search);
 app.use('/api/v1', new RateLimit(config.http.limit_request.api), api_v1);
 app.use('/jwt', jwt_api);
 app.use('/apidoc', express.static(path.join(__dirname, 'apidoc')));
+app.use('/helper', helper);
+
 //Allows the authentication, at the moment the /download api have to stay private
 app.use(basicAuth(configLogin.login, configLogin.password));
 app.use('/download', download);
@@ -148,7 +151,6 @@ if (process.env.NODE_ENV === config.launch.env.dev) {
     app.use('/extractdbpedia', extractdbpedia);
     app.use('/extractdiscoveryhub', extractdiscoveryhub);
     app.use('/feedback', feedback);
-    app.use('/helper', helper);
     
     // development error handler
     // will print stacktrace
