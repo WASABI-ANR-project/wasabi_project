@@ -131,8 +131,8 @@ app.use('/apidoc', express.static(path.join(__dirname, 'apidoc')));
 //app.use('/helper', helper);
 
 //Allows the authentication, at the moment the /download api have to stay private
-app.use(basicAuth(configLogin.login, configLogin.password));
-app.use('/download', download);
+//app.use(basicAuth(configLogin.login, configLogin.password));
+
 //Put here the dev routes
 if (config.http.limit_request.search.max < 30) console.error("/!\\-------------------------------PLEASE INCREASE THE NUMBER OF REQUEST/MIN------------------------------/!\\");
 if (process.env.NODE_ENV === config.launch.env.dev) {
@@ -145,6 +145,7 @@ if (process.env.NODE_ENV === config.launch.env.dev) {
     //     rootValue: root,
     //     graphiql: true,
     // }));
+    app.use('/download', download);
     app.use('/updatedb', updatedb);
     app.use('/mergedb', mergedb);
     app.use('/createdb', createdb);
