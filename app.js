@@ -129,7 +129,7 @@ app.use('/search', search);
 app.use('/api/v1', new RateLimit(config.http.limit_request.api), api_v1);
 app.use('/jwt', jwt_api);
 app.use('/apidoc', express.static(path.join(__dirname, 'apidoc')));
-app.use('/helper', helper);
+//app.use('/helper', helper);
 
 //Allows the authentication, at the moment the /download api have to stay private
 //app.use(basicAuth(configLogin.login, configLogin.password));
