@@ -646,7 +646,7 @@ var updateFieldsSongsDeezer = (oSong, oDeezer) => {
     oSong.explicitLyrics = oDeezer.explicit_lyrics;
     oSong.preview = oDeezer.preview ? oDeezer.preview : "";
     oSong.length = oDeezer.duration ? oDeezer.duration.toString() : "";
-    oSong.rank = oDeezer.rank ? oDeezer.rank.toString() : "";
+    oSong.rank = oDeezer.rank ? oDeezer.rank : 0;
     oSong.bpm = oDeezer.bpm ? oDeezer.bpm.toString() : "";
     oSong.gain = oDeezer.gain ? oDeezer.gain.toString() : "";
     oSong.availableCountries = oDeezer.available_countries.length ? oDeezer.available_countries : [];
@@ -657,7 +657,7 @@ var updateFieldsSongsDeezer = (oSong, oDeezer) => {
         oSong.urlDeezer = oDeezer.alternative.link ? oDeezer.alternative.link : oSong.urlDeezer;
         oSong.preview = oDeezer.alternative.preview ? oDeezer.alternative.preview : oSong.preview;
         oSong.length = oDeezer.alternative.duration ? oDeezer.alternative.duration.toString() : oSong.length;
-        oSong.rank = oDeezer.alternative.rank ? oDeezer.alternative.rank.toString() : oSong.rank;
+        oSong.rank = oDeezer.alternative.rank ? oDeezer.alternative.rank : oSong.rank;
         oSong.bpm = oDeezer.alternative.bpm ? oDeezer.alternative.bpm.toString() : oSong.bpm;
         oSong.gain = oDeezer.alternative.gain ? oDeezer.alternative.gain.toString() : oSong.gain;
         oSong.availableCountries = oDeezer.alternative.available_countries ? oDeezer.alternative.available_countries : oSong.availableCountries;

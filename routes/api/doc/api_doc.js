@@ -231,7 +231,7 @@ const router = express.Router();
  * @apiSuccess {String} isrc [Source : Deezer]
  * @apiSuccess {String} bpm [Source : Deezer]
  * @apiSuccess {String} gain [Source : Deezer]
- * @apiSuccess {String} length Song length [Source : Deezer]
+ * @apiSuccess {String} length Song duration in seconds.<br>{Source : Deezer}<br><i>Ex value: "228.0"</i>
  * @apiSuccess {String} preview [Source : Deezer]
  * @apiSuccess {String} publicationDate [Source : Deezer]
  * @apiSuccess {String} rank [Source : Deezer]
@@ -249,7 +249,7 @@ const router = express.Router();
  * @apiSuccess {String[]} recordLabel Song recordLabel [Source : DBpedia]
  * @apiSuccess {String[]} recorded Song recorded, mainly are dates [Source : DBpedia]
  * @apiSuccess {String[]} releaseDate Song release date [Source : DBpedia]
- * @apiSuccess {String[]} runtime Song runtime in seconds [Source : DBpedia]
+ * @apiSuccess {String[]} runtime Song duration in seconds. This field can have different duration depend to the music's version.<br>{Source : DBpedia}<br><i>Ex value: "228.0, 258.0"</i>
  * @apiSuccess {String[]} subject Song subject in section "Categories" in bottom of Wikipedia pages [Source : DBpedia]
  * @apiSuccess {String[]} writer List of people who participated in writing music [Source : DBpedia]
  * @apiSuccess {Boolean} isClassic Depend to "subject" from Song collection "true" if subject is {award, Hall_of_fame, diamond, platinum, gold or hot_100} [Source : DBpedia]

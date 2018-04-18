@@ -36,7 +36,6 @@
                 min-width: 220px;
                 height: 40px;
             }
-
             .drawer-contents {
                 height: 100%;
                 overflow-y: auto;
@@ -83,7 +82,7 @@
                 display: none;
 
                 position: fixed;
-                bottom: 0px;
+                bottom: 60px;
                 right: 0px;
             }
         </style>
@@ -110,7 +109,7 @@
             </div>
         </paper-toolbar>
 
-        <paper-button id="bt_nav_goUp" raised role="button" class="style-scope show-dialog x-scope paper-button-0" on-tap="goToUp" >up</paper-button>
+        <paper-button id="bt_nav_goUp" raised role="button" class="style-scope show-dialog x-scope paper-button-0" on-tap="goToUp" ><iron-icon icon="arrow-drop-up"></iron-icon></paper-button>
         <show-feedback></show-feedback>
     </template>
     <script>
@@ -131,14 +130,14 @@
                             target: "_self"
                         }, {
                             label: "Stats",
-                            icon: "fingerprint",
+                            icon: "info-outline",
                             link: "#/stats",
                             target: "_self"
                         }, {
                             label: "API",
                             icon: "swap-vertical-circle",
                             link: "/apidoc",
-                            target: "_self"
+                            target: "_blank"
                         }, {
                             label: "Blog",
                             icon: "today",

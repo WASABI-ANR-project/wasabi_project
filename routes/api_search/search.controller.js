@@ -291,7 +291,13 @@ var get_dbinfo = (req, res) => {
 
 
 
-
+/**
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ * 
+ * mettre 'publicationDate' à '-1' pour afficher les albums les plus récents en premiers
+ */
 var get_artist = (req, res) => {
     passport.authenticate('jwt', config.passport.auth.jwt, (err, user) => {
         var db = req.db,
@@ -303,7 +309,7 @@ var get_artist = (req, res) => {
             db.collection(COLLECTIONALBUM).find({
                 id_artist: artist._id
             }, config.request.projection.search.get_artist.album).sort({
-                "publicationDate": -1
+                "publicationDate": 1
             }).toArray((err, albums) => {
                 var nbAlbum = albums.length,
                     cnt = 0;
@@ -544,12 +550,48 @@ var put_songLyrics = (req, res) => {
         }, {
                 $set: {
                     lyrics: songBody.lyrics
+                    //bpm: songBody.bpm
                 }
             }, (err, song) => {
                 return res.json(config.http.valid.send_message_ok);
             });
     })(req, res);
 };
+
+
+/**
+ * API permettant de modifier le champs notes
+ */
+var put_songNotes = (req, res) => {
+    // authentification requise
+    passport.authenticate('jwt', config.passport.auth.jwt, function (err, user) {
+        console.log("=======> put_songNotes");
+        console.log("user");
+        console.log(user);
+        console.log(req.body);
+        console.log(req.body._id);
+        // si non authentifier: erreur 403
+        if (!user) return res.status(403).json(config.http.error.put.song);
+
+        // récupération des fields à modifier
+        var songBody = req.body;
+        //On récupére l'id de la musique afin de modifier l'objet en base de données
+        var idSong = songBody._id;
+        // si l'id n'est pas valide: erreur 404
+        if (!ObjectId.isValid(idSong)) return res.status(404).json(config.http.error.objectid_404);
+        //!\ Il faut supprimer les attributs qui sont de type objectId dans notre base car songBody les récupéres en string
+        delete songBody._id;
+        // req.db.collection(COLLECTIONSONG).update({ _id: ObjectId(idSong) }, {
+        //     $set: {
+        //         notes: songBody.notes
+        //     }
+        // }, (err, song) => {
+        //     return res.json(config.http.valid.send_message_ok);
+        // });
+    })(req, res);
+};
+
+
 var put_songIsClassic = (req, res) => {
     passport.authenticate('jwt', config.passport.auth.jwt, function (err, user) {
         if (!user) return res.status(403).json(config.http.error.put.song);
@@ -613,9 +655,10 @@ var get_moreSearchText = (req, res) => {
 };
 
 var getSongsMultitrack = (req, res) => {
-    let _limit=50;
-    console.log('_limit : '+_limit);
-    let _skip=(parseInt(req.params.skip)*_limit);
+    let skip=req.params.skip || 0;
+    let _limit = 10;
+    console.log('_limit : ' + _limit);
+    let _skip = (parseInt(skip) * _limit);
     req.db.collection(COLLECTIONSONG).find({
         multitrack_path: { $ne: "" }
     }, {
@@ -653,7 +696,7 @@ var getAllSongsMultitrack = (req, res) => {
         });
 }
 
-var getCountSongsMultitrack=(req, res)=>{
+var getCountSongsMultitrack = (req, res) => {
     req.db.collection(COLLECTIONSONG).count({
         multitrack_path: { $ne: "" }
     }, (err, countfield) => {
@@ -666,8 +709,8 @@ var getCountSongsMultitrack=(req, res)=>{
 
 var getSongsStream = (req, res) => {
     // $or:[{ urlYouTube:{$ne:""}, preview:{$ne:""}}]
-    let skip=parseInt(req.params.skip);
-    console.log('skip '+skip, 'limit '+LIMIT);
+    let skip = parseInt(req.params.skip);
+    console.log('skip ' + skip, 'limit ' + LIMIT);
     req.db.collection(COLLECTIONSONG).find({
         preview: { $ne: "" }
     }, {
@@ -684,13 +727,13 @@ var getSongsStream = (req, res) => {
 }
 
 
-var getAlbumSong=(req,res)=>{
+var getAlbumSong = (req, res) => {
     let artistName = req.params.artistName;
     let songName = req.params.songName;
-    console.log(artistName,songName);
+    console.log(artistName, songName);
     req.db.collection(COLLECTIONSONG).find({
-        name:artistName, 
-        title:songName
+        name: artistName,
+        title: songName
     }, {
             name: 1,
             title: 1,
@@ -722,6 +765,7 @@ exports.put_album = put_album;
 exports.get_song = get_song;
 exports.get_songById = get_songById;
 exports.put_songLyrics = put_songLyrics;
+exports.put_songNotes = put_songNotes;
 exports.put_songIsClassic = put_songIsClassic;
 exports.get_member_name_memberName = get_member_name_memberName;
 exports.get_fullTextSearch = get_fullTextSearch;
@@ -731,4 +775,4 @@ exports.getAllSongsMultitrack = getAllSongsMultitrack;
 exports.getSongsMultitrack = getSongsMultitrack;
 exports.getCountSongsMultitrack = getCountSongsMultitrack;
 exports.getSongsStream = getSongsStream;
-exports.getAlbumSong =  getAlbumSong;
+exports.getAlbumSong = getAlbumSong;

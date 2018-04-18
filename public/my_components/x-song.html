@@ -1,17 +1,9 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 
-
-
 <dom-module id="x-song">
     <template>
         <style>
-            #song {
-                border-bottom: 1px solid rgba(229, 229, 229, 0.51);
-                padding: 15px;
-                padding-left: 7%;
-            }
-
             paper-input {
                 margin-left: 9%;
                 margin-right: 9%;
@@ -23,16 +15,21 @@
                 outline-style: none;
             }
 
-            li {
-                background: linear-gradient(#FFF, #F9F9F9);
+            li:hover {
+                background: #eee;
             }
 
-            li:hover {
-                background: linear-gradient(#F3F3F3, #F3F3F3);
+            li {
+                border-bottom: 1px solid #eee;
+                color: #555;
+
+                padding: 10px 20px;
             }
         </style>
         <a class="li-link" href="{{getURLSongPage(album.name, album.title, song.title)}}" tabindex="-1">
-            <li hidden="{{editing}}" id="song">{{song.title}}</li>
+            <li hidden="{{editing}}" id="song">
+                {{song.title}}
+            </li>
         </a>
     </template>
     <script>

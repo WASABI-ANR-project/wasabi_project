@@ -11,10 +11,11 @@
 <dom-module id="x-album">
     <template>
         <style>
-            :host{
+            :host {
                 display: flex;
-                margin-top:0px !important;
+                margin-top: 0px !important;
             }
+
             .done {
                 background: green;
             }
@@ -24,9 +25,8 @@
             }
 
             article {
-                border-bottom: 1px solid #e5e5e5;
                 display: flex;
-                flex-direction: row;
+                flex-direction: column;
                 justify-content: flex-start;
                 align-items: center;
                 position: relative;
@@ -67,11 +67,11 @@
                 margin-right: 3%;
             }
 
-            .addSong {
+            /* .addSong {
                 margin: 4% 0% 1% 9%;
                 background: rgb(63, 81, 181);
                 color: white;
-            }
+            } */
 
             .img_title {
                 display: flex;
@@ -81,30 +81,62 @@
             }
 
             .imageAlbum {
+                /* box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.24), 0 1px 7px 0 rgba(0, 0, 0, 0.52), 0 3px 1px -2px rgba(0, 0, 0, 0.3); */
                 width: 100%;
-                box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.24), 0 1px 7px 0 rgba(0, 0, 0, 0.52), 0 3px 1px -2px rgba(0, 0, 0, 0.3);
-                border-radius: 0px;
+                height: 250px;
+
                 vertical-align: top;
             }
 
             .div_column {
-                background: rgba(0,0,0,0.2);
-                border-bottom:1px solid #bbb;
+                margin: 0px 40px;
+                margin-top: 30px;
+                padding: 0px;
+                flex: 1;
 
-                padding: 30px;
-            }
-            .div_column #div_listbox{
-                max-height: 250px;
-                overflow: scroll;
-
-                flex:2;
-            }
-            .div_column{
                 display: flex;
                 justify-content: flex-start;
                 align-content: stretch;
+                position: relative;
+            }
 
-                flex:1;
+            .div_column #div_listbox {
+                background: rgba(255, 255, 255, 0.9);
+
+                max-height: 250px;
+                flex: 2;
+
+                overflow: scroll;
+            }
+
+            .div_edit {
+                position: absolute;
+                top: -10px;
+                right: -10px;
+            }
+
+            .div_album:hover {
+                background: #fff;
+            }
+
+            .div_album {
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+                align-content: stretch;
+                width: 100%;
+
+                transition: 0.2s;
+            }
+
+            .album_title {
+                color: #555;
+
+                font-size: 12px;
+                padding: 10px;
+                margin-left: 30px;
+
+                text-align: left;
             }
         </style>
         <iron-ajax id="get_content" headers="[[headers]]" method="GET" on-response="responseHandler" handle-as="json"> </iron-ajax>
@@ -113,38 +145,52 @@
 
         <template is="dom-if" if="{{moredata}}">
             <span on-tap="doLoadAlbum" link="{{getURLMoreAlbumPage(album.name,album.title)}}" hidden="{{editing}}" class="album">
-                {{album.title}} {{album.publicationDate}} 
+                {{album.title}} {{album.publicationDate}}
             </span>
         </template>
-        <template is="dom-if" if="{{isConnected}}">
-            <paper-fab hidden="{{editing}}" icon="icons:create" on-tap="doEdit" class="edit" mini></paper-fab>
-            <paper-fab hidden="{{!editing}}" icon="icons:done" on-tap="doEdit" class="done" mini></paper-fab>
-        </template>
-        <div class="div_column" title="{{album.title}} {{album.publicationDate}} ">
-            <article id="container">
-                <template is="dom-if" if="{{!moredata}}">
-                    <div class="img_title">
-                        <template is="dom-if" if="{{album.cover.medium}}">
-                            <img class="imageAlbum" src$="{{album.cover.medium}}" alt="Image Album">
-                        </template>
+
+        <div class="div_album">
+            <div class="div_column" title="{{album.title}} {{album.publicationDate}} ">
+
+                <template is="dom-if" if="{{isConnected}}">
+                    <div class="div_edit">
+                        <paper-fab hidden="{{editing}}" icon="icons:create" on-tap="doEdit" class="edit" mini></paper-fab>
+                        <paper-fab hidden="{{!editing}}" icon="icons:done" on-tap="doEdit" class="done" mini></paper-fab>
                     </div>
                 </template>
-            </article>
-
-            <div role="listbox" id="div_listbox">
-                <ol id="listSong">
-                    <template id="songs" is="dom-repeat" items="{{album.songs}}" as="song">
-                        <x-song album={{album}} editing={{editing}} song={{song}}></x-song>
+                <article id="container">
+                    <template is="dom-if" if="{{!moredata}}">
+                        <a href="#/search/artist/{{_encodeUri(album.name)}}/album/{{_encodeUri(album.title)}}">
+                            <div class="img_title">
+                                <template is="dom-if" if="{{album.cover.medium}}">
+                                    <img class="imageAlbum" src$="{{album.cover.medium}}" alt="Image Album">
+                                </template>
+                            </div>
+                        </a>
                     </template>
-                </ol>
+                </article>
+
+                <div role="listbox" id="div_listbox">
+                    <ol id="listSong">
+                        <template id="songs" is="dom-repeat" items="{{album.songs}}" as="song">
+                            <x-song album={{album}} editing={{editing}} song={{song}}></x-song>
+                        </template>
+                    </ol>
+                </div>
             </div>
+            <span class="album_title">
+                {{album.title}} 
+                <template is="dom-if" if="{{album.publicationDate}}"> - {{album.publicationDate}}</template>
+            </span>
         </div>
-        <template is="dom-if" if="{{isConnected}}">
+        <!-- 
+            <template is="dom-if" if="{{isConnected}}">
             <paper-button class="addSong" on-tap="addSong" hidden="{{!editing}}" raised elevation="2">
                 Add a music
                 <iron-icon icon="add"></iron-icon>
             </paper-button>
-        </template>
+        </template> 
+    -->
     </template>
     <script>
         // element registration

@@ -811,6 +811,8 @@ router.get('/artist/:artistName/album/:albumName/song/:songName', new RateLimit(
 router.get('/artist_id/:artistId/album_id/:albumId/song_id/:songId', new RateLimit(config.http.limit_request.search), searchController.get_songById);
 //PUT SONG OBJECT
 router.put('/artist/:artistName/album/:albumName/song/:songName/lyrics', new RateLimit(config.http.limit_request.search), searchController.put_songLyrics);
+router.put('/artist/:artistName/album/:albumName/song/:songName/notes', new RateLimit(config.http.limit_request.search), searchController.put_songNotes);
+
 router.put('/artist/:artistName/album/:albumName/song/:songName/is_classic', new RateLimit(config.http.limit_request.search), searchController.put_songIsClassic);
 //==========================================================================================================================\\
 //====================================API REST POUR RECUPERER UN ARTISTE PAR NOM DE MEMBRE==================================\\
@@ -896,6 +898,7 @@ router.get('/auth', searchController.get_auth);
     }]
  *
  */
+router.get('/song/multitrack', new RateLimit(config.http.limit_request.search), searchController.getSongsMultitrack);
 router.get('/song/multitrack/:skip', new RateLimit(config.http.limit_request.search), searchController.getSongsMultitrack);
 
 

@@ -37,7 +37,7 @@ import jwt_api from './routes/api_jwt/jwt';
 import updatedb from './routes/api_updatedb/updatedb';
 import extractdiscoveryhub from './routes/api_extractdiscoveryhub/extractdiscoveryhub';
 import feedback from './routes/api_feedback/feedback';
-//import helper from './routes/api_helper/helper';
+import helper from './routes/api_helper/helper';
 import mergedb from './routes/api_mergedb/mergedb';
 import createdb from './routes/api_createdb/createdb';
 import extractdbpedia from './routes/api_extractdbpedia/extractdbpedia';
@@ -129,7 +129,7 @@ app.use('/search', search);
 app.use('/api/v1', new RateLimit(config.http.limit_request.api), api_v1);
 app.use('/jwt', jwt_api);
 app.use('/apidoc', express.static(path.join(__dirname, 'apidoc')));
-//app.use('/helper', helper);
+app.use('/helper', helper);
 
 //Allows the authentication, at the moment the /download api have to stay private
 //app.use(basicAuth(configLogin.login, configLogin.password));

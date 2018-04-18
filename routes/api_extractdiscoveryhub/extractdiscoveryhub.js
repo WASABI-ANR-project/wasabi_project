@@ -3,6 +3,7 @@ import extractDiscoveryhubController from './extractdiscoveryhub.controller.js';
 
 const router = express.Router();
 
+router.get('/',extractDiscoveryhubController.getInfos);
 /**
  * API permettant d'afficher les points commun entre 2 artistes
  */

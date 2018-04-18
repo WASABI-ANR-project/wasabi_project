@@ -620,6 +620,13 @@ router.get('/animux/find_similar_am/song',animuxController.findSimilarSong_animu
  * ---
  */
 router.get('/animux/getUniqueAnimuxPaths/song',animuxController.getUniqueAnimuxPaths);
+
+
+/**
+ * API permettant de mettre à jour les champs "animux_contents" à partir des chemins "animux_paths"
+ * ---
+ */
+router.get('/animux/updateAnimuxContents',animuxController.updateAnimuxContents);
 //--
 
 

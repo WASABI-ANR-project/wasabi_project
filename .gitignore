@@ -8,6 +8,7 @@ public/my_components/MT5/multitrack/*
 public/download/*
 public/AmpSim3/*
 public/AmpSimFA/*
+public/TER-Pedalboard-creation/*
 
 routes/conf/login.json
 routes/conf/confJwt.json

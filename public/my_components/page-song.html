@@ -12,18 +12,267 @@
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../bower_components/google-youtube/google-youtube.html">
+<link rel="import" href="../bower_components/paper-audio-player/paper-audio-player.html">
+<!-- <link rel="import" href="../bower_components/paper-tooltip/paper-tooltip.html"> -->
 <!--<link rel="import" href="MT5/index-mt5.html">-->
 
 
 
 <!--my_components-->
 <link rel="import" href="show-dialog.html">
+<link rel="import" href="edit-field.html">
 
 <dom-module id="page-song">
     <template>
+        <!-- CSS -->
         <style>
-            paper-tab {
-                --paper-tab-ink: #E0E0E0;
+            * {
+                padding: 0px;
+                margin: 0px;
+                border: 0px;
+
+                border-collapse: collapse;
+                box-sizing: border-box;
+                vertical-align: top;
+            }
+
+            *:focus {
+                outline: 0;
+            }
+
+            /* ----- .nav_subject ----- */
+
+            .nav_subject {
+                background-color: #3f50b5;
+
+                flex-wrap: wrap;
+                text-align: center;
+                display: flex;
+                justify-content: center;
+            }
+
+            .nav_subject a:hover {
+                background-color: #eee;
+                color: #3f50b5;
+            }
+
+            .nav_subject a {
+                color: #eee;
+
+                font-size: 12px;
+                padding: 10px;
+                margin: 5px;
+                transition: 0.2s;
+
+                text-decoration: none;
+            }
+
+            /* ----- #externalLink ----- */
+
+            #externalLink {
+                background: #fff;
+                /* box-shadow: inset 0px 2px 18px rgba(162, 162, 162, 0.26); */
+                border-top: 1px solid #eee;
+                border-bottom: 1px solid #eee;
+
+                display: flex;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            #externalLink paper-icon-button:hover {
+                background: #eee;
+            }
+
+            #externalLink paper-icon-button {
+                width: 50px;
+                height: 50px;
+
+                /*permet de ne pas déformer les icones*/
+                font-size: 0;
+                padding: 10px;
+            }
+
+
+            /* ----- #abstract ----- */
+
+            #abstract {
+                background: #fafafa;
+                border-bottom: 1px solid #eee;
+
+                padding: 50px 100px;
+                font-size: 16px;
+
+                text-align: justify;
+            }
+
+            /* ----- .metadata_list ----- */
+
+            .metadata_list {
+                list-style: none;
+            }
+
+            .metadata_list li {
+                border-bottom: 1px solid #eee;
+
+                display: flex;
+                flex-direction: row;
+                justify-content: flex-start;
+                position: relative;
+            }
+
+            .metadata_list li span {
+                padding: 10px;
+                font-size: 14px;
+
+                display: flex;
+                flex-direction: row;
+                justify-content: flex-start;
+                align-items: flex-start;
+                flex-wrap: wrap;
+            }
+
+            .metadata_list li span:nth-child(1) {
+                background: #fafafa;
+
+                min-width: 170px;
+            }
+
+            .metadata_list li span:nth-child(2) {
+                background: #fff;
+
+                flex: 1;
+
+                align-items: center;
+            }
+
+            .metadata_list li span a {
+                padding: 5px;
+
+                text-decoration: none;
+                display: inline-block;
+            }
+
+            /* ----- #divSongTitle ----- */
+
+            #divSongTitle {
+                background: #fff;
+                color: #333;
+                border-top: 1px solid #eee;
+                border-bottom: 1px solid #eee;
+
+                padding: 30px 10px;
+                font-size: 36px;
+
+                display: flex;
+                justify-content: center;
+            }
+
+            /* #divSongTitle a {
+                display: inline-block;
+                text-decoration: none;
+                padding: 30px 10px;
+                font-size: 36px;
+            } */
+
+            /* ----- .bg_ytVideo ----- */
+
+            .bg_ytVideo {
+                background: #111;
+
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+            }
+
+            /* ----- .divPathSong ----- */
+
+            #divPathSong {
+                background: #fafafa;
+
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            #divPathSong a:hover {
+                background: #eee;
+            }
+
+            #divPathSong a:nth-child(1) {
+                font-weight: bold;
+            }
+
+            #divPathSong a {
+                color: #555;
+
+                font-size: 14px;
+                padding: 10px;
+
+                display: flex;
+                flex-direction: row;
+                justify-content: flex-start;
+                align-items: center;
+                align-content: center;
+                text-decoration: none;
+                text-align: center;
+
+
+                /* Chrome all / Safari all */
+                -webkit-user-select: all;
+                /* Firefox all */
+                -moz-user-select: all;
+                /* IE 10+ */
+                -ms-user-select: all;
+                user-select: all;
+            }
+
+            #divPathSong a:nth-child(1) img {
+                border-radius: 100%;
+            }
+
+            #divPathSong span {
+                padding: 10px;
+                margin: 0;
+                /* No support yet */
+                user-select: all;
+            }
+
+            /* ----- #divAudio ----- */
+
+            #divAudio {
+                background: #fff;
+                border-top: 2px solid #3f51b5;
+                padding: 5px;
+
+                display: flex;
+                flex-direction: row;
+
+                position: fixed;
+                bottom: 0px;
+                left: 0px;
+                right: 0px;
+            }
+
+            #divAudio img {
+                width: 50px;
+                height: 50px;
+            }
+
+            #divAudio paper-audio-player {
+                flex: 1;
+            }
+
+            audio {
+                vertical-align: top;
+            }
+
+            audio::-webkit-media-controls-panel,
+            audio::-webkit-media-controls-current-time-display,
+            audio::-webkit-media-controls-time-remaining-display {
+                background: transparent;
+                color: #888;
             }
 
             /*Hide download button for audio*/
@@ -40,43 +289,51 @@
                 width: calc(100% + 30px);
             }
 
-            paper-tab:hover {
-                background-color: #f2f2f2;
+            /* ----- others ----- */
+
+            paper-material {
+                background: rgba(255, 255, 255, 0.95);
+
+                margin-bottom: 100px;
+                border-radius: 3px;
             }
 
-            .isClassic {
-                color: #ffe52f;
-                width: 50px;
-                height: 50px;
-                float: right;
+            paper-fab {
+                /* position: absolute;
+                top: 0px;
+                right: -50px; */
+                /* position: absolute;
+                top: 0px;
+                right: -50px; */
             }
 
-            .inline {
-                display: inline-block;
+            .done {
+                background: green;
+            }
+
+            paper-input {
+                font-size: 12px;
             }
 
             paper-tabs {
                 --paper-tabs-selection-bar-color: #3f51b5;
             }
 
-            #songLyricsSection {
-                display: flex;
-                justify-content: center;
+            paper-tab {
+                --paper-tab-ink: #E0E0E0;
             }
 
-            #songLyricsNonEditable,
-            #songLyricsEditable,
-            #songName,
-            #songInfos {
-                padding-top: 3%;
-                padding-right: 24px;
-                padding-bottom: 14px;
-                padding-left: 24px;
+            paper-tab:hover {
+                background-color: #f2f2f2;
             }
 
-            #songName paper-button {
-                padding: 0;
-                margin: 0;
+            .isClassic {
+                color: #ffe52f;
+
+                width: 50px;
+                height: 50px;
+
+                float: right;
             }
 
             .song {
@@ -84,38 +341,31 @@
                 width: 100%;
             }
 
-            nav {
-                padding: 3%;
-            }
-
-            nav>a {
-                margin-right: 5px;
-                margin-left: 5px;
-            }
-
             #updateData {
+                background: #fefefe;
+
                 display: flex;
-                flex-direction: row-reverse;
+                flex-direction: row;
+                justify-content: flex-end;
+
+                padding: 10px;
+            }
+
+            #songLyricsSection {
+                background: linear-gradient(45deg, #fafafa, #fefefe);
+
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+
+                padding: 50px;
+                font-size: 16px;
             }
 
             #songLyricsNonEditable,
             #songLyricsEditable,
             #songInfos {
                 font-size: 19px;
-            }
-
-            #externalLink {
-                padding: 5px;
-                display: flex;
-                justify-content: center;
-                border-bottom: 1px solid #DDD;
-                box-shadow: inset 0px 2px 18px rgba(162, 162, 162, 0.26);
-                flex-wrap: wrap;
-            }
-
-            #externalLink paper-icon-button {
-                width: 45px;
-                height: 45px;
             }
 
             #songLyricsEditable,
@@ -127,298 +377,409 @@
                 background-color: #F2F2F2;
             }
 
-            #abstract {
-                border-top: 1px solid rgba(208, 208, 208, 0.58);
-                padding-top: 10px;
-                padding-bottom: 10px;
-                border-bottom: 1px solid rgba(208, 208, 208, 0.58);
-                text-align: justify;
-            }
-
-            paper-fab {
-                float: right;
-                margin-right: 3%;
-            }
-
-            paper-input {
-                font-size: 12px;
-            }
-
-            paper-material {
-                margin-bottom: 5%;
-                border-radius: 3px;
-            }
-
             .inherit {
                 color: inherit;
                 background-color: inherit;
                 text-decoration: none;
             }
 
-            .nav_subject {
-                flex-wrap: wrap;
-                text-align: center;
-                display: flex;
-                justify-content: center;
-                padding: 5% 0 5% 0;
+            .edit_item {
+                background: #eee !important;
             }
 
-            .nav_subject>a>paper-button {
-                padding: 10px;
-                background: rgba(204, 204, 204, 0.34);
-                text-decoration: none;
-                margin: 4px;
-                text-align: center;
-                font-size: 12px;
-                color: #3F51B5;
-                border-radius: 3px;
-                transition: 0.7s;
-                box-shadow: 2px 2px 8px 0px #cfcfcf;
-            }
-
-            .nav_subject>a>paper-button:hover {
-                background-color: #ffffff;
-            }
-
-            .urlMargin {
-                margin-right: 5px;
-            }
-
-            .metadata_list {
-                list-style-type: none;
-                padding: 0px;
+            .div_splited_br{
+                background-color: #aed581 !important;
             }
         </style>
+
+        <!-- HTML -->
+
+        <!-- ajax request to get api information about : auth, artist -->
+        <iron-ajax auto url="/search/auth" method="GET" headers="[[headers]]" handle-as="json" last-response="{{auth}}"></iron-ajax>
+        <iron-ajax id="get_content_artist" auto url="/search/artist/{{_encodeUri(nameArtist)}}" last-response="{{art}}" headers="[[headers]]"
+            handle-as="json"></iron-ajax>
+
+        <iron-ajax id="get_content_album" auto url="/search/artist/{{_encodeUri(nameArtist)}}/album/{{_encodeUri(nameAlbum)}}" last-response="{{albu}}"
+            headers="[[headers]]" handle-as="json"></iron-ajax>
+
+        <iron-ajax id="get_album_song" auto headers="[[headers]]" url="/search/album/song/{{_encodeUri(nameArtist)}}/{{_encodeUri(nameSong)}}"
+            last-response="{{albumSong}}" handle-as="json" on-response="handleResponse"> </iron-ajax>
+
+        <!--permet de lancer automatiquement la requête get chargeant la page-->
+        <iron-ajax id="get_content_auto" auto headers="[[headers]]" url="/search/artist/{{_encodeUri(nameArtist)}}/album/{{_encodeUri(nameAlbum)}}/song/{{_encodeUri(nameSong)}}"
+            last-response="{{artist}}" handle-as="json" on-response="handleResponse"> </iron-ajax>
+        <!--permet de faire des requêtes get permettant de recupérer les données avant modification-->
+        <iron-ajax id="get_content" last-response="{{artist}}" headers="[[headers]]" handle-as="json" on-response="handleResponse"></iron-ajax>
+        <!--permet de faire des requêtes de modification-->
+        <iron-ajax id="put_content" method="PUT" headers="[[headers]]" content-type="application/json"></iron-ajax>
+
+        <!-- get covers songs's versions -->
+        <iron-ajax auto url="/helper/getReprises/{{_encodeUri(artist.albums.songs.title)}}/{{getBeginLyrics(artist.albums.songs.lyrics)}}"
+            method="GET" last-response="{{coversSong}}" handle-as="json" on-response="handleResponse" content-type='application/json'>
+        </iron-ajax>
+
+
+        <!-- paper-material : a Material Design container that looks like a lifted piece of paper. Elevation is box-shadow -->
         <paper-material elevation="1">
-            <!--permet de lancer automatiquement la requête get chargeant la page-->
-            <iron-ajax id="get_content_auto" auto headers="[[headers]]" url="/search/artist/{{_encodeUri(nameArtist)}}/album/{{_encodeUri(nameAlbum)}}/song/{{_encodeUri(nameSong)}}"
-                last-response="{{artist}}" handle-as="json" on-response="handleResponse"> </iron-ajax>
-            <!--permet de faire des requêtes get permettant de recupérer les données avant modification-->
-            <iron-ajax id="get_content" last-response="{{artist}}" headers="[[headers]]" handle-as="json" on-response="handleResponse"></iron-ajax>
-            <!--permet de faire des requêtes de modification-->
-            <iron-ajax id="put_content" method="PUT" headers="[[headers]]" content-type="application/json"></iron-ajax>
 
-            <iron-ajax id="get_album_song" auto headers="[[headers]]" url="/search/album/song/{{_encodeUri(nameArtist)}}/{{_encodeUri(nameSong)}}"
-                last-response="{{albumSong}}" handle-as="json" on-response="handleResponse"> </iron-ajax>
-
-            <!--Ce dom-if sert uniquement a ne pas avoir de problème d'affichage sur la selection du paper-tab (uniquement sur les musiques ayant du multitrack)-->
+            <!-- Ce dom-if sert uniquement a ne pas avoir de problème d'affichage sur la selection du paper-tab (uniquement sur les musiques ayant du multitrack) -->
             <template is="dom-if" if="{{artist}}">
-                <paper-tabs selected="{{idxCurrentTab}}">
-                    <paper-tab>Lyrics</paper-tab>
-                    <template is="dom-if" if="{{artist.albums.songs.multitrack_path}}">
+                <template is="dom-if" if="{{artist.albums.songs.multitrack_path}}">
+                    <paper-tabs selected="{{idxCurrentTab}}">
+                        <paper-tab>Lyrics</paper-tab>
                         <paper-tab>Multitracks</paper-tab>
-                    </template>
-                </paper-tabs>
+                    </paper-tabs>
+                </template>
             </template>
+
             <iron-pages selected="{{idxCurrentTab}}">
                 <div>
-                    <template is="dom-if" if="{{artist.albums.songs.rdf}}">
-                        <show-dialog labeldialog="RDF {{artist.albums.songs.title}} :" labelbutton="Show RDF" content="{{artist.albums.songs.rdf}}"
-                            labelexitdialog="Close"></show-dialog>
+                    <template is="dom-if" if="{{auth.isConnected}}">
+                        <!-- is user is connected : SHOW RDF -->
+                        <template is="dom-if" if="{{artist.albums.songs.rdf}}">
+                            <show-dialog labeldialog="RDF {{artist.albums.songs.title}} :" labelbutton="Show RDF" content="{{artist.albums.songs.rdf}}"
+                                labelexitdialog="Close"></show-dialog>
+                        </template>
+
+
+                        <!--sans cette verification on verrai les deux icons s'afficher en même temps jusqu'a ce que la requête ajax arrive-->
+                        <template is="dom-if" if="{{artist}}">
+                            <template is="dom-if" if="{{artist.isConnected}}">
+                                <paper-icon-button on-tap="doIsClassic" class="isClassic" icon="star-border" hidden$="{{artist.albums.songs.isClassic}}"></paper-icon-button>
+                                <paper-icon-button on-tap="doIsClassic" class="isClassic" icon="star" hidden$="{{!artist.albums.songs.isClassic}}"></paper-icon-button>
+                            </template>
+                        </template>
                     </template>
-                    <section id="songName">
-                        <div class="song inline">
-                            <a href="#/search/more/{{_concat(artist.name,artist.albums.songs.title)}}" tabindex="-1" class="inherit">
-                                <paper-button tabindex="0" role="button" elevation="0">{{artist.albums.songs.title}}</paper-button>
+
+                    <section id="songInfos">
+
+
+                        <!-- ARTIST > ALBUM > SONG -->
+                        <div id="divPathSong">
+                            <a href="#/search/artist/{{_encodeUri(artist.name)}}">
+                                <template is="dom-if" if="{{art.picture.small}}">
+                                    <img src="{{art.picture.small}}">
+                                </template>
+                                <span>{{artist.name}}</span>
                             </a>
-                            <!--sans cette verification on verrai les deux icons s'afficher en même temps jusqu'a ce que la requête ajax arrive-->
-                            <template is="dom-if" if="{{artist}}">
-                                <template is="dom-if" if="{{artist.isConnected}}">
-                                    <paper-icon-button on-tap="doIsClassic" class="isClassic" icon="star-border" hidden$="{{artist.albums.songs.isClassic}}"></paper-icon-button>
-                                    <paper-icon-button on-tap="doIsClassic" class="isClassic" icon="star" hidden$="{{!artist.albums.songs.isClassic}}"></paper-icon-button>
+                            <a href="#/search/artist/{{_encodeUri(artist.name)}}/album/{{_encodeUri(artist.albums.title)}}">
+                                <template is="dom-if" if="{{albu.albums.cover.small}}">
+                                    <img src="{{albu.albums.cover.small}}">
+                                </template>
+                                <span>{{artist.albums.title}}</span>
+                            </a>
+                        </div>
+
+                        <!-- TITLE SONG -->
+                        <div id="divSongTitle" class="song">
+                            <!-- <a href="#/search/more/{{_concat(artist.name,artist.albums.songs.title)}}" tabindex="-1" class="inherit">
+                                <paper-button tabindex="0" role="button" elevation="0"></paper-button>
+                            </a> -->
+                            {{artist.albums.songs.title}}
+                        </div>
+
+                        <!-- <template is="dom-if" if="{{artist.albums.songs.urlYouTube}}">
+                            <google-youtube video-id="{{artist.albums.songs.urlYouTube}}" class="bg_ytVideo"></google-youtube>
+                        </template> -->
+
+                        <!-- CHECK IF YOUTUBE URL EXIST -->
+                        <iron-ajax auto url="/helper/checkUrlYouTubeExist/{{artist.albums.songs.urlYouTube}}" method="GET" last-response="{{isUrlYouTubeExist}}"
+                            handle-as="json" on-response="handleResponse" content-type='application/json'> </iron-ajax>
+                        <!-- IF TRUE -->
+                        <template is="dom-if" if="{{isUrlYouTubeExist.isUrlYouTubeExist}}">
+                            <google-youtube video-id="{{artist.albums.songs.urlYouTube}}" class="bg_ytVideo"></google-youtube>
+                        </template>
+                        <!-- IF FALSE -->
+                        <template is="dom-if" if="{{!isUrlYouTubeExist.isUrlYouTubeExist}}">
+                            <!--  => on récupère le dernier lien youtube de LyricsWikia -->
+                            <!-- <paper-fab icon="icons:refresh" on-tap="doCheckLastUpdatedLW" data-url$="/helper/getYouTubeLinkFromLW/{{_encodeUri(nameArtist)}}/{{_encodeUri(nameSong)}}" mini></paper-fab> -->
+                            <!-- 
+                                SI LIEN TROUVE : => on affiche la vidéo youtube trouvée
+                                <span>Lien youtube de la BD est vide ou est mort. Nouveau lien de LyricsWikia :</span>
+                                <a target='_blank' href="{{ytSong.urlYouTube}}">- {{ytSong.urlYouTube}} -</a>
+                            -->
+                            <!-- GET LAST LYRICKSWIKIA YOUTUBE URL -->
+                            <iron-ajax auto url="/helper/getYouTubeLinkFromLW/{{_encodeUri(nameArtist)}}/{{_encodeUri(nameSong)}}" method="GET" last-response="{{ytSong}}"
+                                handle-as="json" on-response="handleResponse" content-type='application/json'> </iron-ajax>
+                            <!-- IF FOUNDED -->
+                            <template is="dom-if" if="{{ytSong.urlYouTube}}">
+                                <!-- CHECK IF YOUTUBE URL EXIST -->
+                                <iron-ajax auto url="/helper/checkUrlYouTubeExist/{{getIDfromYouTubeURL(ytSong.urlYouTube)}}" method="GET" last-response="{{_isUrlYouTubeExist}}"
+                                    handle-as="json" on-response="handleResponse" content-type='application/json'> </iron-ajax>
+                                <!-- IF TRUE : DISPLAY IT -->
+                                <template is="dom-if" if="{{_isUrlYouTubeExist.isUrlYouTubeExist}}">
+                                    <google-youtube video-id="{{getIDfromYouTubeURL(ytSong.urlYouTube)}}" class="bg_ytVideo"></google-youtube>
                                 </template>
                             </template>
-                        </div>
-                        <div>
-                            <a href="#/search/artist/{{_encodeUri(artist.name)}}" tabindex="-1" class="inherit">
-                                <paper-button tabindex="0" role="button" elevation="0">Artist: {{artist.name}}</paper-button>
-                            </a>
-                        </div>
-                        <div>
-                            <a href="#/search/artist/{{_encodeUri(artist.name)}}/album/{{_encodeUri(artist.albums.title)}}" tabindex="-1" class="inherit">
-                                <paper-button tabindex="0" role="button" elevation="0">Album: {{artist.albums.title}}</paper-button>
-                            </a>
-                        </div>
-                        <div>
-                            <template is="dom-if" if="{{artist.albums.songs.preview}}">
-                                <audio src="{{artist.albums.songs.preview}}" controls></audio>
+                        </template>
+
+                        <!-- externalLink (x12) -->
+                        <nav id="externalLink">
+                            <template is="dom-if" if="{{artist.albums.songs.urlWikipedia}}">
+                                <a target="_blank" tabindex="-1" href="{{artist.albums.songs.urlWikipedia}}" alt="url Wikipedia" title="Wikipedia">
+                                    <paper-icon-button src="../img/wikipedia_icon.svg"></paper-icon-button>
+                                </a>
                             </template>
-                        </div>
-                    </section>
-                    <div id="externalLink">
-                        <template is="dom-if" if="{{artist.albums.songs.urlWikipedia}}">
-                            <a class="urlMargin" href="{{artist.albums.songs.urlWikipedia}}" target="_blank" tabindex="-1" alt="url Wikipedia" title="Wikipedia">
-                                <paper-icon-button src="../img/wikipedia_icon.svg"></paper-icon-button>
-                            </a>
+                            <template is="dom-if" if="{{artist.albums.songs.urlAmazon}}">
+                                <a target="_blank" tabindex="-1" href="{{artist.albums.songs.urlAmazon}}" alt="url Amazon" title="Amazon">
+                                    <paper-icon-button src="../img/amazon_icon.svg"></paper-icon-button>
+                                </a>
+                            </template>
+                            <template is="dom-if" if="{{artist.albums.songs.urlYouTube}}">
+                                <a target="_blank" tabindex="-1" href="http://www.youtube.com/watch?v={{artist.albums.songs.urlYouTube}}" alt="url YouTube"
+                                    title="YouTube">
+                                    <paper-icon-button src="../img/youtube_icon.svg"></paper-icon-button>
+                                </a>
+                            </template>
+                            <template is="dom-if" if="{{artist.albums.songs.urlSpotify}}">
+                                <a target="_blank" tabindex="-1" href="{{artist.albums.songs.urlSpotify}}" alt="url Spotify" title="Spotify">
+                                    <paper-icon-button src="../img/spotify_icon.svg"></paper-icon-button>
+                                </a>
+                            </template>
+                            <template is="dom-if" if="{{artist.albums.songs.urlDeezer}}">
+                                <a target="_blank" tabindex="-1" href="{{artist.albums.songs.urlDeezer}}" alt="url Deezer" title="Deezer">
+                                    <paper-icon-button src="../img/deezer_icon.svg"></paper-icon-button>
+                                </a>
+                            </template>
+                            <template is="dom-if" if="{{artist.albums.songs.urlITunes}}">
+                                <a target="_blank" tabindex="-1" href="{{artist.albums.songs.urlITunes}}" alt="url iTunes" title="iTunes">
+                                    <paper-icon-button src="../img/itunes_icon.svg"></paper-icon-button>
+                                </a>
+                            </template>
+                            <template is="dom-if" if="{{artist.albums.songs.urlMusicBrainz}}">
+                                <a target="_blank" tabindex="-1" href="{{artist.albums.songs.urlMusicBrainz}}" alt="url MusicBrainz" title="MusicBrainz">
+                                    <paper-icon-button src="../img/musicbrainz_icon.svg"></paper-icon-button>
+                                </a>
+                            </template>
+                            <template is="dom-if" if="{{artist.albums.songs.urlAllmusic}}">
+                                <a target="_blank" tabindex="-1" href="{{artist.albums.songs.urlAllmusic}}" alt="url AllMusic" title="AllMusic">
+                                    <paper-icon-button src="../img/allmusic_icon.svg"></paper-icon-button>
+                                </a>
+                            </template>
+                            <template is="dom-if" if="{{artist.albums.songs.urlLastFm}}">
+                                <a target="_blank" tabindex="-1" href="{{artist.albums.songs.urlLastFm}}" alt="url Last FM" title="Last FM">
+                                    <paper-icon-button src="../img/lastfm_icon.svg"></paper-icon-button>
+                                </a>
+                            </template>
+                            <template is="dom-if" if="{{artist.albums.songs.urlPandora}}">
+                                <a target="_blank" tabindex="-1" href="{{artist.albums.songs.urlPandora}}" alt="url Pandora" title="Pandora">
+                                    <paper-icon-button src="../img/pandora_icon.svg"></paper-icon-button>
+                                </a>
+                            </template>
+                            <template is="dom-if" if="{{artist.albums.songs.urlGoEar}}">
+                                <a target="_blank" tabindex="-1" href="{{artist.albums.songs.urlGoEar}}" alt="url GoEar" title="GoEar">
+                                    <paper-icon-button src="../img/goear_icon.svg"></paper-icon-button>
+                                </a>
+                            </template>
+                            <template is="dom-if" if="{{artist.albums.songs.urlHypeMachine}}">
+                                <a target="_blank" tabindex="-1" href="{{artist.albums.songs.urlHypeMachine}}" alt="url Hype Machine" title="Hype Machine">
+                                    <paper-icon-button src="../img/hypemachine_icon.svg"></paper-icon-button>
+                                </a>
+                            </template>
+                        </nav>
+
+                        <!-- abstract -->
+                        <template is="dom-if" if="{{artist.albums.songs.abstract.length}}">
+                            <article id="abstract">{{artist.albums.songs.abstract}}</article>
                         </template>
-                        <template is="dom-if" if="{{artist.albums.songs.urlAmazon}}">
-                            <a class="urlMargin" href="{{artist.albums.songs.urlAmazon}}" target="_blank" tabindex="-1" alt="url Amazon" title="Amazon">
-                                <paper-icon-button src="../img/amazon_icon.svg"></paper-icon-button>
-                            </a>
-                        </template>
-                        <template is="dom-if" if="{{artist.albums.songs.urlYouTube}}">
-                            <a class="urlMargin" href="http://www.youtube.com/watch?v={{artist.albums.songs.urlYouTube}}" target="_blank" tabindex="-1"
-                                alt="url YouTube" title="YouTube">
-                                <paper-icon-button src="../img/youtube_icon.svg"></paper-icon-button>
-                            </a>
-                        </template>
-                        <template is="dom-if" if="{{artist.albums.songs.urlSpotify}}">
-                            <a class="urlMargin" href="{{artist.albums.songs.urlSpotify}}" target="_blank" tabindex="-1" alt="url Spotify" title="Spotify">
-                                <paper-icon-button src="../img/spotify_icon.svg"></paper-icon-button>
-                            </a>
-                        </template>
-                        <template is="dom-if" if="{{artist.albums.songs.urlDeezer}}">
-                            <a class="urlMargin" href="{{artist.albums.songs.urlDeezer}}" target="_blank" tabindex="-1" alt="url Deezer" title="Deezer">
-                                <paper-icon-button src="../img/deezer_icon.svg"></paper-icon-button>
-                            </a>
-                        </template>
-                        <template is="dom-if" if="{{artist.albums.songs.urlITunes}}">
-                            <a class="urlMargin" href="{{artist.albums.songs.urlITunes}}" target="_blank" tabindex="-1" alt="url iTunes" title="iTunes">
-                                <paper-icon-button src="../img/itunes_icon.svg"></paper-icon-button>
-                            </a>
-                        </template>
-                        <template is="dom-if" if="{{artist.albums.songs.urlMusicBrainz}}">
-                            <a class="urlMargin" href="{{artist.albums.songs.urlMusicBrainz}}" target="_blank" tabindex="-1" alt="url MusicBrainz" title="MusicBrainz">
-                                <paper-icon-button src="../img/musicbrainz_icon.svg"></paper-icon-button>
-                            </a>
-                        </template>
-                        <template is="dom-if" if="{{artist.albums.songs.urlAllmusic}}">
-                            <a class="urlMargin" href="{{artist.albums.songs.urlAllmusic}}" target="_blank" tabindex="-1" alt="url AllMusic" title="AllMusic">
-                                <paper-icon-button src="../img/allmusic_icon.svg"></paper-icon-button>
-                            </a>
-                        </template>
-                        <template is="dom-if" if="{{artist.albums.songs.urlLastFm}}">
-                            <a class="urlMargin" href="{{artist.albums.songs.urlLastFm}}" target="_blank" tabindex="-1" alt="url Last FM" title="Last FM">
-                                <paper-icon-button src="../img/lastfm_icon.svg"></paper-icon-button>
-                            </a>
-                        </template>
-                        <template is="dom-if" if="{{artist.albums.songs.urlPandora}}">
-                            <a class="urlMargin" href="{{artist.albums.songs.urlPandora}}" target="_blank" tabindex="-1" alt="url Pandora" title="Pandora">
-                                <paper-icon-button src="../img/pandora_icon.svg"></paper-icon-button>
-                            </a>
-                        </template>
-                        <template is="dom-if" if="{{artist.albums.songs.urlGoEar}}">
-                            <a class="urlMargin" href="{{artist.albums.songs.urlGoEar}}" target="_blank" tabindex="-1" alt="url GoEar" title="GoEar">
-                                <paper-icon-button src="../img/goear_icon.svg"></paper-icon-button>
-                            </a>
-                        </template>
-                        <template is="dom-if" if="{{artist.albums.songs.urlHypeMachine}}">
-                            <a class="urlMargin" href="{{artist.albums.songs.urlHypeMachine}}" target="_blank" tabindex="-1" alt="url Hype Machine" title="Hype Machine">
-                                <paper-icon-button src="../img/hypemachine_icon.svg"></paper-icon-button>
-                            </a>
-                        </template>
-                    </div>
-                    <section id="songInfos">
-                        <template is="dom-if" if="{{artist.albums.songs.urlYouTube}}">
-                            <google-youtube video-id="{{artist.albums.songs.urlYouTube}}"></google-youtube>
-                        </template>
+
+                        <!-- informations (x19) -->
                         <ul class="metadata_list">
-                            <template is="dom-if" if="{{artist.albums.songs.runtime}}">
-                                <li>Runtime: {{artist.albums.songs.runtime}}</li>
-                            </template>
-                            <template is="dom-if" if="{{artist.albums.songs.length}}">
-                                <li>Length: {{artist.albums.songs.length}}</li>
-                            </template>
-                            <template is="dom-if" if="{{artist.albums.songs.bpm}}">
-                                <li>BPM: {{artist.albums.songs.bpm}}</li>
-                            </template>
-                            <template is="dom-if" if="{{artist.albums.songs.gain}}">
-                                <li>Gain: {{artist.albums.songs.gain}}</li>
-                            </template>
-                            <template is="dom-if" if="{{artist.albums.songs.isrc}}">
-                                <li>ISRC: {{artist.albums.songs.isrc}}</li>
-                            </template>
-                            <template is="dom-if" if="{{artist.albums.songs.publicationDate}}">
-                                <li>Publication Date: {{artist.albums.songs.publicationDate}}</li>
-                            </template>
-                            <template is="dom-if" if="{{artist.albums.songs.releaseDate}}">
-                                <li>Release Date: {{artist.albums.songs.releaseDate}}</li>
-                            </template>
-                            <template is="dom-if" if="{{artist.albums.songs.begin}}">
-                                <li>Begin Date: {{artist.albums.songs.begin}}</li>
-                            </template>
-                            <template is="dom-if" if="{{artist.albums.songs.end}}">
-                                <li>End Date: {{artist.albums.songs.end}}</li>
-                            </template>
-                            <template is="dom-if" if="{{artist.albums.songs.recorded.length}}">
-                                <li>Recorded:
-                                    <template is="dom-repeat" items="{{artist.albums.songs.recorded}}" as="recorded">
-                                        <a href="#/search/recorded/{{_encodeUri(recorded)}}">{{recorded}}</a>
-                                    </template>
+                            <template is="dom-if" if="{{artist.albums.songs.isrc.length}}">
+                                <li id="tooltip_isrc" title="{{tooltip.isrc}}">
+                                    <span>ISRC</span>
+                                    <span>{{artist.albums.songs.isrc}}</span>
                                 </li>
                             </template>
-                            <template is="dom-if" if="{{artist.albums.songs.format.length}}">
-                                <li>Format:
-                                    <template is="dom-repeat" items="{{artist.albums.songs.format}}" as="format">
-                                        <a href="#/search/format/{{_encodeUri(format)}}">{{format}}</a>
-                                    </template>
+                            <template is="dom-if" if="{{displayDuration(artist.albums.songs)}}">
+                                <li>
+                                    <span>Duration</span>
+                                    <span>{{displayDuration(artist.albums.songs)}}</span>
+                                </li>
+                            </template>
+                            <template is="dom-if" if="{{artist.albums.songs.rank}}">
+                                <li>
+                                    <span>Rank</span>
+                                    <span>{{artist.albums.songs.rank}}</span>
+                                </li>
+                            </template>
+                            <template is="dom-if" if="{{artist.albums.songs.releaseDate.length}}">
+                                <li>
+                                    <span>Release Date</span>
+                                    <span>{{artist.albums.songs.releaseDate}}</span>
+                                </li>
+                            </template>
+                            <template is="dom-if" if="{{!artist.albums.songs.releaseDate.length}}">
+                                <template is="dom-if" if="{{artist.albums.songs.publicationDate.length}}">
+                                    <li>
+                                        <span>Publication Date</span>
+                                        <span>{{artist.albums.songs.publicationDate}}</span>
+                                    </li>
+                                </template>
+                            </template>
+                            <template is="dom-if" if="{{artist.albums.songs.begin.length}}">
+                                <li>
+                                    <span>Begin Date</span>
+                                    <span>{{artist.albums.songs.begin}}</span>
+                                </li>
+                            </template>
+                            <template is="dom-if" if="{{artist.albums.songs.end.length}}">
+                                <li>
+                                    <span>End Date</span>
+                                    <span>{{artist.albums.songs.end}}</span>
+                                </li>
+                            </template>
+                            <template is="dom-if" if="{{artist.albums.songs.recorded.length}}">
+                                <li>
+                                    <span>Recorded</span>
+                                    <span>
+                                        <template is="dom-repeat" items="{{artist.albums.songs.recorded}}" as="recorded">
+                                            <a href="#/search/recorded/{{_encodeUri(recorded)}}">{{recorded}}</a>
+                                            <template is="dom-if" if="{{lastItem(index,artist.albums.songs.recorded.length)}}">- </template>
+                                        </template>
+                                    </span>
                                 </li>
                             </template>
                             <template is="dom-if" if="{{artist.albums.songs.genre.length}}">
-                                <li>Genre:
-                                    <template is="dom-repeat" items="{{artist.albums.songs.genre}}" as="genre">
-                                        <a href="#/search/genre/{{_encodeUri(genre)}}">{{genre}}</a>
-                                    </template>
+                                <li>
+                                    <span>Genre</span>
+                                    <span>
+                                        <template is="dom-repeat" items="{{artist.albums.songs.genre}}" as="genre">
+                                            <a href="#/search/genre/{{_encodeUri(genre)}}">{{genre}}</a>
+                                            <template is="dom-if" if="{{lastItem(index,artist.albums.songs.genre.length)}}">- </template>
+                                        </template>
+                                    </span>
                                 </li>
                             </template>
-                            <template is="dom-if" if="{{artist.albums.songs.producer.length}}">
-                                <li>Producer:
-                                    <template is="dom-repeat" items="{{artist.albums.songs.producer}}" as="producer">
-                                        <a href="#/search/producer/{{_encodeUri(producer)}}">{{producer}}</a>
-                                    </template>
-                                </li>
-                            </template>
-                            <template is="dom-if" if="{{artist.albums.songs.recordLabel.length}}">
-                                <li>RecordLabel:
-                                    <template is="dom-repeat" items="{{artist.albums.songs.recordLabel}}" as="recordLabel">
-                                        <a href="#/search/recordlabel/{{_encodeUri(recordLabel)}}">{{recordLabel}}</a>
-                                    </template>
+                            <template is="dom-if" if="{{artist.albums.songs.format.length}}">
+                                <li>
+                                    <span>Format</span>
+                                    <span>
+                                        <template is="dom-repeat" items="{{artist.albums.songs.format}}" as="format">
+                                            <a href="#/search/format/{{_encodeUri(format)}}">{{format}}</a>
+                                            <template is="dom-if" if="{{lastItem(index,artist.albums.songs.format.length)}}">- </template>
+                                        </template>
+                                    </span>
                                 </li>
                             </template>
                             <template is="dom-if" if="{{artist.albums.songs.writer.length}}">
-                                <li>Writer:
-                                    <template is="dom-repeat" items="{{artist.albums.songs.writer}}" as="writer">
-                                        <a href="#/search/writer/{{_encodeUri(writer)}}">{{writer}}</a>
-                                    </template>
+                                <li>
+                                    <span>Writer</span>
+                                    <span>
+                                        <template is="dom-repeat" items="{{artist.albums.songs.writer}}" as="writer">
+                                            <a href="#/search/writer/{{_encodeUri(writer)}}">{{writer}}</a>
+                                            <template is="dom-if" if="{{lastItem(index,artist.albums.songs.writer.length)}}">- </template>
+                                        </template>
+                                    </span>
+                                </li>
+                            </template>
+                            <template is="dom-if" if="{{artist.albums.songs.producer.length}}">
+                                <li>
+                                    <span>Producer</span>
+                                    <span>
+                                        <template is="dom-repeat" items="{{artist.albums.songs.producer}}" as="producer">
+                                            <a href="#/search/producer/{{_encodeUri(producer)}}">{{producer}}</a>
+                                            <template is="dom-if" if="{{lastItem(index,artist.albums.songs.producer.length)}}">- </template>
+                                        </template>
+                                    </span>
                                 </li>
                             </template>
                             <template is="dom-if" if="{{artist.albums.songs.award.length}}">
-                                <li>Award:
-                                    <template is="dom-repeat" items="{{artist.albums.songs.award}}" as="award">
-                                        <a href="#/search/award/{{_encodeUri(award)}}">{{award}}</a>
-                                    </template>
+                                <li>
+                                    <span>Award</span>
+                                    <span>
+                                        <template is="dom-repeat" items="{{artist.albums.songs.award}}" as="award">
+                                            <a href="#/search/award/{{_encodeUri(award)}}">{{award}}</a>
+                                            <template is="dom-if" if="{{lastItem(index,artist.albums.songs.award.length)}}">- </template>
+                                        </template>
+                                    </span>
                                 </li>
                             </template>
-                            <template is="dom-if" if="{{artist.albums.songs.language}}">
-                                <li>Language: {{artist.albums.songs.language}}</li>
+                            <template is="dom-if" if="{{artist.albums.songs.recordLabel.length}}">
+                                <li>
+                                    <span>RecordLabel</span>
+                                    <span>
+                                        <template is="dom-repeat" items="{{artist.albums.songs.recordLabel}}" as="recordLabel">
+                                            <a href="#/search/recordlabel/{{_encodeUri(recordLabel)}}">{{recordLabel}}</a>
+                                            <template is="dom-if" if="{{lastItem(index,artist.albums.songs.recordLabel.length)}}">- </template>
+                                        </template>
+                                    </span>
+                                </li>
+                            </template>
+                            <template is="dom-if" if="{{artist.albums.songs.language.length}}">
+                                <li>
+                                    <span>Language</span>
+                                    <span>{{artist.albums.songs.language}}</span>
+                                </li>
+                            </template>
+                            <template is="dom-if" if="{{artist.albums.songs.bpm.length}}">
+                                <li title="{{tooltip.bpm}}">
+                                    <span>BPM</span>
+                                    <span>{{artist.albums.songs.bpm}}</span>
+                                </li>
+                            </template>
+
+                            <template is="dom-if" if="{{artist.albums.songs.gain.length}}">
+                                <li>
+                                    <li title="{{tooltip.gain}}">
+                                        <span>Gain</span>
+                                        <span>{{artist.albums.songs.gain}}</span>
+                                    </li>
+                                </li>
+                            </template>
+                            <template is="dom-if" if="{{artist.albums.songs.notes.length}}">
+                                <li>
+                                    <edit-field idf="id-notes" namef="Notes" artistf={{artist}} valuef="{{artist.albums.songs.notes}}"></edit-field>
+                                </li>
                             </template>
                             <template is="dom-if" if="{{artist.albums.songs.explicitLyrics}}">
-                                <li>This song contain explicit lyrics</li>
-                            </template>
-                            <template is="dom-if" if="{{checkNbAlbum(albumSong.length)}}">
-                                <li>Also available in:
-                                    <template class="flex-wrap" is="dom-repeat" items="{{albumSong}}" as="albumSong" initial-count="1">
-                                        <!-- <template is="dom-if" if="{{checkSongAlbum(albumSong.albumTitle,nameAlbum)}}"> -->
-                                            <a href="#/search/artist/{{_encodeUri(albumSong.name)}}/album/{{_encodeUri(albumSong.albumTitle)}}/song/{{_encodeUri(albumSong.title)}}">{{albumSong.albumTitle}}</a>
-                                        <!-- </template> -->
-                                    </template>
+                                <li>
+                                    <span>Explicit lyrics</span>
+                                    <span>This song contain explicit lyrics</span>
                                 </li>
                             </template>
+                            <template is="dom-if" if="{{checkAlbumSong(albumSong.length)}}">
+                                <li>
+                                    <span>Also available in</span>
+                                    <span>
+                                        <template is="dom-repeat" items="{{albumSong}}" as="albumSong" initial-count="1" class="flex-wrap">
+                                            <!-- <template is="dom-if" if="{{checkSongAlbum(albumSong.albumTitle,nameAlbum)}}"> -->
+                                            <a href="#/search/artist/{{_encodeUri(albumSong.name)}}/album/{{_encodeUri(albumSong.albumTitle)}}/song/{{_encodeUri(albumSong.title)}}">{{albumSong.albumTitle}}</a>
+                                            <template is="dom-if" if="{{lastItem(index,nbTotalAlbumSong)}}">- </template>
+                                            <!-- </template> -->
+                                        </template>
+                                    </span>
+                                </li>
+                            </template>
+                            <template is="dom-if" if="{{coversSong}}">
+                                <li>
+                                    <span>Cover versions ({{coversSong.res.length}})</span>
+                                    <span>
+                                        <template is="dom-repeat" items="{{coversSong.res}}" as="reprise">
+                                            <a href="#/search/artist/{{_encodeUri(reprise.name)}}/album/{{_encodeUri(reprise.albumTitle)}}/song/{{_encodeUri(reprise.title)}}">
+                                                <template is="dom-if" if="{{!reprise.preview}}">
+                                                    {{reprise.name}} ({{reprise.albumTitle}})
+                                                </template>
+                                                <template is="dom-if" if="{{reprise.preview}}">
+                                                    <b>{{reprise.name}} ({{reprise.albumTitle}})</b>
+                                                </template>
+                                            </a>
+                                            <template is="dom-if" if="{{lastItem(index,coversSong.res.length)}}">- </template>
+                                        </template>
+                                    </span>
+                                </li>
+                            </template>
+                            <li id="songLyricsSection">
+                                <article id="songLyricsNonEditable" hidden={{editing}} contenteditable=false></article>
+                                <article id="songLyricsEditable" hidden={{!editing}} contenteditable=true></article>
+                                <template is="dom-if" if="{{artist.isConnected}}">
+                                    <paper-fab hidden={{editing}} icon="icons:create" on-tap="doEditLyrics" class="edit" mini></paper-fab>
+                                    <paper-fab hidden={{!editing}} icon="icons:done" on-tap="doEditLyrics" class="done" mini></paper-fab>
+                                </template>
+                            </li>
                         </ul>
-                        <template is="dom-if" if="{{artist.albums.songs.abstract}}">
-                            <article id="abstract">Abstract: {{artist.albums.songs.abstract}}</article>
-                        </template>
                     </section>
-                    <template is="dom-if" if="{{artist.isConnected}}">
-                        <section id="updateData">
-                            <paper-fab hidden={{editing}} icon="icons:create" on-tap="doEditLyrics" class="edit" mini></paper-fab>
-                            <paper-fab hidden={{!editing}} icon="icons:done" on-tap="doEditLyrics" class="done" mini></paper-fab>
-                        </section>
-                    </template>
-                    <section id="songLyricsSection">
-                        <article id="songLyricsNonEditable" hidden={{editing}} contenteditable=false> </article>
-                        <article id="songLyricsEditable" hidden={{!editing}} contenteditable=true> </article>
-                    </section>
+
                     <template is="dom-if" if="{{artist.albums.songs.subject.length}}">
                         <nav class="nav_subject">
                             <template is="dom-repeat" items="{{artist.albums.songs.subject}}" as="subject">
@@ -428,7 +789,24 @@
                             </template>
                         </nav>
                     </template>
+
+
+
+                    <!-- EXTRAIT AUDIO -->
+                    <template is="dom-if" if="{{artist.albums.songs.preview}}">
+                        <div id="divAudio">
+                            <div id="divAudio_infos">
+                                <img src="{{albu.albums.cover.small}}">
+
+                                <!-- <span>{{artist.name}}</span>
+                                        <span>{{artist.albums.title}}</span> -->
+                            </div>
+                            <!-- <audio src="{{artist.albums.songs.preview}}" id="audioExtract" controls></audio> -->
+                            <paper-audio-player src="{{artist.albums.songs.preview}}" title="{{artist.albums.songs.title}}" color="#3f51b5"></paper-audio-player>
+                        </div>
+                    </template>
                 </div>
+
                 <template is="dom-if" if="{{artist.albums.songs.multitrack_path}}">
                     <div>
                         <template is="dom-if" if="{{artist.isConnected}}">
@@ -453,7 +831,10 @@
             // add properties and methods on the element's prototype
             properties: {
                 artist: {
-                    type: Object,
+                    type: Object
+                },
+                song: {
+                    type: Object
                 },
                 idxCurrentTab: {
                     type: Number,
@@ -474,10 +855,105 @@
                 },
                 headers: {
                     computed: '_computeHeader(token)'
+                },
+                nbTotalAlbumSong: {
+                    type: Number,
+                    value: 0
+
+                },
+                tooltip: {
+                    type: String,
+                    value: {
+                        isrc:"L'International Standard Recording Code, abrégé par le sigle ISRC, est un code unique d'identification mis en place par l'International Federation of Phonographic Industry (IFPI) pour identifier les enregistrements musicaux (sonores et audiovisuels) dans le monde entier.",
+                        bpm: "Le BPM (battement par minute), couramment abrégé par le sigle bpm, est une unité de mesure utilisée pour exprimer le tempo de la musique ou le rythme cardiaque, quantifié par le nombre de battements se produisant en une minute.",
+                        gain:"un gain non défini"
+                    }
+                },
+                edit_bpm: {
+                    type: Boolean,
+                    value: false
+                },
+            },
+            ready: function () {
+                this.$.songLyricsEditable.addEventListener("paste", function (e) {
+                    e.preventDefault();
+                    var text = e.clipboardData.getData("text/plain");
+                    text = text.replace(/\n|\r\n|\r/g, "<br>");
+                    var cleanText = text.replace(/(<([^>]+)>)/ig, "<br>"); //pour échapper éventuellement du html ou script
+                    this.innerHTML = cleanText;
+                });
+
+            },
+            getBeginLyrics: function (lyrics) {
+                return lyrics.substring(0, 15);
+            },
+            doCheckLastUpdatedLW: function (e) {
+                // let url=e.target.getAttribute('data-url');
+                // var xhttp = new XMLHttpRequest();
+                // xhttp.onreadystatechange = function () {
+                //     if (this.readyState == 4 && this.status == 200) {
+                //         // Typical action to be performed when the document is ready:
+                //         console.log(xhttp.responseText);
+                //     }
+                // };
+                // xhttp.open("GET", url, true);
+                // xhttp.send();
+
+                this.$.get_content_yt.url = `/helper/getYouTubeLinkFromLW/${this._encodeUri(this.artist.name)}/${this._encodeUri(this.artist.albums.songs.title)}`;
+                this.$.get_content_yt.generateRequest();
+            },
+            getIDfromYouTubeURL: function (urlYouTube) {
+                console.log(urlYouTube);
+                var video_id = urlYouTube.split('v=')[1];
+                var ampersandPosition = video_id.indexOf('&');
+                if (ampersandPosition != -1) {
+                    video_id = video_id.substring(0, ampersandPosition);
+                }
+                return video_id;
+            },
+            displayDuration: function (songs) {
+                // duration
+                // - from deezer
+                if (songs.length) {
+                    let length = parseInt(songs.length);
+                    return this.convertSongDuration(length);
+                }
+                // - from dbpedia (can have different duration depend to the music's version)
+                else if (songs.runtime) {
+                    let runtime = 0;
+                    if (songs.runtime.length > 1) {
+                        let duration = '';
+                        for (let i = 0; i < songs.runtime.length; i++) {
+                            runtime = parseInt(songs.runtime[i]);
+                            duration += this.convertSongDuration(runtime);
+                            if (i < songs.runtime.length - 1) duration += '; '
+                        }
+                        return `${duration} (depend to the music's version)`;
+                    } else {
+                        let runtime = parseInt(songs.runtime);
+                        return this.convertSongDuration(runtime);
+                    }
+                } else {
+                    return false;
                 }
             },
-            checkNbAlbum: function (_value) {
-                console.log('value', _value);
+            convertSongDuration: function (time) {
+                if (time < 60) return `00:${this.toDecimal(time)}`;
+                else {
+                    let minutes = (Math.floor(time / 60));
+                    let seconds = this.toDecimal(time - (minutes * 60));
+                    return `${minutes}:${seconds}`;
+                }
+            },
+            toDecimal: function (number) {
+                return (number < 10) ? ("0" + number) : number;
+            },
+            lastItem: function (index, nbTotal) {
+                return (index < nbTotal - 1);
+            },
+            checkAlbumSong: function (_value) {
+                //console.log('nbTotalAlbumSong',this.nbTotalAlbumSong);
+                this.nbTotalAlbumSong = _value;
                 return (_value > 1);
             },
             checkSongAlbum: function (_value, _album) {
@@ -497,15 +973,6 @@
             getURLSongIsClassic: function () {
                 return this.getURLSong() + "/is_classic";
             },
-            ready: function () {
-                this.$.songLyricsEditable.addEventListener("paste", function (e) {
-                    e.preventDefault();
-                    var text = e.clipboardData.getData("text/plain");
-                    text = text.replace(/\n|\r\n|\r/g, "<br>");
-                    var cleanText = text.replace(/(<([^>]+)>)/ig, "<br>"); //pour échapper éventuellement du html ou script
-                    this.innerHTML = cleanText;
-                });
-            },
             _encodeUri: function (title) {
                 return encodeURIComponent(title);
             },
@@ -519,13 +986,26 @@
                 }
                 //Si l'utilisateur l'utilisateur veut sauvegarder ses modifications
                 else {
-                    if (typeof this.artist !== 'undefined'){
-
-                        this.$.songLyricsNonEditable.innerHTML = this.artist.albums.songs.lyrics;
-                    /*On rempli aussi le contenu éditable (#songLyricsEditable) cela permet de ne pas avoir des lyrics vide lors de l'attente de la reponse ajax*/
-                    this.$.songLyricsEditable.innerHTML = this.artist.albums.songs.lyrics;
+                    if (typeof this.artist !== 'undefined') {
+                        this.$.songLyricsNonEditable.innerHTML = this._filter(this.artist.albums.songs.lyrics,'br');
+                        /*On rempli aussi le contenu éditable (#songLyricsEditable) cela permet de ne pas avoir des lyrics vide lors de l'attente de la reponse ajax*/
+                        this.$.songLyricsEditable.innerHTML = this.artist.albums.songs.lyrics;
                     }
                 }
+            },
+            _filter(_string,_type){
+                let _stringSplited="";
+                let _stringFiltered="";
+                switch(_type){
+                    case "br":{
+                        _stringSplited=_string.split('<br><br>');
+                        for (let i=0;i<_stringSplited.length;i++){
+                            _stringFiltered+=`<div class="div_splited_br" style="background-color:#aed581;padding:10px;">${_stringSplited[i]}</div><br>`;
+                        }
+                    }
+                    break;
+                }
+                return _stringFiltered;
             },
             _concat: function (str1, str2) {
                 return this._encodeUri(str1 + ' ' + str2);

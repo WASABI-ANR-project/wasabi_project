@@ -41,23 +41,44 @@ var deleteElasticSearchIndex = function (url) {
  */
 var createElasticSearchIndex = function (url, mappingObj) {
     var setting = {
+        // "settings": {
+        //     "analysis": {
+        //         "analyzer": {
+        //             "folding": {
+        //                 "tokenizer": "standard",
+        //                 "filter": ["lowercase", "asciifolding", "my_word_delimiter"]
+        //             }
+        //         },
+        //         "filter": {
+        //             "my_word_delimiter": {
+        //                 "type": "word_delimiter",
+        //                 "catenate_words": true,
+        //                 "preserve_original": true
+        //             }
+        //         }
+        //     }
+        // },
         "settings": {
             "analysis": {
-                "analyzer": {
-                    "folding": {
-                        "tokenizer": "standard",
-                        "filter": ["lowercase", "asciifolding", "my_word_delimiter"]
-                    }
-                },
-                "filter": {
-                    "my_word_delimiter": {
-                        "type": "word_delimiter",
-                        "catenate_words": true,
-                        "preserve_original": true
-                    }
-                }
+               "filter": {
+                  "edge_ngram_filter": {
+                     "type": "edge_ngram",
+                     "min_gram": 2,
+                     "max_gram": 20
+                  }
+               },
+               "analyzer": {
+                  "edge_ngram_analyzer": {
+                     "type": "custom",
+                     "tokenizer": "standard",
+                     "filter": [
+                        "lowercase",
+                        "edge_ngram_filter"
+                     ]
+                  }
+               }
             }
-        },
+         },
         "mappings": mappingObj
     }
     return new Promise(function (resolve, reject) {
@@ -121,41 +142,54 @@ var insertBulkData = function (req, collectionName, projectObj, indexName, typeN
                         db.collection(req.config.database.collection_album).findOne({
                             _id: new ObjectId(objSong.id_album)
                         }, {
-                            "cover.small": 1
-                        }, function (err, objSongWasabi) {
-                            picture = objSongWasabi.hasOwnProperty('cover') ? objSongWasabi.cover.small : "";
-                            if (picture == "http://e-cdn-images.deezer.com/images/cover//56x56-000000-80-0-0.jpg") picture = "";
-                            objSong.picture = picture;
-                            objSong.weight = Number(objSong.rank || 0);
-                            //for each line we must provide the informations below
-                            //ex line1: { "index" : { "_index" : "idx_artist", "_type" : "artist", "_id" : an objectid from mongodb } }
-                            //ex line2: { "field1" : "data1", "field2" : "data2" , ...}
-                            bulk_request.push({
-                                index: {
-                                    _index: indexName,
-                                    _type: typeName,
-                                    _id: objSong._id
+                                "cover.small": 1
+                            }, function (err, objSongWasabi) {
+                                picture = objSongWasabi.hasOwnProperty('cover') ? objSongWasabi.cover.small : "";
+                                if (picture == "http://e-cdn-images.deezer.com/images/cover//56x56-000000-80-0-0.jpg") picture = "";
+
+                                objSong.rank = (objSong.rank) ? parseInt(objSong.rank) : 0;
+                                objSong.titleSuggest = {};
+                                objSong.titleSuggest.input = [];
+
+                                // Si le nom contient plus de deux mots ex : The Rolling Stones
+                                if (objSong.title.split(" ").length > 1) {
+                                    objSong.titleSuggest.input = (objSong.title.split(" "));
+                                    // objSong.titleSuggest.input.push(objSong.title.substring(objSong.title.indexOf(" ") + 1, objSong.title.length));
                                 }
-                            });
-                            delete objSong._id;
-                            delete objSong.id_album;
-                            delete objSong.rank;
-                            bulk_request.push(objSong); // Insert data
-                            if (bulk_request.length / 2 == obj.length) {
-                                elasticsearchClient.bulk({
-                                    body: bulk_request
-                                }, (err, resp) => {
-                                    if (err) console.log("ERREUR ==== " + err);
+                                objSong.titleSuggest.input.push(objSong.title);
+                                objSong.titleSuggest.weight = objSong.rank;
+
+
+                                objSong.picture = picture;
+                                //for each line we must provide the informations below
+                                //ex line1: { "index" : { "_index" : "idx_artist", "_type" : "artist", "_id" : an objectid from mongodb } }
+                                //ex line2: { "field1" : "data1", "field2" : "data2" , ...}
+                                bulk_request.push({
+                                    index: {
+                                        _index: indexName,
+                                        _type: typeName,
+                                        _id: objSong._id
+                                    }
                                 });
-                                skip += limit;
-                                if (obj.length != limit) {
-                                    console.log("FIN DU TRAITEMENT !");
-                                    console.log(indexName + " Crée");
-                                    return;
+                                delete objSong._id;
+                                delete objSong.id_album;
+                                //delete objSong.rank;
+                                bulk_request.push(objSong); // Insert data
+                                if (bulk_request.length / 2 == obj.length) {
+                                    elasticsearchClient.bulk({
+                                        body: bulk_request
+                                    }, (err, resp) => {
+                                        if (err) console.log("ERREUR ==== " + err);
+                                    });
+                                    skip += limit;
+                                    if (obj.length != limit) {
+                                        console.log("FIN DU TRAITEMENT !");
+                                        console.log(indexName + " Crée");
+                                        return;
+                                    }
+                                    recursivePost(skip);
                                 }
-                                recursivePost(skip);
-                            }
-                        })
+                            })
                     })(obj[i])
                 } else { //on traite les artistes
                     picture = obj[i].hasOwnProperty('picture') ? obj[i].picture.small : "";
@@ -167,7 +201,7 @@ var insertBulkData = function (req, collectionName, projectObj, indexName, typeN
                     if (obj[i].name.split(" ").length > 1) {
                         obj[i].nameSuggest.input.push(obj[i].name.substring(obj[i].name.indexOf(" ") + 1, obj[i].name.length));
                     }
-                    obj[i].nameSuggest.weight = Number(obj[i].deezerFans || 0);
+                    obj[i].nameSuggest.rank = Number(obj[i].deezerFans || 0);
                     obj[i].picture = picture;
                     //for each line we must provide the informations below
                     //ex line1: { "index" : { "_index" : "idx_artist", "_type" : "artist", "_id" : an objectid from mongodb } }

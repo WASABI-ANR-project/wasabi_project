@@ -56,6 +56,36 @@ router.get('/add/:urlArtist', function (req, res) {
     res.end();
 });
 
+/**
+ *  mappingObj[typeName] = {
+        "properties": {
+            "title": {
+                //"type": "string",
+                //"analyzer": "folding"
+                "type": "text",
+                "fields": {"raw": {"type": "keyword"}}
+            },
+            "name": {
+                "type": "text",
+                "fields": {"raw": {"type": "keyword"}}
+                //"type": "string",
+                //"analyzer": "folding"
+            },
+            "albumTitle": {
+                "type": "text",
+                "fields": {"raw": {"type": "keyword"}}
+                //"type": "string",
+                //"analyzer": "folding"
+            },
+            // "weight": {
+            //     "type": "integer"
+            // },
+            "rank": {
+                "type": "long"
+            }
+        }
+    };
+ */
 
 router.get('/createdbelasticsearchsong', function (req, res) {
     var urlElasticSearch = config.database.elasticsearch_url;
@@ -67,25 +97,28 @@ router.get('/createdbelasticsearchsong', function (req, res) {
         "albumTitle": 1,
         "rank": 1,
         "id_album": 1
-    }; //ce que nous voulons récupérer dans la base de données mongodb
+    };
+
+    //ce que nous voulons récupérer dans la base de données mongodb
+    // title
+    // "fields": {
+    //     "keyword": {
+    //         "type": "keyword",
+    //         "ignore_above": 256
+    //     }
+    // }
     var urlIndex = urlElasticSearch + indexName;
     var mappingObj = {};
     mappingObj[typeName] = {
         "properties": {
-            "title": {
-                "type": "string",
-                "analyzer": "folding"
-            },
-            "name": {
-                "type": "string",
-                "analyzer": "folding"
-            },
-            "albumTitle": {
-                "type": "string",
-                "analyzer": "folding"
-            },
-            "weight": {
-                "type": "integer"
+            "title": { "type": "text" },
+            "name": { "type": "text" },
+            "albumTitle": { "type": "text" },
+            "rank": { "type": "integer" },
+            "titleSuggest": {
+                "type": "text",
+                "index_analyzer": "edge_ngram_analyzer",
+                "search_analyzer": "standard"
             }
         }
     };
@@ -100,6 +133,8 @@ router.get('/createdbelasticsearchsong', function (req, res) {
     });
     res.send("OK");
 });
+
+
 router.get('/createdbelasticsearchartist', function (req, res) {
     var urlElasticSearch = config.database.elasticsearch_url;
     var typeName = config.database.index_type_artist;
@@ -144,17 +179,17 @@ router.get('/add/elasticsearch/artist/:_id', function (req, res) {
     db.collection(COLLECTIONARTIST).findOne({
         _id: ObjectId(id)
     }, {
-        "name": 1
-    }, function (err, artist) {
-        if (artist == null) {
-            return res.status(404).send([{
-                error: config.http.error.global_404
-            }]);
-        }
-        delete artist._id; // impossible de faire l'insertion si un _id est présent dans le document à insérer
-        elasticSearchHandler.addDocumentToElasticSearch(req, index_artist, type_artist, artist, id);
+            "name": 1
+        }, function (err, artist) {
+            if (artist == null) {
+                return res.status(404).send([{
+                    error: config.http.error.global_404
+                }]);
+            }
+            delete artist._id; // impossible de faire l'insertion si un _id est présent dans le document à insérer
+            elasticSearchHandler.addDocumentToElasticSearch(req, index_artist, type_artist, artist, id);
 
-    });
+        });
     res.send("OK");
 });
 //Permet d'ajouter la musique dont l'id est passé en parametre
@@ -166,18 +201,18 @@ router.get('/add/elasticsearch/song/:_id', function (req, res) {
     db.collection(COLLECTIONSONG).findOne({
         _id: ObjectId(id)
     }, {
-        "name": 1,
-        "albumTitle": 1,
-        "title": 1
-    }, function (err, song) {
-        if (song == null) {
-            return res.status(404).send([{
-                error: config.http.error.global_404
-            }]);
-        }
-        delete song._id; // impossible de faire l'insertion si un _id est présent dans le document à insérer
-        elasticSearchHandler.addDocumentToElasticSearch(req, index_song, type_song, song, id);
-    });
+            "name": 1,
+            "albumTitle": 1,
+            "title": 1
+        }, function (err, song) {
+            if (song == null) {
+                return res.status(404).send([{
+                    error: config.http.error.global_404
+                }]);
+            }
+            delete song._id; // impossible de faire l'insertion si un _id est présent dans le document à insérer
+            elasticSearchHandler.addDocumentToElasticSearch(req, index_song, type_song, song, id);
+        });
     res.send("OK");
 });
 

@@ -13,8 +13,8 @@ const FILENAME_ARTIST_FOUND = "animux_artist_found_several_time_log.txt";
 const COLLECTIONSONG = config.database.collection_song;
 const COLLECTIONARTIST = config.database.collection_artist;
 
-const lr=require("line-reader");
-const Levenshtein=require("levenshtein");
+const lr = require("line-reader");
+const Levenshtein = require("levenshtein");
 
 /**
  * 
@@ -82,11 +82,11 @@ var removeAccentArtists = (req, res) => {
             db.collection(COLLECTIONARTIST).updateOne({
                 name: tArtists[i].name
             }, {
-                $set: {
-                    name_accent_fold: name_folding,
-                    nameVariations_fold: nameVariations_folding
-                }
-            });
+                    $set: {
+                        name_accent_fold: name_folding,
+                        nameVariations_fold: nameVariations_folding
+                    }
+                });
         }
         console.log("Traitement terminé");
     });
@@ -111,19 +111,19 @@ var removeAccentSongs = (req, res) => {
                 db.collection(COLLECTIONSONG).updateOne({
                     _id: ObjectId(tSongs[i]._id)
                 }, {
-                    $set: {
-                        title_accent_fold: title_folding
-                    }
-                }, (err) => {
-                    count++;
-                    if (count == tSongs.length) {
-                        if (tSongs.length == LIMIT) {
-                            loop(SKIP += LIMIT);
-                        } else {
-                            console.log("Traitement fini");
+                        $set: {
+                            title_accent_fold: title_folding
                         }
-                    }
-                });
+                    }, (err) => {
+                        count++;
+                        if (count == tSongs.length) {
+                            if (tSongs.length == LIMIT) {
+                                loop(SKIP += LIMIT);
+                            } else {
+                                console.log("Traitement fini");
+                            }
+                        }
+                    });
             }
         });
     })(SKIP);
@@ -258,10 +258,10 @@ var getDirArtist = (req, res) => {
                     req.db.collection(COLLECTIONARTIST).updateOne({
                         name: artist.name
                     }, {
-                        $set: {
-                            animux_path: pathToArtist
-                        }
-                    });
+                            $set: {
+                                animux_path: pathToArtist
+                            }
+                        });
                     nbMatch++;
                     console.log(nbMatch + "/" + nbTotal + '     ' + pathToArtist);
                 } else loggerNotFound.write(artistName + "\n");
@@ -339,9 +339,9 @@ var getNotFoundLogArtist = (req, res) => {
  */
 var getFileSong = (req, res) => {
     var options = {
-            flags: 'w',
-            autoClose: true
-        },
+        flags: 'w',
+        autoClose: true
+    },
         loggerNotFound = fs.createWriteStream('animux_song_not_found_log.txt', options),
         loggerFound = fs.createWriteStream('animux_song_found_log.txt', options);
     //We find artist having animux path
@@ -350,80 +350,80 @@ var getFileSong = (req, res) => {
             $exists: 1
         }
     }, {
-        animux_path: 1,
-        name: 1
-    }).toArray((err, tArtists) => {
-        if (err) return res.status(404).json(config.http.error.artist_404);
-        let nbMatch = 0,
-            nbTotal = 0,
-            nbEnd = 0;
-        for (let i = 0; i < tArtists.length; i++) {
-            setTimeout(() => {
-                for (var ii = 0; ii < tArtists[i].animux_path.length; ii++) {
-                    //we are reading files in directory artist
-                    try {
-                        let fileArray = readFilesSongs(tArtists[i].animux_path[ii]);
-                        //for each songs in the previous directory (artist directory), we are going to find the title of each songs
-                        for (var j = 0; j < fileArray.length; j++) {
-                            var fileName = fileArray[j].replace(tArtists[i].animux_path[ii] + '/', "");
-                            fileName = decodeURIComponent(fileName).trim();
-                            ((filePathName, fileName) => {
-                                nbTotal++;
-                                //We try to match songs with insensitive case
-                                req.db.collection(COLLECTIONSONG).find({
-                                    $and: [{
-                                        name: tArtists[i].name
-                                    }, {
-                                        title: new RegExp("^" + utilHandler.escapeRegExp(fileName) + "$", "i")
-                                    }]
-                                }).toArray((err, tSongs) => {
-                                    if (err) return res.status(404).json(config.http.error.song_404);
-                                    if (tSongs.length) {
-                                        readContentFileSong(filePathName).then((data) => {
-                                            nbEnd++;
-                                            nbMatch++
-                                            console.log(filePathName + " trouvé: " + nbMatch + '/' + (nbTotal));
-                                            loggerFound.write(filePathName + "\n");
-                                            //we update each songs for an artist
-                                            req.db.collection(COLLECTIONSONG).updateMany({
-                                                $and: [{
-                                                    name: tSongs[0].name
+            animux_path: 1,
+            name: 1
+        }).toArray((err, tArtists) => {
+            if (err) return res.status(404).json(config.http.error.artist_404);
+            let nbMatch = 0,
+                nbTotal = 0,
+                nbEnd = 0;
+            for (let i = 0; i < tArtists.length; i++) {
+                setTimeout(() => {
+                    for (var ii = 0; ii < tArtists[i].animux_path.length; ii++) {
+                        //we are reading files in directory artist
+                        try {
+                            let fileArray = readFilesSongs(tArtists[i].animux_path[ii]);
+                            //for each songs in the previous directory (artist directory), we are going to find the title of each songs
+                            for (var j = 0; j < fileArray.length; j++) {
+                                var fileName = fileArray[j].replace(tArtists[i].animux_path[ii] + '/', "");
+                                fileName = decodeURIComponent(fileName).trim();
+                                ((filePathName, fileName) => {
+                                    nbTotal++;
+                                    //We try to match songs with insensitive case
+                                    req.db.collection(COLLECTIONSONG).find({
+                                        $and: [{
+                                            name: tArtists[i].name
+                                        }, {
+                                            title: new RegExp("^" + utilHandler.escapeRegExp(fileName) + "$", "i")
+                                        }]
+                                    }).toArray((err, tSongs) => {
+                                        if (err) return res.status(404).json(config.http.error.song_404);
+                                        if (tSongs.length) {
+                                            readContentFileSong(filePathName).then((data) => {
+                                                nbEnd++;
+                                                nbMatch++
+                                                console.log(filePathName + " trouvé: " + nbMatch + '/' + (nbTotal));
+                                                loggerFound.write(filePathName + "\n");
+                                                //we update each songs for an artist
+                                                req.db.collection(COLLECTIONSONG).updateMany({
+                                                    $and: [{
+                                                        name: tSongs[0].name
+                                                    }, {
+                                                        title: new RegExp("^" + utilHandler.escapeRegExp(fileName) + "$", "i")
+                                                    }]
                                                 }, {
-                                                    title: new RegExp("^" + utilHandler.escapeRegExp(fileName) + "$", "i")
-                                                }]
-                                            }, {
-                                                $set: {
-                                                    animux_path: filePathName,
-                                                    animux_content: data
-                                                }
+                                                        $set: {
+                                                            animux_path: filePathName,
+                                                            animux_content: data
+                                                        }
+                                                    });
+                                                if (nbEnd == nbTotal) console.log("END : " + nbMatch + '/' + nbTotal);
+                                            }).catch((err) => {
+                                                nbEnd++;
+                                                console.error(err);
+                                                if (nbEnd == nbTotal) console.log("END : " + nbMatch + '/' + nbTotal);
                                             });
-                                            if (nbEnd == nbTotal) console.log("END : " + nbMatch + '/' + nbTotal);
-                                        }).catch((err) => {
+                                        } else {
                                             nbEnd++;
-                                            console.error(err);
+                                            decodeURIComponent(filePathName).substring;
+                                            var name = filePathName.split('/')[4];
+                                            var song = fileName;
+                                            //loggerNotFound.write(decodeURIComponent(name) + "_-_" + decodeURIComponent(song) + "\n");
+                                            loggerNotFound.write(decodeURIComponent(name) + "\t" + decodeURIComponent(song) + "\t" + (filePathName) + "\n");
                                             if (nbEnd == nbTotal) console.log("END : " + nbMatch + '/' + nbTotal);
-                                        });
-                                    } else {
-                                        nbEnd++;
-                                        decodeURIComponent(filePathName).substring;
-                                        var name = filePathName.split('/')[4];
-                                        var song = fileName;
-                                        //loggerNotFound.write(decodeURIComponent(name) + "_-_" + decodeURIComponent(song) + "\n");
-                                        loggerNotFound.write(decodeURIComponent(name)+"\t"+decodeURIComponent(song)+"\t"+(filePathName)+"\n");
-                                        if (nbEnd == nbTotal) console.log("END : " + nbMatch + '/' + nbTotal);
-                                    }
-                                })
-                            })(fileArray[j], fileName);
-                        }
-                    } catch (error) {
-                        console.log("=> ERROR ! :",error);
-                    } finally {
+                                        }
+                                    })
+                                })(fileArray[j], fileName);
+                            }
+                        } catch (error) {
+                            console.log("=> ERROR ! :", error);
+                        } finally {
 
+                        }
                     }
-                }
-            }, 10 * i)
-        }
-    });
+                }, 10 * i)
+            }
+        });
     console.log("Traitement terminé");
     res.json(config.http.valid.send_message_ok);
 };
@@ -573,10 +573,10 @@ var getDirArtistWithNameVariations = (db, artistName) => {
                     db.collection(COLLECTIONARTIST).updateOne({
                         name: tArtists[0].name
                     }, {
-                        $addToSet: {
-                            animux_path: pathToArtist
-                        }
-                    });
+                            $addToSet: {
+                                animux_path: pathToArtist
+                            }
+                        });
                     return reject(artistName);
                 } else if (tArtists.length > 1) {
                     console.log(tArtists.length + "-----" + artistName);
@@ -584,10 +584,10 @@ var getDirArtistWithNameVariations = (db, artistName) => {
                         db.collection(COLLECTIONARTIST).update({
                             name: tArtists[i].name
                         }, {
-                            $addToSet: {
-                                animux_path_ambiguous: pathToArtist
-                            }
-                        });
+                                $addToSet: {
+                                    animux_path_ambiguous: pathToArtist
+                                }
+                            });
                     }
                     return reject(artistName);
                 } else {
@@ -663,10 +663,10 @@ var updateArtistAnimuxPath = (db, artist, artistName) => {
         db.collection(COLLECTIONARTIST).updateOne({
             name: artist.name
         }, {
-            $push: {
-                animux_path: pathToArtist
-            }
-        })
+                $push: {
+                    animux_path: pathToArtist
+                }
+            })
     }
 }
 /**
@@ -702,15 +702,15 @@ var readFilesSongs = (rootPath) => {
 }
 */
 var readFilesSongs = (rootPath) => {
-    
+
     var fileArray = [];
-    try{
+    try {
         var files = fs.readdirSync(rootPath);
-    }catch(err){
-        console.log("_ERROR_",err);
-    }finally{
+    } catch (err) {
+        console.log("_ERROR_", err);
+    } finally {
         let l = files.length,
-        i = 0;
+            i = 0;
         for (i; i < l; i++) {
             var pathFile = rootPath + '/' + files[i];
             if (fs.lstatSync(pathFile).isFile()) {
@@ -792,53 +792,50 @@ var sanitizeFilename = (filename) => {
  */
 var findSimilarArtist = (req, res) => {
     var options = {
-            flags: 'w',
-            autoClose: true
-        },
+        flags: 'w',
+        autoClose: true
+    },
         loggerNotFound = fs.createWriteStream('animux_artist_not_found_log_3.txt', options),
         loggerFound = fs.createWriteStream('animux_artist_found_log_3.txt', options);
 
-    var rootPath="./animux_artist_not_found_log_2.txt";
-    var line, artistName="";
-    var nbLine=0, nbLineUnique=0;
-    var objArtist={};
-    var tabArtistName=[];
-    var aresimilare="";
+    var rootPath = "./animux_artist_not_found_log_2.txt";
+    var line, artistName = "";
+    var nbLine = 0, nbLineUnique = 0;
+    var objArtist = {};
+    var tabArtistName = [];
+    var aresimilare = "";
 
-    lr.eachLine(rootPath, function(line, last) {
-        if (tabArtistName.indexOf(line)===-1) {
+    lr.eachLine(rootPath, function (line, last) {
+        if (tabArtistName.indexOf(line) === -1) {
             tabArtistName.push(line);
             nbLineUnique++;
         }
         nbLine++;
-        
-        if(last){
-            objArtist.namesArtistsFiles=tabArtistName;
-            objArtist.nbArtistsFiles=tabArtistName.length;
 
-            (async()=>{
-                try
-                {
-                    var contentArtists= await processGetArtistName(req.db);
-                }
-                catch(error)
-                {
-                   // console.log("============== ERROR : ",aartistName, error);
-                }
-                finally
-                {
-                    objArtist.namesArtistsDB=contentArtists;
-                    objArtist.nbArtistsDB=contentArtists.length;
+        if (last) {
+            objArtist.namesArtistsFiles = tabArtistName;
+            objArtist.nbArtistsFiles = tabArtistName.length;
 
-                    for(let n=0;n<objArtist.nbArtistsFiles;n++){
-                        for (let m=0;m<objArtist.nbArtistsDB;m++){
-                            aresimilare=are_similar(objArtist.namesArtistsFiles[n],objArtist.namesArtistsDB[m],0.85); //0.75
-                            line=objArtist.namesArtistsFiles[n]+"\t"+aresimilare.score+"\t"+(objArtist.namesArtistsDB[m]);
+            (async () => {
+                try {
+                    var contentArtists = await processGetArtistName(req.db);
+                }
+                catch (error) {
+                    // console.log("============== ERROR : ",aartistName, error);
+                }
+                finally {
+                    objArtist.namesArtistsDB = contentArtists;
+                    objArtist.nbArtistsDB = contentArtists.length;
+
+                    for (let n = 0; n < objArtist.nbArtistsFiles; n++) {
+                        for (let m = 0; m < objArtist.nbArtistsDB; m++) {
+                            aresimilare = are_similar(objArtist.namesArtistsFiles[n], objArtist.namesArtistsDB[m], 0.85); //0.75
+                            line = objArtist.namesArtistsFiles[n] + "\t" + aresimilare.score + "\t" + (objArtist.namesArtistsDB[m]);
                             if (aresimilare.isTrue) {
                                 loggerFound.write(line + "\n");
                                 console.log(line);
-                            }else{
-                                if (aresimilare.score>0.5) loggerNotFound.write(line + "\n");
+                            } else {
+                                if (aresimilare.score > 0.5) loggerNotFound.write(line + "\n");
                             }
                         }
                     }
@@ -857,77 +854,74 @@ var findSimilarArtist = (req, res) => {
  */
 var findSimilarSong = (req, res) => {
     var options = {
-            flags: 'w',
-            autoClose: true
-        },
+        flags: 'w',
+        autoClose: true
+    },
         loggerNotFound = fs.createWriteStream('animux_song_not_found_log_2.txt', options),
         loggerFound = fs.createWriteStream('animux_song_found_log_2.txt', options);
 
-    var rootPath="./animux_song_not_found_log.txt";
-    var line, artistName, songName, animuxPath="";
-    var objSongsPerArtist={};    
+    var rootPath = "./animux_song_not_found_log.txt";
+    var line, artistName, songName, animuxPath = "";
+    var objSongsPerArtist = {};
 
-    lr.eachLine(rootPath, function(line, last) {
-        line=line.split('\t');
-        artistName=line[0];
-        songName=line[1];
-        animuxPath=line[2];
+    lr.eachLine(rootPath, function (line, last) {
+        line = line.split('\t');
+        artistName = line[0];
+        songName = line[1];
+        animuxPath = line[2];
         if (!objSongsPerArtist.hasOwnProperty(artistName)) {
-            objSongsPerArtist[artistName]={};
-            objSongsPerArtist[artistName].songsFromAnimuxFile=[];
-            objSongsPerArtist[artistName].songsFromMongoDB=[];
+            objSongsPerArtist[artistName] = {};
+            objSongsPerArtist[artistName].songsFromAnimuxFile = [];
+            objSongsPerArtist[artistName].songsFromMongoDB = [];
         }
-        objSongsPerArtist[artistName].songsFromAnimuxFile.push([songName,animuxPath]);  
-        
-        if(last){            
-            var nbLine=0, nbArtists = Object.keys(objSongsPerArtist).length;
-            var contentSongs="";
-            var line="", aresimilare="";
-            for (let i =0;i<nbArtists;i++){
-                (async(i)=>{
-                    var aartistName=Object.keys(objSongsPerArtist)[i];
-                    try
-                    {
-                        contentSongs= await processGetSongByArtistName(req.db,aartistName);
-                        objSongsPerArtist[aartistName].songsFromMongoDB=(contentSongs);
-                    }
-                    catch(error)
-                    {
-                       // console.log("============== ERROR : ",aartistName, error);
-                    }
-                    finally
-                    {
-                        nbLine++;
-                        if (nbLine==nbArtists){
+        objSongsPerArtist[artistName].songsFromAnimuxFile.push([songName, animuxPath]);
 
-                            for (let j=0;j<nbArtists;j++){
-                                var artistObjects=Object.keys(objSongsPerArtist)[j];
-                                var artistSongsFromAnimuxFile=objSongsPerArtist[artistObjects].songsFromAnimuxFile;    
-                                var artistSongsFromMongoDB=objSongsPerArtist[artistObjects].songsFromMongoDB;
-                                
-                                for(let n=0;n<artistSongsFromAnimuxFile.length;n++){
-                                    for (let m=0;m<artistSongsFromMongoDB.length;m++){
-                                        aresimilare=are_similar(artistSongsFromAnimuxFile[n][0],artistSongsFromMongoDB[m],0.5); //0.75
-                                        line=artistObjects+"\t"+aresimilare.score+"\t"+(artistSongsFromAnimuxFile[n][0])+"\t"+(artistSongsFromMongoDB[m])+"\t"+artistSongsFromAnimuxFile[n][1];
+        if (last) {
+            var nbLine = 0, nbArtists = Object.keys(objSongsPerArtist).length;
+            var contentSongs = "";
+            var line = "", aresimilare = "";
+            for (let i = 0; i < nbArtists; i++) {
+                (async (i) => {
+                    var aartistName = Object.keys(objSongsPerArtist)[i];
+                    try {
+                        contentSongs = await processGetSongByArtistName(req.db, aartistName);
+                        objSongsPerArtist[aartistName].songsFromMongoDB = (contentSongs);
+                    }
+                    catch (error) {
+                        // console.log("============== ERROR : ",aartistName, error);
+                    }
+                    finally {
+                        nbLine++;
+                        if (nbLine == nbArtists) {
+
+                            for (let j = 0; j < nbArtists; j++) {
+                                var artistObjects = Object.keys(objSongsPerArtist)[j];
+                                var artistSongsFromAnimuxFile = objSongsPerArtist[artistObjects].songsFromAnimuxFile;
+                                var artistSongsFromMongoDB = objSongsPerArtist[artistObjects].songsFromMongoDB;
+
+                                for (let n = 0; n < artistSongsFromAnimuxFile.length; n++) {
+                                    for (let m = 0; m < artistSongsFromMongoDB.length; m++) {
+                                        aresimilare = are_similar(artistSongsFromAnimuxFile[n][0], artistSongsFromMongoDB[m], 0.5); //0.75
+                                        line = artistObjects + "\t" + aresimilare.score + "\t" + (artistSongsFromAnimuxFile[n][0]) + "\t" + (artistSongsFromMongoDB[m]) + "\t" + artistSongsFromAnimuxFile[n][1];
                                         if (aresimilare.isTrue) {
 
                                             req.db.collection(COLLECTIONSONG).updateOne({
                                                 name: artistObjects,
                                                 title: artistSongsFromMongoDB[m]
                                             }, {
-                                                $addToSet: {
-                                                    animux_paths: artistSongsFromAnimuxFile[n][1]
-                                                }
-                                            });
+                                                    $addToSet: {
+                                                        animux_paths: artistSongsFromAnimuxFile[n][1]
+                                                    }
+                                                });
                                             // on écrit les songs similaires dans des fichiers de log
                                             loggerFound.write(line + "\n");
                                         }
                                     }
-                                }                                
+                                }
                             }
                             console.log("Traitement terminé");
                             return res.json(config.http.valid.send_message_ok);
-                        }        
+                        }
                     }
                 })(i);
             }
@@ -941,85 +935,82 @@ var findSimilarSong = (req, res) => {
  * Dans la base de données wasabi, les songs dont les noms sont similaires aux noms des songs animux auront le champ "animux_paths" avec comme contenu le path des songs animux 
  * ---
  */
-var findSimilarSong_animux_mongodb=(req, res)=>{
+var findSimilarSong_animux_mongodb = (req, res) => {
     var options = {
-            flags: 'w',
-            autoClose: true
-        },
+        flags: 'w',
+        autoClose: true
+    },
         loggerFound = fs.createWriteStream('animux_song_found_log_4.txt', options);
 
-    var rootPath="./animux_artist_found_log_3.txt";
-    var artistName, artistName_animux, songs_animux, animuxPath="";
-    var objSongsPerArtist={};
+    var rootPath = "./animux_artist_found_log_3.txt";
+    var artistName, artistName_animux, songs_animux, animuxPath = "";
+    var objSongsPerArtist = {};
 
-    lr.eachLine(rootPath, function(line, last) {
-        line=line.split('\t');
-        artistName_animux=(line[0]);
-        artistName=(line[2]);
-        
+    lr.eachLine(rootPath, function (line, last) {
+        line = line.split('\t');
+        artistName_animux = (line[0]);
+        artistName = (line[2]);
+
         if (!objSongsPerArtist.hasOwnProperty(artistName)) {
-            objSongsPerArtist[artistName]={};
-            objSongsPerArtist[artistName].artistName_animux=artistName_animux;
-            objSongsPerArtist[artistName].songsFromAnimuxFile=[];
+            objSongsPerArtist[artistName] = {};
+            objSongsPerArtist[artistName].artistName_animux = artistName_animux;
+            objSongsPerArtist[artistName].songsFromAnimuxFile = [];
         }
         songs_animux = readDirsSongs(PATH_MAPPING_ANIMUX + '/' + artistName_animux[0].toUpperCase() + '/' + encodeURIComponent(artistName_animux));
-        for (let i=0;i<songs_animux.length;i++){
-            objSongsPerArtist[artistName].songsFromAnimuxFile.push([decodeURI(songs_animux[i].split("/")[5]),songs_animux[i]]);
+        for (let i = 0; i < songs_animux.length; i++) {
+            objSongsPerArtist[artistName].songsFromAnimuxFile.push([decodeURI(songs_animux[i].split("/")[5]), songs_animux[i]]);
         }
-        if(last){
+        if (last) {
 
-            var nbLine=0, nbArtists = Object.keys(objSongsPerArtist).length;
-            var contentSongs="";
-            var line="", aresimilare="";
-            for (let i =0;i<nbArtists;i++){
-                (async(i)=>{
-                    var aartistName=Object.keys(objSongsPerArtist)[i];
-                    try
-                    {
-                        contentSongs= await processGetSongByArtistName(req.db,aartistName);
-                        objSongsPerArtist[aartistName].songsFromMongoDB=(contentSongs);
+            var nbLine = 0, nbArtists = Object.keys(objSongsPerArtist).length;
+            var contentSongs = "";
+            var line = "", aresimilare = "";
+            for (let i = 0; i < nbArtists; i++) {
+                (async (i) => {
+                    var aartistName = Object.keys(objSongsPerArtist)[i];
+                    try {
+                        contentSongs = await processGetSongByArtistName(req.db, aartistName);
+                        objSongsPerArtist[aartistName].songsFromMongoDB = (contentSongs);
                     }
-                    catch(error)
-                    {
-                       // console.log("============== ERROR : ",aartistName, error);
+                    catch (error) {
+                        // console.log("============== ERROR : ",aartistName, error);
                     }
-                    finally
-                    {
+                    finally {
                         nbLine++;
-                        if (nbLine==nbArtists){
-                            for (let j=0;j<nbArtists;j++){
-                                var artistObjects=Object.keys(objSongsPerArtist)[j];
-                                var artistSongsFromAnimuxFile=objSongsPerArtist[artistObjects].songsFromAnimuxFile;    
-                                var artistSongsFromMongoDB=objSongsPerArtist[artistObjects].songsFromMongoDB;
-                                
-                                for(let n=0;n<artistSongsFromAnimuxFile.length;n++){
-                                    for (let m=0;m<artistSongsFromMongoDB.length;m++){
-                                        aresimilare=are_similar(artistSongsFromAnimuxFile[n][0],artistSongsFromMongoDB[m],0.75); //0.75
-                                        line=artistObjects+"\t"+aresimilare.score+"\t"+(artistSongsFromAnimuxFile[n][0])+"\t"+(artistSongsFromMongoDB[m])+"\t"+artistSongsFromAnimuxFile[n][1];
+                        if (nbLine == nbArtists) {
+                            for (let j = 0; j < nbArtists; j++) {
+                                var artistObjects = Object.keys(objSongsPerArtist)[j];
+                                var artistSongsFromAnimuxFile = objSongsPerArtist[artistObjects].songsFromAnimuxFile;
+                                var artistSongsFromMongoDB = objSongsPerArtist[artistObjects].songsFromMongoDB;
+
+                                for (let n = 0; n < artistSongsFromAnimuxFile.length; n++) {
+                                    for (let m = 0; m < artistSongsFromMongoDB.length; m++) {
+                                        aresimilare = are_similar(artistSongsFromAnimuxFile[n][0], artistSongsFromMongoDB[m], 0.75); //0.75
+                                        line = artistObjects + "\t" + aresimilare.score + "\t" + (artistSongsFromAnimuxFile[n][0]) + "\t" + (artistSongsFromMongoDB[m]) + "\t" + artistSongsFromAnimuxFile[n][1];
                                         if (aresimilare.isTrue) {
 
                                             req.db.collection(COLLECTIONSONG).updateOne({
                                                 name: artistObjects,
                                                 title: artistSongsFromMongoDB[m]
                                             }, {
-                                                $addToSet: {
-                                                    animux_paths: artistSongsFromAnimuxFile[n][1]
-                                                }
-                                            });
+                                                    $addToSet: {
+                                                        animux_paths: artistSongsFromAnimuxFile[n][1]
+                                                    }
+                                                });
                                             // on écrit les songs similaires dans des fichiers de log
                                             loggerFound.write(line + "\n");
                                         }
                                     }
-                                }                        
-                            }                               
+                                }
+                            }
                             console.log("Traitement terminé");
                             return res.json(config.http.valid.send_message_ok);
-                        }        
+                        }
                     }
                 })(i);
             }
         }
-        
+
     });
 }
 
@@ -1028,26 +1019,25 @@ var findSimilarSong_animux_mongodb=(req, res)=>{
  * API permettant d'enregistrer les animux_paths dans un fichier de log
  * ---
  */
-var getUniqueAnimuxPaths=(req,res)=>{
+var getUniqueAnimuxPaths = (req, res) => {
     var options = {
-            flags: 'w',
-            autoClose: true
-        },
+        flags: 'w',
+        autoClose: true
+    },
         loggerFound = fs.createWriteStream('animux_song_found_log_final_AnimuxPaths.txt', options);
-    var animuxPaths, line="";
-    
-    (async()=>{
-        try{
-            animuxPaths= await processGetAnimuxPaths(req.db);
+    var animuxPaths, line = "";
+
+    (async () => {
+        try {
+            animuxPaths = await processGetAnimuxPaths(req.db);
             //animuxPaths= await processGetAnimuxPath(req.db);
         }
-        catch(error)
-        {
-           console.log("============== ERROR : ", error);
+        catch (error) {
+            console.log("============== ERROR : ", error);
         }
-        finally{
-            for (let i=0;i<animuxPaths.length;i++){
-                line+=animuxPaths[i]+"\n";
+        finally {
+            for (let i = 0; i < animuxPaths.length; i++) {
+                line += animuxPaths[i] + "\n";
             }
             loggerFound.write(line);
             console.log("Traitement terminé");
@@ -1056,11 +1046,38 @@ var getUniqueAnimuxPaths=(req,res)=>{
     })();
 }
 
-var processGetAnimuxPaths= (db)=>{
+/**
+ *  API permettant de mettre à jour les champs "animux_contents" à partir des chemins "animux_paths"
+ *  - pour toute les songs ayant un animux_paths.length>0
+ *  - lire les fichiers animux et enregistrer le contenu dans le champ "animux_contents"
+ *  -
+ * @param {*} req 
+ * @param {*} res 
+ */
+var updateAnimuxContents = (req, res) => {
+    /*
+    // https://localhost/updatedb/animux/updateAnimuxContents
+    req.db.collection(COLLECTIONSONG).find({'animux_paths.0':{$exists:true}}).forEach(function(doc){
+        if (doc){
+            for (let i=0;i<doc.animux_paths.length;i++){
+                readContentFileSong(doc.animux_paths[i]).then((data) => {
+                    req.db.collection(COLLECTIONSONG).update({_id: doc._id},{$push:{"animux_contents": data}});
+                });
+            }
+        }
+    });
+    */
+    res.json({ msg: 'updateAnimuxContents'});
+}
+
+var processGetAnimuxPathsNotEmpty = (db) => {
+}
+
+var processGetAnimuxPaths = (db) => {
     return new Promise(function (resolve, reject) {
-        db.collection(COLLECTIONSONG).distinct("animux_paths",(err, tSongs) => {
+        db.collection(COLLECTIONSONG).distinct("animux_paths", (err, tSongs) => {
             if (err) return res.status(404).json(config.http.error.song_404);
-            if (tSongs.length>0) {
+            if (tSongs.length > 0) {
                 return resolve(tSongs);
             } else {
                 return reject(tSongs);
@@ -1068,11 +1085,11 @@ var processGetAnimuxPaths= (db)=>{
         });
     });
 }
-var processGetAnimuxPath= (db)=>{
+var processGetAnimuxPath = (db) => {
     return new Promise(function (resolve, reject) {
-        db.collection(COLLECTIONSONG).distinct("animux_path",(err, tSongs) => {
+        db.collection(COLLECTIONSONG).distinct("animux_path", (err, tSongs) => {
             if (err) return res.status(404).json(config.http.error.song_404);
-            if (tSongs.length>0) {
+            if (tSongs.length > 0) {
                 return resolve(tSongs);
             } else {
                 return reject(tSongs);
@@ -1081,12 +1098,12 @@ var processGetAnimuxPath= (db)=>{
     });
 }
 
-var processGetArtistName = (db)=>{
+var processGetArtistName = (db) => {
     return new Promise(function (resolve, reject) {
-        db.collection(COLLECTIONARTIST).distinct("name",(err, tArtists) => {
+        db.collection(COLLECTIONARTIST).distinct("name", (err, tArtists) => {
             if (err) return res.status(404).json(config.http.error.artist_404);
 
-            if (tArtists.length>0) {
+            if (tArtists.length > 0) {
                 //On resolve le artistName
                 return resolve(tArtists);
             } else {
@@ -1097,10 +1114,10 @@ var processGetArtistName = (db)=>{
 }
 var processGetSongByArtistName = (db, artistName) => {
     return new Promise(function (resolve, reject) {
-        db.collection(COLLECTIONSONG).distinct("title",{name:artistName},{title:1},(err, tSongs) => {
+        db.collection(COLLECTIONSONG).distinct("title", { name: artistName }, { title: 1 }, (err, tSongs) => {
             if (err) return res.status(404).json(config.http.error.song_404);
 
-            if (tSongs.length>0) {
+            if (tSongs.length > 0) {
                 //On resolve le artistName
                 return resolve(tSongs);
             } else {
@@ -1109,12 +1126,12 @@ var processGetSongByArtistName = (db, artistName) => {
         });
     });
 }
-var normalize_text = (text)=>{
+var normalize_text = (text) => {
     text = text.replace(/<\/?[^>]*>/g, '');
     text = text.replace(/[,\.:;\?!]/g, '');
     text = text.replace(/\([^()]*\)/g, '');
     text = text.replace(/( ){2,}/g, ' ');
-    
+
     text = utilHandler.removeDiacritic(text);
     text = text.toLowerCase();
     text = replace_strangeAccent(text);
@@ -1122,8 +1139,8 @@ var normalize_text = (text)=>{
     return text;
 }
 
-var replace_strangeAccent= (text)=>{
-    text= text
+var replace_strangeAccent = (text) => {
+    text = text
         .replace(/é/gi, "é")
         .replace(/ë/gi, "ë")
         .replace(/ö/gi, "ö")
@@ -1142,17 +1159,17 @@ var replace_strangeAccent= (text)=>{
 }
 
 
-var string_similarity = (some, other)=>{
-    if(!some || !other){
+var string_similarity = (some, other) => {
+    if (!some || !other) {
         return 0.0
-    }    
-    return  1.0 - new Levenshtein(some, other) / Math.max(some.length, other.length)
+    }
+    return 1.0 - new Levenshtein(some, other) / Math.max(some.length, other.length)
 }
-var are_similar=(some, other, threshold)=>{
+var are_similar = (some, other, threshold) => {
     var _score = string_similarity(normalize_text(some), normalize_text(other));
-    var _response={
-        isTrue : (_score>threshold),
-        score :_score.toFixed(3)
+    var _response = {
+        isTrue: (_score > threshold),
+        score: _score.toFixed(3)
     }
     return _response;
 }
@@ -1171,3 +1188,4 @@ exports.findSimilarSong = findSimilarSong;
 exports.findSimilarArtist = findSimilarArtist;
 exports.findSimilarSong_animux_mongodb = findSimilarSong_animux_mongodb;
 exports.getUniqueAnimuxPaths = getUniqueAnimuxPaths;
+exports.updateAnimuxContents = updateAnimuxContents;

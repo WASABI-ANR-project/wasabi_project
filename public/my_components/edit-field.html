@@ -1,0 +1,252 @@
+<!-- IMPORTS -->
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/iron-icons/social-icons.html">
+<link rel="import" href="../bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../bower_components/paper-ripple/paper-ripple.html">
+<link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
+
+<!-- MODULE -->
+<dom-module id="edit-field">
+    <template>
+        <!-- CSS -->
+        <style>
+            * {
+                border: 0px;
+                padding: 0px;
+                margin: 0px;
+
+                border-collapse: collapse;
+                box-sizing: border-box;
+                vertical-align: top;
+            }
+
+            *:focus {
+                outline: 0;
+            }
+
+            :host,
+            article {
+                display: flex;
+                flex-direction: row;
+                justify-content: flex-start;
+                align-items: flex-start;
+
+                flex: 1;
+                width: 100%;
+
+                position: relative;
+            }
+
+            article span,
+            article textarea {
+                font-size: 14px;
+                padding: 10px;
+
+                display: inline-block;
+            }
+
+            article .span_name {
+                background: #fafafa;
+
+                min-width: 170px;
+            }
+
+            article .span_value {
+                flex: 1;
+                resize: none;
+
+                max-height: 300px;
+                min-height: 40px;
+            }
+
+            .edit_item {
+                background: #eee;
+                border-bottom: 1px solid green;
+
+            }
+
+            article .section_edit {
+                position: absolute;
+                top: 0px;
+                right: 0px;
+            }
+
+            article .section_edit button:hover {
+                background: rgba(0, 0, 0, 0.8);
+            }
+
+            article .section_edit button {
+                background: rgba(0, 0, 0, 0.4);
+                color: #fff;
+
+                font-size: 12px;
+                padding: 4px;
+
+                cursor: pointer;
+            }
+
+            .hidden {
+                display: none;
+            }
+        </style>
+
+        <!-- HTML -->
+        <iron-ajax auto url="/search/auth" method="GET" headers="[[headers]]" handle-as="json" last-response="{{auth}}"></iron-ajax>
+        <!--permet de faire des requêtes de modification-->
+        <iron-ajax id="get_content" headers="[[headers]]" method="GET" on-response="responseHandler" handle-as="json"> </iron-ajax>
+        <iron-ajax id="put_content" headers="[[headers]]" method="PUT" content-type="application/json"></iron-ajax>
+        <!-- {{auth.isConnected}} -->
+
+        <article>
+            <!-- name -->
+            <span class="span_name">{{namef}}</span>
+
+            <!-- value -->
+            <template is="dom-if" if="{{multiple}}">
+                <span id="{{idf}}" class="span_value">
+                    <template is="dom-repeat" items="{{valuef}}" as="element">
+                        <a href="#/">{{element}}</a>
+                        <template is="dom-if" if="{{lastItem(index,valuef.length)}}">- </template>
+                    </template>
+                </span>
+            </template>
+
+            <template is="dom-if" if="{{!multiple}}">
+                <textarea id="{{idf}}" class="span_value" contenteditable="false" readonly>{{valuef}}</textarea>
+            </template>
+
+            <!-- edit/save buttons -->
+            <template is="dom-if" if="{{!auth.isConnected}}">
+                <section class="section_edit">
+                    <button id="{{idf}}_edit" on-click="doEdit">edit</button>
+                    <button id="{{idf}}_save" on-click="doSave" class="hidden">save</button>
+                    <button id="{{idf}}_cancel" on-click="doCancel" class="hidden">cancel</button>
+                </section>
+            </template>
+        </article>
+
+    </template>
+
+    <!-- JS -->
+    <script>
+        // element registration
+        Polymer({
+            is: "edit-field",
+            properties: {
+                artistf: {
+                    type: Object,
+                },
+                idf: {
+                    type: Object,
+                },
+                namef: {
+                    type: Object,
+                },
+                valuef: {
+                    type: Object,
+                },
+                multiple: {
+                    type: Boolean,
+                    value: false
+                }
+            },
+            ready: function (e) {
+            },
+            lastItem: function (index, nbTotal) {
+                return (index < nbTotal - 1);
+            },
+            _encodeUri: function (title) {
+                return encodeURIComponent(title);
+            },
+            getURLSong: function (_param) {
+                return "/search/artist/" + this._encodeUri(this.artistf.name) + "/album/" + this._encodeUri(this.artistf.albums.title) + "/song/" + this._encodeUri(this.artistf.albums.songs.title) + "/" + _param;
+            },
+            doEdit: function () {
+                console.log(this.idf, this.namef, this.valuef);
+
+                let _el = document.querySelector('#' + this.idf);
+                let _el_bt_edit = document.querySelector('#' + this.idf + "_edit");
+                let _el_bt_save = document.querySelector('#' + this.idf + "_save");
+                let _el_bt_cancel = document.querySelector('#' + this.idf + "_cancel");
+
+                // effect
+                console.log('artistf id', this.artistf.albums.songs._id);
+
+                // editable content
+                _el.setAttribute('contenteditable', true);
+                _el.removeAttribute('readonly');
+                _el.style.resize = "vertical";
+                _el.classList.add('edit_item');
+                _el.focus();
+
+                // hide edit button && show save/cancel button
+                _el_bt_edit.classList.add('hidden');
+                _el_bt_save.classList.remove('hidden');
+                _el_bt_cancel.classList.remove('hidden');
+            },
+            doCancel: function () {
+
+                let _el = document.querySelector('#' + this.idf);
+                let _el_bt_edit = document.querySelector('#' + this.idf + "_edit");
+                let _el_bt_save = document.querySelector('#' + this.idf + "_save");
+                let _el_bt_cancel = document.querySelector('#' + this.idf + "_cancel");
+
+                // effect
+                _el.innerHTML = this.valuef;
+
+                // editable content
+                _el.setAttribute('contenteditable', false);
+                _el.setAttribute('readonly', true);
+                _el.style.resize = "none";
+                _el.classList.remove('edit_item');
+
+                // show edit button && hide save/cancel button
+                _el_bt_edit.classList.remove('hidden');
+                _el_bt_save.classList.add('hidden');
+                _el_bt_cancel.classList.add('hidden');
+            },
+            doSave: function () {
+
+                let _el = document.querySelector('#' + this.idf);
+                let _el_bt_edit = document.querySelector('#' + this.idf + "_edit");
+                let _el_bt_save = document.querySelector('#' + this.idf + "_save");
+                let _el_bt_cancel = document.querySelector('#' + this.idf + "_cancel");
+
+                // effect
+                this.valuef = _el.value;
+
+                //Construction de la requête + on lance la requête
+                if (confirm('Are you sure you want to update this fields ?')) {
+
+                    console.log('artistf id', this.artistf.albums.songs._id);
+                    let fieldUpdate={
+                        "_id": this.artistf.albums.songs._id,
+                        "notes": _el.value
+                    };
+                    //this.$.put_content.body = JSON.stringify(fieldUpdate);
+                    this.$.put_content.body = fieldUpdate;
+                    this.$.put_content.url = this.getURLSong('notes');
+                    console.log(this.$.put_content.body);
+                    console.log(this.$.put_content.url);
+                    this.$.put_content.generateRequest();
+                }else{
+                    console.log('not saved');
+                }
+
+                // editable content
+                _el.setAttribute('contenteditable', false);
+                _el.setAttribute('readonly', true);
+                _el.style.resize = "none";
+                _el.classList.remove('edit_item');
+
+                // show edit button && hide save/cancel button
+                _el_bt_edit.classList.remove('hidden');
+                _el_bt_save.classList.add('hidden');
+                _el_bt_cancel.classList.add('hidden');
+            }
+        });
+    </script>
+</dom-module>

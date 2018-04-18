@@ -10,46 +10,22 @@
 <dom-module id="page-multitrack">
     <template>
         <style>
-            .flex-wrap {
-                @apply(--layout-horizontal);
-                @apply(--layout-wrap);
-            }
+            .app_content{
 
-            paper-material {
-                margin-bottom: 5%;
-            }
+                width:100%;
+                margin:0 auto;
 
-            .inherit {
-                color: inherit;
-                background-color: inherit;
             }
-
-            paper-card {
-                width: 100%;
-                padding-left: 5%;
-                padding-top: 1%;
-                padding-bottom: 1%;
-                cursor: pointer;
-                color: black;
-            }
-
-            .search_title {
-                position: absolute;
-                margin-top: 10px;
-                margin-left: 10px;
-            }
-
-            .center {
-                text-align: center;
-            }
-
             .searchText-info {
                 font-size: 1.5em;
                 padding: 25px;
                 color: #333333;
+                text-align: center;
             }
 
             #ul_content {
+                background: linear-gradient(#fafafa,#fff);
+                box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
 
                 list-style: none;
                 margin: 0px !important;
@@ -57,7 +33,6 @@
             }
 
             #ul_content li {
-                background: #fff;
             }
 
             #ul_content li a:hover {
@@ -68,7 +43,7 @@
 
             #ul_content li a {
                 color: #111;
-                border-bottom: 1px solid #ccc;
+                border-bottom: 1px solid #ddd;
 
                 padding: 20px;
 
@@ -76,16 +51,68 @@
                 text-decoration: none;
                 transition: 0.5s;
             }
+
+
+            .app_pagination {
+                background: #3f51b5;
+
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                position: relative;
+
+                margin: 0 auto;
+                padding: 10px;
+                margin-top: 50px;
+            }
+
+            .app_pagination paper-button:hover {
+                color: #fff;
+            }
+
+            .app_pagination paper-button {
+                color: #aaa;
+            }
+
+            .hidden {
+                display: none;
+            }
+
+            .img_loading {
+                height: 50px;
+                vertical-align: middle;
+            }
+
+            #img_loading {
+                position: absolute;
+                left: 0px;
+                top: 7px;
+            }
         </style>
-        <paper-progress indeterminate class="blue"></paper-progress>
-        <iron-ajax id="get_count" on-response='_setNbElements' auto url="/search/song/count/multitrack" last-response="{{countField}}"
-            handleAs="json"></iron-ajax>
-        <iron-ajax id="get_content" auto url="/search/song/multitrack/0" on-response="_onResponse" last-response="{{multitrack}}"
+
+        <iron-ajax id="get_count" on-response='_countFinished' auto url="/search/song/count/multitrack" last-response="{{countField}}"
             handleAs="json"></iron-ajax>
 
-        <p class="center searchText-info">We have {{countField.count}} multitrack songs</p>
-        <progress id="progress_bar" min=0 max=100 value=0 style="width:100%"></progress>
-        <ul id="ul_content"></ul>
+        <div class="app_content">
+            <p class="center searchText-info">We have
+                <template id="templateForm" is="dom-if" if="{{!indicator}}">
+                    <img class='img_loading' src="http://backgroundcheckall.com/wp-content/uploads/2017/12/loading-gif-transparent-background-6.gif">
+                </template>
+                <template id="templateForm" is="dom-if" if="{{indicator}}">
+                    <b>{{indicator}}</b>
+                </template>
+                multitrack songs
+            </p>
+            <ul id="ul_content"></ul>
+            <div id="app_pagination" class="app_pagination hidden">
+                <img id='img_loading' class='img_loading' src="http://backgroundcheckall.com/wp-content/uploads/2017/12/loading-gif-transparent-background-6.gif">
+
+                <paper-button id='bt_first'>first</paper-button>
+                <paper-button id='bt_previous'>previous</paper-button>
+                <paper-button id='bt_next'>next</paper-button>
+                <paper-button id='bt_last'>last</paper-button>
+            </div>
+        </div>
     </template>
 
     <script>
@@ -94,83 +121,117 @@
             is: "page-multitrack",
             // add properties and methods on the element's prototype
             properties: {
-                nbLoad: {
-                    type: Number,
-                    value: 1
+                pagination: {
+                    type: Object,
+                    value: null
                 },
-                numTotal: {
-                    type: Number,
-                    value: 2800
-                },
-                nbPart: {
-                    type: Number,
-                    value: 50
+                indicator: {
+                    type: Object,
+                    value: null
                 }
             },
             ready: function (e) {
                 console.log('ready');
-            },
-            _loadData: function (e) {
-                let self = this;
-                new Promise((resolve, reject) => {
-                    let nbL = self.nbLoad++;
-                    console.log('this.nbLoad : ' + nbL);
-                    let _urlAPI = "https://localhost/search/song/multitrack/" + nbL;
-                    var xhttp = new XMLHttpRequest();
-                    xhttp.open("GET", _urlAPI, true);
-                    xhttp.onreadystatechange = function (e) {
-                        if (this.readyState == 4 && this.status == 200) {
-                            console.log(nbL + " => " + (nbL * self.nbPart / self.numTotal) * 100);
-                            document.querySelector('#progress_bar').value = (nbL * self.nbPart / self.numTotal) * 100;
-                            let data = (JSON.parse(xhttp.responseText));
-                            let liHTML = '';
-                            for (d in data) {
-                                liHTML = `<li class="style-scope page-multitrack"><a href="#/search/artist/${encodeURIComponent(data[d].name)}/album/${encodeURIComponent(data[d].albumTitle)}/song/${encodeURIComponent(data[d].title)}" class="style-scope page-multitrack">${(data[d].name)} - ${(data[d].title)} - ${(data[d].albumTitle)}</a></li>`;
-                                document.querySelector('#ul_content').insertAdjacentHTML('beforeend', liHTML);
-                            }
-                            //this.nbLoad++;
-                            if (((nbL * self.nbPart / self.numTotal) * 100) > 100) {
-                                reject(false);
-                                alert('finished');
-                                return false;
-                            } else {
-                                // self._loadData();
-                                resolve(true);
-                            }
-                        }
-                    };
 
-                    xhttp.send();
-                }).then(function (valeur) {
-                    console.log(valeur);
-                    console.log('// Promesse tenue');
-                    self._loadData();
-                }, function (raison) {
-                    console.log(raison);
-                    console.log('// Rejet de la promesse');
-                })
-            },
-            _setNbElements: function (e) {
-                const data = e.detail.response;
-                console.log("---loaded : " + data.count);
-                this.numTotal = data.count;
-            },
-            _onResponse: function (e) {
-                const data = e.detail.response;
-                let liHTML = '';
-                //<img class="song_search_bar" src="../../img/song_search_bar.svg" alt="Band">
-                for (d in data) {
-                    liHTML = `<li class="style-scope page-multitrack"><a href="#/search/artist/${this._encodeUri(data[d].name)}/album/${this._encodeUri(data[d].albumTitle)}/song/${this._encodeUri(data[d].title)}" class="style-scope page-multitrack">${(data[d].name)} - ${(data[d].title)} - ${(data[d].albumTitle)}</a></li>`;
-                    this.$.ul_content.insertAdjacentHTML('beforeend', liHTML);
-                }
-                document.querySelector('#progress_bar').value = (1 * this.nbPart / this.numTotal) * 100;
+                let _ul_content = this.$.ul_content;
+                let _img_loading = this.$.img_loading;
 
-                this._loadData();
+                this.pagination = new Pagination(_ul_content, `/search/song/multitrack/`, _img_loading);
+
+                let _bt_first = this.$.bt_first;
+                let _bt_previous = this.$.bt_previous;
+                let _bt_next = this.$.bt_next;
+                let _bt_last = this.$.bt_last;
+
+                _bt_first.onclick = () => this.pagination.first();
+                _bt_previous.onclick = () => this.pagination.previous();
+                _bt_next.onclick = () => this.pagination.next();
+                _bt_last.onclick = () => this.pagination.last();
             },
-            _encodeUri: function (nameArtist) {
-                return encodeURIComponent(nameArtist);
+            _updateReq: function (_num) {
+                this.$.get_content.url = `/search/song/multitrack/${_num}`;
+                this.$.get_content.generateRequest();
             },
+            _countFinished: function (e) {
+                const _nbSongs = e.detail.response.count;
+                this.pagination.lastPage = parseInt(_nbSongs / 10);
+                this.$.app_pagination.classList.remove('hidden');
+
+                this.indicator = _nbSongs;
+            }
         });
 
+
+        class Pagination {
+            constructor(_container, _urlAPI, _indicator) {
+                this.container = _container;
+                this.indicator = _indicator;
+
+                this.page = 1;
+                this.lastPage = 1;
+                this.nbPageViews = 2;
+
+                this.urlAPI = _urlAPI;
+                this.getAPIResults();
+            }
+
+            getAPIResults() {
+                this.indicator.style.display = "flex";
+                fetch(`${this.urlAPI + this.page}`).
+                    then(response => {
+                        response.json().then(res => {
+                            let _listHTML = "";
+                            Object.keys(res).map(
+                                (elem, index) => {
+                                    _listHTML += this.render(res[elem]);
+                                }
+                            )
+                            this.container.innerHTML = _listHTML;
+                            this.indicator.style.display = "none";
+                        })
+                    })
+            }
+
+            first() {
+                if (this.page != 1) {
+                    this.page = 1;
+                    this.getAPIResults();
+                }
+            }
+
+            last() {
+                if (this.page != this.lastPage) {
+                    this.page = this.lastPage;
+                    this.getAPIResults();
+                }
+            }
+
+            next() {
+                if (this.page < this.lastPage) {
+                    this.page += 1;
+                    this.getAPIResults();
+                }
+            }
+
+            previous() {
+                if (this.page > 1) {
+                    this.page -= 1;
+                    this.getAPIResults();
+                }
+            }
+
+            _encodeUri(nameArtist) {
+                return encodeURIComponent(nameArtist);
+            }
+
+            render(data) {
+                return `
+                <li class="style-scope page-multitrack">
+                    <a href="#/search/artist/${this._encodeUri(data.name)}/album/${this._encodeUri(data.albumTitle)}/song/${this._encodeUri(data.title)}" class="style-scope page-multitrack">
+                        <u>${(data.title)}</u> - <i>${(data.albumTitle)}</i> by <b>${(data.name)}</b>
+                        </a>
+                        </li>`;
+            }
+        }
     </script>
 </dom-module>

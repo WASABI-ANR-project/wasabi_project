@@ -2,6 +2,10 @@ import request from 'request';
 import xml from 'xml';
 import sparql from 'sparql';
 
+var getInfos=(req,res)=>{
+    res.json({msg:'welcome'});
+}
+
 /**
  * Permet d'afficher les suggestions proposé par Discoveryhub concernant l'élément recherché
  * @param {*} req 
@@ -78,5 +82,6 @@ var requestDH = (urlDH) => {
     })
 };
 
+exports.getInfos = getInfos;
 exports.getCommonalities = getCommonalities;
 exports.getSuggestions = getSuggestions;
