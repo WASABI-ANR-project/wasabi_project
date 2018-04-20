@@ -92,15 +92,15 @@
 
             <table style="margin-left: auto; margin-right: auto;">
                 <tr><td>
-                    <button id="bplay" type="button" class="btn btn-default btn-lg" onclick="playAllTracks(0);" disabled>
+                    <button id="bplay" type="button" class="btn btn-default btn-lg" onclick="playAllTracks(0);context.resume();" disabled>
                         <span class="glyphicon glyphicon-play"></span>
                     </button>
 
-                    <button id="bpause" onclick="pauseAllTracks();" disabled type="button" class="btn btn-default btn-lg">
+                    <button id="bpause" onclick="pauseAllTracks();context.resume();" disabled type="button" class="btn btn-default btn-lg">
                         <span class="glyphicon glyphicon-pause"></span>
                     </button>
 
-                    <button id="bstop" onclick="stopAllTracks();"  type="button" class="btn btn-default btn-lg" disabled>
+                    <button id="bstop" onclick="stopAllTracks();context.resume();"  type="button" class="btn btn-default btn-lg" disabled>
                         <span class="glyphicon glyphicon-stop"></span>
                     </button>
                     <button id="brecordMix" onclick="toggleRecordMix();"type="button" class="btn btn-default btn-lg" style="font-size: 10px;

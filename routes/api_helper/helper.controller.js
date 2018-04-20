@@ -16,6 +16,9 @@ const _apiYouTubeKey = "AIzaSyD9ospyRhErY0B04kL3BDfa3RzihOcgDgE";
 var getInfos = (req, res) => {
     res.json({ msg: 'infos' })
 }
+
+
+/** ---------------- DEEZER ---------------- */
 /**
  *  API permettant de détecter les liens de preview vide et les remplaces par les preview DEEZER trouvés à partir de l'ISRC
  * @param {*} req 
@@ -198,6 +201,7 @@ const updatePreviewDeezerNull = (req, res) => {
 
 
 
+/** ---------------- YOUTUBE ---------------- */
 /**
  * - on récupère les urlYouTube (=youtube_id) de la collection songs
  * - pour chaque urlYouTube, on vérifie s'il existe :
@@ -317,7 +321,7 @@ const getYouTubeLinkFromLW = (req, res) => {
             if (urlYouTube) return resolve(urlYouTube);
             else resolve(false);
         } catch (err) {
-            console.error(err.code + ' ===== getArtistFromCategorie ===== ' + url);
+            console.error(err.code + ' ===== getYouTubeLinkFromLW ===== ' + url);
             return reject(false);
         }
     }).then(function (data) {
@@ -325,6 +329,10 @@ const getYouTubeLinkFromLW = (req, res) => {
     });
 }
 
+
+
+
+/** ---------------- REPRISES ---------------- */
 const getReprises=(req,res)=>{
     
     return new Promise(function (resolve, reject) {
@@ -405,6 +413,7 @@ const getReprises=(req,res)=>{
         res.json({res:data});
     })
 }
+
 
 /**
  * 
