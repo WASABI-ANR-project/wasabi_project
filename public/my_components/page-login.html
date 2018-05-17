@@ -51,7 +51,7 @@
                     <paper-input type="email" name="email" label="email" required autofocus auto-validate error-message="Needs a valid email"
                         autocomplete></paper-input>
                     <paper-input type="password" name="password" label="password" required></paper-input>
-                    <paper-button raised on-click="submitForm">Submit</paper-button>
+                    <paper-button type="button" raised on-click="submitForm">Submit</paper-button>
                 </form>
             </template>
             <template is="dom-if" if="{{auth.isConnected}}">
