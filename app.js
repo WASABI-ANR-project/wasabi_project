@@ -124,12 +124,16 @@ app.use('/pedalboard', express.static(path.join(__dirname, 'public/pedalboard'))
 app.use('/pedalboarddev', express.static(path.join(__dirname, 'public/pedalboarddev')));
 app.use('/AmpSimFA', express.static(path.join(__dirname, 'public/AmpSimFA')));
 app.use('/AmpSim3', express.static(path.join(__dirname, 'public/AmpSim3')));
+app.use('/AmpDesigner', express.static(path.join(__dirname, 'public/AmpDesigner')));
+app.use('/dev', express.static(path.join(__dirname, 'public/dev')));
+
 app.use('/MT5', MT5);
 app.use('/search', search);
 app.use('/api/v1', new RateLimit(config.http.limit_request.api), api_v1);
 app.use('/jwt', jwt_api);
 app.use('/apidoc', express.static(path.join(__dirname, 'apidoc')));
 app.use('/helper', helper);
+
 
 //Allows the authentication, at the moment the /download api have to stay private
 //app.use(basicAuth(configLogin.login, configLogin.password));

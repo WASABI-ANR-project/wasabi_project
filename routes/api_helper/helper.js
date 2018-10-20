@@ -40,4 +40,21 @@ router.get('/checkUrlYouTubeExist/:youtubeId', helperController.checkUrlYouTubeE
 //router.get('/getReprises/:songname/:songwriter/:songreleasedate/:songlyrics', helperController.getReprises);
 router.get('/getReprises/:songname/:songlyrics', helperController.getReprises);
 
+/**
+ * API permettant d'avoir le nombre de songs multitrack depuis la table des stats
+ */
+router.get('/getNbMultitrackSongs', helperController.getNbMultitrackSongs);
+
+
+/**
+ * API permettant de récupérer un artist par son nom et le convertir au format RDF
+ */
+router.get('/convertToRDF/:artistname', helperController.convertToRDF);
+
+/**
+ * API permettant d'enregistrer l'alignement entre les id wasabi, deezer et youtube
+ */
+//router.get('/doMappingID', helperController.doMappingID);
+
+
 export default router;

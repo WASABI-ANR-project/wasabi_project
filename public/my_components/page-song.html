@@ -353,6 +353,7 @@
 
             #songLyricsSection {
                 background: linear-gradient(45deg, #fafafa, #fefefe);
+                background-size: cover;
 
                 display: flex;
                 flex-direction: row;
@@ -360,6 +361,17 @@
 
                 padding: 50px;
                 font-size: 16px;
+                position: relative;
+            }
+
+            #img_visu {
+                position: absolute;
+                top: 0px;
+                left: 0px;
+                right: 0px;
+                opacity: 0.3;
+                width:100%;
+                margin:0 auto;
             }
 
             #songLyricsNonEditable,
@@ -387,7 +399,7 @@
                 background: #eee !important;
             }
 
-            .div_splited_br{
+            .div_splited_br {
                 background-color: #aed581 !important;
             }
         </style>
@@ -396,11 +408,11 @@
 
         <!-- ajax request to get api information about : auth, artist -->
         <iron-ajax auto url="/search/auth" method="GET" headers="[[headers]]" handle-as="json" last-response="{{auth}}"></iron-ajax>
-        <iron-ajax id="get_content_artist" auto url="/search/artist/{{_encodeUri(nameArtist)}}" last-response="{{art}}" headers="[[headers]]"
-            handle-as="json"></iron-ajax>
-
-        <iron-ajax id="get_content_album" auto url="/search/artist/{{_encodeUri(nameArtist)}}/album/{{_encodeUri(nameAlbum)}}" last-response="{{albu}}"
+        <iron-ajax id="get_content_artist" auto url="/search/artist/{{_encodeUri(nameArtist)}}" last-response="{{art}}"
             headers="[[headers]]" handle-as="json"></iron-ajax>
+
+        <iron-ajax id="get_content_album" auto url="/search/artist/{{_encodeUri(nameArtist)}}/album/{{_encodeUri(nameAlbum)}}"
+            last-response="{{albu}}" headers="[[headers]]" handle-as="json"></iron-ajax>
 
         <iron-ajax id="get_album_song" auto headers="[[headers]]" url="/search/album/song/{{_encodeUri(nameArtist)}}/{{_encodeUri(nameSong)}}"
             last-response="{{albumSong}}" handle-as="json" on-response="handleResponse"> </iron-ajax>
@@ -437,8 +449,8 @@
                     <template is="dom-if" if="{{auth.isConnected}}">
                         <!-- is user is connected : SHOW RDF -->
                         <template is="dom-if" if="{{artist.albums.songs.rdf}}">
-                            <show-dialog labeldialog="RDF {{artist.albums.songs.title}} :" labelbutton="Show RDF" content="{{artist.albums.songs.rdf}}"
-                                labelexitdialog="Close"></show-dialog>
+                            <show-dialog labeldialog="RDF {{artist.albums.songs.title}} :" labelbutton="Show RDF"
+                                content="{{artist.albums.songs.rdf}}" labelexitdialog="Close"></show-dialog>
                         </template>
 
 
@@ -483,8 +495,9 @@
                         </template> -->
 
                         <!-- CHECK IF YOUTUBE URL EXIST -->
-                        <iron-ajax auto url="/helper/checkUrlYouTubeExist/{{artist.albums.songs.urlYouTube}}" method="GET" last-response="{{isUrlYouTubeExist}}"
-                            handle-as="json" on-response="handleResponse" content-type='application/json'> </iron-ajax>
+                        <iron-ajax auto url="/helper/checkUrlYouTubeExist/{{artist.albums.songs.urlYouTube}}" method="GET"
+                            last-response="{{isUrlYouTubeExist}}" handle-as="json" on-response="handleResponse"
+                            content-type='application/json'> </iron-ajax>
                         <!-- IF TRUE -->
                         <template is="dom-if" if="{{isUrlYouTubeExist.isUrlYouTubeExist}}">
                             <google-youtube video-id="{{artist.albums.songs.urlYouTube}}" class="bg_ytVideo"></google-youtube>
@@ -499,13 +512,15 @@
                                 <a target='_blank' href="{{ytSong.urlYouTube}}">- {{ytSong.urlYouTube}} -</a>
                             -->
                             <!-- GET LAST LYRICKSWIKIA YOUTUBE URL -->
-                            <iron-ajax auto url="/helper/getYouTubeLinkFromLW/{{_encodeUri(nameArtist)}}/{{_encodeUri(nameSong)}}" method="GET" last-response="{{ytSong}}"
-                                handle-as="json" on-response="handleResponse" content-type='application/json'> </iron-ajax>
+                            <iron-ajax auto url="/helper/getYouTubeLinkFromLW/{{_encodeUri(nameArtist)}}/{{_encodeUri(nameSong)}}"
+                                method="GET" last-response="{{ytSong}}" handle-as="json" on-response="handleResponse"
+                                content-type='application/json'> </iron-ajax>
                             <!-- IF FOUNDED -->
                             <template is="dom-if" if="{{ytSong.urlYouTube}}">
                                 <!-- CHECK IF YOUTUBE URL EXIST -->
-                                <iron-ajax auto url="/helper/checkUrlYouTubeExist/{{getIDfromYouTubeURL(ytSong.urlYouTube)}}" method="GET" last-response="{{_isUrlYouTubeExist}}"
-                                    handle-as="json" on-response="handleResponse" content-type='application/json'> </iron-ajax>
+                                <iron-ajax auto url="/helper/checkUrlYouTubeExist/{{getIDfromYouTubeURL(ytSong.urlYouTube)}}"
+                                    method="GET" last-response="{{_isUrlYouTubeExist}}" handle-as="json" on-response="handleResponse"
+                                    content-type='application/json'> </iron-ajax>
                                 <!-- IF TRUE : DISPLAY IT -->
                                 <template is="dom-if" if="{{_isUrlYouTubeExist.isUrlYouTubeExist}}">
                                     <google-youtube video-id="{{getIDfromYouTubeURL(ytSong.urlYouTube)}}" class="bg_ytVideo"></google-youtube>
@@ -515,64 +530,79 @@
 
                         <!-- externalLink (x12) -->
                         <nav id="externalLink">
+                            <!-- <a target="_blank" tabindex="-1" href="http://lyrics.wikia.com/{{_encodeUri(nameArtist)}}:{{_encodeUri(nameSong)}}" alt="url LyricsWikia"
+                                title="LyricsWikia">
+                                <paper-icon-button src="">LW</paper-icon-button>
+                            </a> -->
                             <template is="dom-if" if="{{artist.albums.songs.urlWikipedia}}">
-                                <a target="_blank" tabindex="-1" href="{{artist.albums.songs.urlWikipedia}}" alt="url Wikipedia" title="Wikipedia">
+                                <a target="_blank" tabindex="-1" href="{{artist.albums.songs.urlWikipedia}}" alt="url Wikipedia"
+                                    title="Wikipedia">
                                     <paper-icon-button src="../img/wikipedia_icon.svg"></paper-icon-button>
                                 </a>
                             </template>
                             <template is="dom-if" if="{{artist.albums.songs.urlAmazon}}">
-                                <a target="_blank" tabindex="-1" href="{{artist.albums.songs.urlAmazon}}" alt="url Amazon" title="Amazon">
+                                <a target="_blank" tabindex="-1" href="{{artist.albums.songs.urlAmazon}}" alt="url Amazon"
+                                    title="Amazon">
                                     <paper-icon-button src="../img/amazon_icon.svg"></paper-icon-button>
                                 </a>
                             </template>
                             <template is="dom-if" if="{{artist.albums.songs.urlYouTube}}">
-                                <a target="_blank" tabindex="-1" href="http://www.youtube.com/watch?v={{artist.albums.songs.urlYouTube}}" alt="url YouTube"
-                                    title="YouTube">
+                                <a target="_blank" tabindex="-1" href="http://www.youtube.com/watch?v={{artist.albums.songs.urlYouTube}}"
+                                    alt="url YouTube" title="YouTube">
                                     <paper-icon-button src="../img/youtube_icon.svg"></paper-icon-button>
                                 </a>
                             </template>
                             <template is="dom-if" if="{{artist.albums.songs.urlSpotify}}">
-                                <a target="_blank" tabindex="-1" href="{{artist.albums.songs.urlSpotify}}" alt="url Spotify" title="Spotify">
+                                <a target="_blank" tabindex="-1" href="{{artist.albums.songs.urlSpotify}}" alt="url Spotify"
+                                    title="Spotify">
                                     <paper-icon-button src="../img/spotify_icon.svg"></paper-icon-button>
                                 </a>
                             </template>
                             <template is="dom-if" if="{{artist.albums.songs.urlDeezer}}">
-                                <a target="_blank" tabindex="-1" href="{{artist.albums.songs.urlDeezer}}" alt="url Deezer" title="Deezer">
+                                <a target="_blank" tabindex="-1" href="{{artist.albums.songs.urlDeezer}}" alt="url Deezer"
+                                    title="Deezer">
                                     <paper-icon-button src="../img/deezer_icon.svg"></paper-icon-button>
                                 </a>
                             </template>
                             <template is="dom-if" if="{{artist.albums.songs.urlITunes}}">
-                                <a target="_blank" tabindex="-1" href="{{artist.albums.songs.urlITunes}}" alt="url iTunes" title="iTunes">
+                                <a target="_blank" tabindex="-1" href="{{artist.albums.songs.urlITunes}}" alt="url iTunes"
+                                    title="iTunes">
                                     <paper-icon-button src="../img/itunes_icon.svg"></paper-icon-button>
                                 </a>
                             </template>
                             <template is="dom-if" if="{{artist.albums.songs.urlMusicBrainz}}">
-                                <a target="_blank" tabindex="-1" href="{{artist.albums.songs.urlMusicBrainz}}" alt="url MusicBrainz" title="MusicBrainz">
+                                <a target="_blank" tabindex="-1" href="{{artist.albums.songs.urlMusicBrainz}}" alt="url MusicBrainz"
+                                    title="MusicBrainz">
                                     <paper-icon-button src="../img/musicbrainz_icon.svg"></paper-icon-button>
                                 </a>
                             </template>
                             <template is="dom-if" if="{{artist.albums.songs.urlAllmusic}}">
-                                <a target="_blank" tabindex="-1" href="{{artist.albums.songs.urlAllmusic}}" alt="url AllMusic" title="AllMusic">
+                                <a target="_blank" tabindex="-1" href="{{artist.albums.songs.urlAllmusic}}" alt="url AllMusic"
+                                    title="AllMusic">
                                     <paper-icon-button src="../img/allmusic_icon.svg"></paper-icon-button>
                                 </a>
                             </template>
                             <template is="dom-if" if="{{artist.albums.songs.urlLastFm}}">
-                                <a target="_blank" tabindex="-1" href="{{artist.albums.songs.urlLastFm}}" alt="url Last FM" title="Last FM">
+                                <a target="_blank" tabindex="-1" href="{{artist.albums.songs.urlLastFm}}" alt="url Last FM"
+                                    title="Last FM">
                                     <paper-icon-button src="../img/lastfm_icon.svg"></paper-icon-button>
                                 </a>
                             </template>
                             <template is="dom-if" if="{{artist.albums.songs.urlPandora}}">
-                                <a target="_blank" tabindex="-1" href="{{artist.albums.songs.urlPandora}}" alt="url Pandora" title="Pandora">
+                                <a target="_blank" tabindex="-1" href="{{artist.albums.songs.urlPandora}}" alt="url Pandora"
+                                    title="Pandora">
                                     <paper-icon-button src="../img/pandora_icon.svg"></paper-icon-button>
                                 </a>
                             </template>
                             <template is="dom-if" if="{{artist.albums.songs.urlGoEar}}">
-                                <a target="_blank" tabindex="-1" href="{{artist.albums.songs.urlGoEar}}" alt="url GoEar" title="GoEar">
+                                <a target="_blank" tabindex="-1" href="{{artist.albums.songs.urlGoEar}}" alt="url GoEar"
+                                    title="GoEar">
                                     <paper-icon-button src="../img/goear_icon.svg"></paper-icon-button>
                                 </a>
                             </template>
                             <template is="dom-if" if="{{artist.albums.songs.urlHypeMachine}}">
-                                <a target="_blank" tabindex="-1" href="{{artist.albums.songs.urlHypeMachine}}" alt="url Hype Machine" title="Hype Machine">
+                                <a target="_blank" tabindex="-1" href="{{artist.albums.songs.urlHypeMachine}}" alt="url Hype Machine"
+                                    title="Hype Machine">
                                     <paper-icon-button src="../img/hypemachine_icon.svg"></paper-icon-button>
                                 </a>
                             </template>
@@ -592,7 +622,7 @@
                                 </li>
                             </template>
                             <template is="dom-if" if="{{displayDuration(artist.albums.songs)}}">
-                                <li>
+                                <li title={{tooltip.duration}}>
                                     <span>Duration</span>
                                     <span>{{displayDuration(artist.albums.songs)}}</span>
                                 </li>
@@ -635,7 +665,8 @@
                                     <span>
                                         <template is="dom-repeat" items="{{artist.albums.songs.recorded}}" as="recorded">
                                             <a href="#/search/recorded/{{_encodeUri(recorded)}}">{{recorded}}</a>
-                                            <template is="dom-if" if="{{lastItem(index,artist.albums.songs.recorded.length)}}">- </template>
+                                            <template is="dom-if" if="{{lastItem(index,artist.albums.songs.recorded.length)}}">-
+                                            </template>
                                         </template>
                                     </span>
                                 </li>
@@ -646,18 +677,20 @@
                                     <span>
                                         <template is="dom-repeat" items="{{artist.albums.songs.genre}}" as="genre">
                                             <a href="#/search/genre/{{_encodeUri(genre)}}">{{genre}}</a>
-                                            <template is="dom-if" if="{{lastItem(index,artist.albums.songs.genre.length)}}">- </template>
+                                            <template is="dom-if" if="{{lastItem(index,artist.albums.songs.genre.length)}}">-
+                                            </template>
                                         </template>
                                     </span>
                                 </li>
                             </template>
                             <template is="dom-if" if="{{artist.albums.songs.format.length}}">
-                                <li>
+                                <li title={{tooltip.format}}>
                                     <span>Format</span>
                                     <span>
                                         <template is="dom-repeat" items="{{artist.albums.songs.format}}" as="format">
                                             <a href="#/search/format/{{_encodeUri(format)}}">{{format}}</a>
-                                            <template is="dom-if" if="{{lastItem(index,artist.albums.songs.format.length)}}">- </template>
+                                            <template is="dom-if" if="{{lastItem(index,artist.albums.songs.format.length)}}">-
+                                            </template>
                                         </template>
                                     </span>
                                 </li>
@@ -668,7 +701,8 @@
                                     <span>
                                         <template is="dom-repeat" items="{{artist.albums.songs.writer}}" as="writer">
                                             <a href="#/search/writer/{{_encodeUri(writer)}}">{{writer}}</a>
-                                            <template is="dom-if" if="{{lastItem(index,artist.albums.songs.writer.length)}}">- </template>
+                                            <template is="dom-if" if="{{lastItem(index,artist.albums.songs.writer.length)}}">-
+                                            </template>
                                         </template>
                                     </span>
                                 </li>
@@ -679,7 +713,8 @@
                                     <span>
                                         <template is="dom-repeat" items="{{artist.albums.songs.producer}}" as="producer">
                                             <a href="#/search/producer/{{_encodeUri(producer)}}">{{producer}}</a>
-                                            <template is="dom-if" if="{{lastItem(index,artist.albums.songs.producer.length)}}">- </template>
+                                            <template is="dom-if" if="{{lastItem(index,artist.albums.songs.producer.length)}}">-
+                                            </template>
                                         </template>
                                     </span>
                                 </li>
@@ -690,7 +725,8 @@
                                     <span>
                                         <template is="dom-repeat" items="{{artist.albums.songs.award}}" as="award">
                                             <a href="#/search/award/{{_encodeUri(award)}}">{{award}}</a>
-                                            <template is="dom-if" if="{{lastItem(index,artist.albums.songs.award.length)}}">- </template>
+                                            <template is="dom-if" if="{{lastItem(index,artist.albums.songs.award.length)}}">-
+                                            </template>
                                         </template>
                                     </span>
                                 </li>
@@ -701,7 +737,8 @@
                                     <span>
                                         <template is="dom-repeat" items="{{artist.albums.songs.recordLabel}}" as="recordLabel">
                                             <a href="#/search/recordlabel/{{_encodeUri(recordLabel)}}">{{recordLabel}}</a>
-                                            <template is="dom-if" if="{{lastItem(index,artist.albums.songs.recordLabel.length)}}">- </template>
+                                            <template is="dom-if" if="{{lastItem(index,artist.albums.songs.recordLabel.length)}}">-
+                                            </template>
                                         </template>
                                     </span>
                                 </li>
@@ -721,10 +758,10 @@
 
                             <template is="dom-if" if="{{artist.albums.songs.gain.length}}">
                                 <li>
-                                    <li title="{{tooltip.gain}}">
-                                        <span>Gain</span>
-                                        <span>{{artist.albums.songs.gain}}</span>
-                                    </li>
+                                <li title="{{tooltip.gain}}">
+                                    <span>Gain</span>
+                                    <span>{{artist.albums.songs.gain}}</span>
+                                </li>
                                 </li>
                             </template>
                             <template is="dom-if" if="{{artist.albums.songs.notes.length}}">
@@ -742,10 +779,12 @@
                                 <li>
                                     <span>Also available in</span>
                                     <span>
-                                        <template is="dom-repeat" items="{{albumSong}}" as="albumSong" initial-count="1" class="flex-wrap">
+                                        <template is="dom-repeat" items="{{albumSong}}" as="albumSong" initial-count="1"
+                                            class="flex-wrap">
                                             <!-- <template is="dom-if" if="{{checkSongAlbum(albumSong.albumTitle,nameAlbum)}}"> -->
                                             <a href="#/search/artist/{{_encodeUri(albumSong.name)}}/album/{{_encodeUri(albumSong.albumTitle)}}/song/{{_encodeUri(albumSong.title)}}">{{albumSong.albumTitle}}</a>
-                                            <template is="dom-if" if="{{lastItem(index,nbTotalAlbumSong)}}">- </template>
+                                            <template is="dom-if" if="{{lastItem(index,nbTotalAlbumSong)}}">-
+                                            </template>
                                             <!-- </template> -->
                                         </template>
                                     </span>
@@ -764,17 +803,21 @@
                                                     <b>{{reprise.name}} ({{reprise.albumTitle}})</b>
                                                 </template>
                                             </a>
-                                            <template is="dom-if" if="{{lastItem(index,coversSong.res.length)}}">- </template>
+                                            <template is="dom-if" if="{{lastItem(index,coversSong.res.length)}}">-
+                                            </template>
                                         </template>
                                     </span>
                                 </li>
                             </template>
                             <li id="songLyricsSection">
+                                <!-- <img id='img_visu' src="../img/visualizations/Dropkick_Murphys--Signed_And_Sealed_In_Blood--The_Season's_Upon_Us.png"> -->
                                 <article id="songLyricsNonEditable" hidden={{editing}} contenteditable=false></article>
                                 <article id="songLyricsEditable" hidden={{!editing}} contenteditable=true></article>
                                 <template is="dom-if" if="{{artist.isConnected}}">
-                                    <paper-fab hidden={{editing}} icon="icons:create" on-tap="doEditLyrics" class="edit" mini></paper-fab>
-                                    <paper-fab hidden={{!editing}} icon="icons:done" on-tap="doEditLyrics" class="done" mini></paper-fab>
+                                    <paper-fab hidden={{editing}} icon="icons:create" on-tap="doEditLyrics" class="edit"
+                                        mini></paper-fab>
+                                    <paper-fab hidden={{!editing}} icon="icons:done" on-tap="doEditLyrics" class="done"
+                                        mini></paper-fab>
                                 </template>
                             </li>
                         </ul>
@@ -802,7 +845,8 @@
                                         <span>{{artist.albums.title}}</span> -->
                             </div>
                             <!-- <audio src="{{artist.albums.songs.preview}}" id="audioExtract" controls></audio> -->
-                            <paper-audio-player src="{{artist.albums.songs.preview}}" title="{{artist.albums.songs.title}}" color="#3f51b5"></paper-audio-player>
+                            <paper-audio-player src="{{artist.albums.songs.preview}}" title="{{artist.albums.songs.title}}"
+                                color="#3f51b5"></paper-audio-player>
                         </div>
                     </template>
                 </div>
@@ -864,9 +908,11 @@
                 tooltip: {
                     type: String,
                     value: {
-                        isrc:"L'International Standard Recording Code, abrégé par le sigle ISRC, est un code unique d'identification mis en place par l'International Federation of Phonographic Industry (IFPI) pour identifier les enregistrements musicaux (sonores et audiovisuels) dans le monde entier.",
+                        isrc: "L'International Standard Recording Code, abrégé par le sigle ISRC, est un code unique d'identification mis en place par l'International Federation of Phonographic Industry (IFPI) pour identifier les enregistrements musicaux (sonores et audiovisuels) dans le monde entier.",
                         bpm: "Le BPM (battement par minute), couramment abrégé par le sigle bpm, est une unité de mesure utilisée pour exprimer le tempo de la musique ou le rythme cardiaque, quantifié par le nombre de battements se produisant en une minute.",
-                        gain:"un gain non défini"
+                        gain: "un gain non défini",
+                        duration: "Song duration in seconds",
+                        format: "Song format (vinyl, CD;)"
                     }
                 },
                 edit_bpm: {
@@ -987,23 +1033,23 @@
                 //Si l'utilisateur l'utilisateur veut sauvegarder ses modifications
                 else {
                     if (typeof this.artist !== 'undefined') {
-                        this.$.songLyricsNonEditable.innerHTML = this._filter(this.artist.albums.songs.lyrics,'br');
+                        this.$.songLyricsNonEditable.innerHTML = this._filter(this.artist.albums.songs.lyrics, 'br');
                         /*On rempli aussi le contenu éditable (#songLyricsEditable) cela permet de ne pas avoir des lyrics vide lors de l'attente de la reponse ajax*/
                         this.$.songLyricsEditable.innerHTML = this.artist.albums.songs.lyrics;
                     }
                 }
             },
-            _filter(_string,_type){
-                let _stringSplited="";
-                let _stringFiltered="";
-                switch(_type){
-                    case "br":{
-                        _stringSplited=_string.split('<br><br>');
-                        for (let i=0;i<_stringSplited.length;i++){
-                            _stringFiltered+=`<div class="div_splited_br" style="background-color:#aed581;padding:10px;">${_stringSplited[i]}</div><br>`;
+            _filter(_string, _type) {
+                let _stringSplited = "";
+                let _stringFiltered = "";
+                switch (_type) {
+                    case "br": {
+                        _stringSplited = _string.split('<br><br>');
+                        for (let i = 0; i < _stringSplited.length; i++) {
+                            _stringFiltered += `<div class="div_splited_br" style="background-color:#aed581;padding:10px;">${_stringSplited[i]}</div><br>`;
                         }
                     }
-                    break;
+                        break;
                 }
                 return _stringFiltered;
             },

@@ -90,8 +90,10 @@
             }
         </style>
 
-        <iron-ajax id="get_count" on-response='_countFinished' auto url="/search/song/count/multitrack" last-response="{{countField}}"
-            handleAs="json"></iron-ajax>
+<!-- <iron-ajax id="get_count" on-response='_countFinished' auto url="/search/song/count/multitrack" last-response="{{countField}}"
+handleAs="json"></iron-ajax> -->
+<iron-ajax id="get_count" on-response='_countFinished' auto url="/helper/getNbMultitrackSongs" last-response="{{countField}}"
+    handleAs="json"></iron-ajax>
 
         <div class="app_content">
             <p class="center searchText-info">We have

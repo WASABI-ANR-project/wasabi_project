@@ -9,13 +9,53 @@ import {
     ObjectId
 } from 'mongoskin';
 
+import fs from 'fs';
+import parse from 'csv-parse';
+const PATH_MAPPING_ID = "./mongo/aligned_id/ids_wasabi_deezer_youtube_whole.json";
+
+const COLLECTIONARTIST = config.database.collection_artist;
 const COLLECTIONSONG = config.database.collection_song;
+const COLLECTION_STATS_PROP_SONG = config.database.collection_stats_prop_song;
 const _apiYouTubeKey = "AIzaSyD9ospyRhErY0B04kL3BDfa3RzihOcgDgE";
 
 
 var getInfos = (req, res) => {
     res.json({ msg: 'infos' })
 }
+
+var doMappingID = (req, res) => {
+    var db = req.db;
+    fs.readFile(PATH_MAPPING_ID, (err, data) => {
+        if (err) console.log(err);
+        let tabAlignedID=(JSON.parse(data));
+        console.log(`Début de l'update pour ${tabAlignedID.length} songs`);
+        var i=1;
+        var _data_alignedID={};
+        (function loop(i){
+            _data_alignedID={
+                wasabi:tabAlignedID[i][0],
+                deezer:tabAlignedID[i][1],
+                youtube:tabAlignedID[i][2]
+            }
+            db.collection(COLLECTIONSONG).updateOne({
+                _id:ObjectId(_data_alignedID.wasabi.toString())
+            },{
+                $addToSet:{
+                    aligned_id:_data_alignedID
+                }
+            },(err)=>{
+                if (err) throw err;
+                if (i<tabAlignedID.length-1) {
+                    i++;
+                    if (i%1000==0) console.log(`${i} documents updated`);
+                    loop(i);
+                }
+            })
+        })(i);
+    });
+    res.json(config.http.valid.send_message_ok);
+};
+
 
 
 /** ---------------- DEEZER ---------------- */
@@ -333,17 +373,17 @@ const getYouTubeLinkFromLW = (req, res) => {
 
 
 /** ---------------- REPRISES ---------------- */
-const getReprises=(req,res)=>{
-    
+const getReprises = (req, res) => {
+
     return new Promise(function (resolve, reject) {
         let skip = 0;
         let limit = 100;
-        let query="";
+        let query = "";
         console.log("-------------------- START REPRISES ! --------------------");
 
-        query={
-            title: { $regex : ".*"+(req.params.songname)+"*." },
-            lyrics: { $regex : ".*"+(req.params.songlyrics)+"*." }
+        query = {
+            title: { $regex: ".*" + (req.params.songname) + "*." },
+            lyrics: { $regex: ".*" + (req.params.songlyrics) + "*." }
         };
         // console.log({
         //     songname:req.params.songname,
@@ -362,7 +402,7 @@ const getReprises=(req,res)=>{
         //             {releaseDate: {$in:req.params.songreleasedate.split(',')}}
         //         ],
         //         lyrics: { $regex : req.params.songlyrics}
-                
+
         //     };
         // }else if (req.params.songwriter && req.params.songwriter!='undefined'){
         //     console.log(req.params.songwriter,req.params.songwriter.split(',').length);
@@ -391,26 +431,26 @@ const getReprises=(req,res)=>{
         console.log(query);
         console.log("-------------------- END REPRISES ! --------------------");
         req.db.collection(COLLECTIONSONG).find(query, {
-                name: 1,
-                title: 1,
-                albumTitle: 1,
-                preview:1
-            }).sort({
-                preview: -1
-            }).skip(skip).limit(limit).toArray((err, tSongs) => {
-                //if (err) return res.status(404).json(config.http.error.internal_error_404);
-                if (tSongs.length > 0) {
-                    //On resolve le artistName
-                    resolve(tSongs);
-                } else {
-                    reject("ErRoR : " + err);
-                }
-            });
-    }).then(data=>{
+            name: 1,
+            title: 1,
+            albumTitle: 1,
+            preview: 1
+        }).sort({
+            preview: -1
+        }).skip(skip).limit(limit).toArray((err, tSongs) => {
+            //if (err) return res.status(404).json(config.http.error.internal_error_404);
+            if (tSongs.length > 0) {
+                //On resolve le artistName
+                resolve(tSongs);
+            } else {
+                reject("ErRoR : " + err);
+            }
+        });
+    }).then(data => {
         console.log("-------------------- RESULT REPRISES ! --------------------");
         console.log(data);
         console.log("-------------------- END RESULT REPRISES ! --------------------");
-        res.json({res:data});
+        res.json({ res: data });
     })
 }
 
@@ -451,6 +491,56 @@ var requestLyricsWikia = (url) => {
     })
 };
 
+
+var getNbMultitrackSongs = (req, res) => {
+    let _query = { _id: 'multitrack_path' };
+    req.db.collection('_stats_prop_song').find(_query, { _id: 0, value: 1 }).toArray((err, countfield) => {
+        if (err) return res.status(404).json(config.http.error.global_404);
+        return res.json({
+            count: countfield[0].value
+        });
+    });
+}
+
+var convertToRDF = (req, res) => {
+    var db = req.db;
+    let _artistName = req.params.artistname;
+    console.log('_artistName',_artistName);
+    let _query = {
+        name: _artistName
+    };
+    db.collection(COLLECTIONARTIST).findOne(_query,config.request.projection.search.get_artist.artist, (err, artist) => {
+        if (artist === null) return res.status(404).json(config.http.error.artist_404);
+        let _result={
+            "@context": {
+                "mo": "http://purl.org/ontology/mo/",
+                "dc": "http://purl.org/dc/elements/1.1/",
+                "xsd": "http://www.w3.org/2001/XMLSchema#",
+                "tl": "http://purl.org/NET/c4dm/timeline.owl#",
+                "event": "http://purl.org/NET/c4dm/event.owl#",
+                "foaf": "http://xmlns.com/foaf/0.1/",
+                "rdfs": "http://www.w3.org/2000/01/rdf-schema#"
+              },
+            "rdf:type": "mo:MusicArtist",
+            "foaf:name": artist.name,
+            "foaf:homepage": artist.urlOfficialWebsite,
+            "mo:activity_start": artist.lifeSpan.begin,
+            "mo:activity_end": artist.lifeSpan.end,
+            "mo:Genre": artist.genres,
+            "mo:discogs": artist.urlDiscogs,
+            "mo:musicbrainz": artist.urlMusicBrainz,
+            "mo:myspace": artist.urlMySpace,
+            "mo:wikipedia": artist.urlWikipedia,
+            "mo:image": artist.picture.standard,
+            "vocab:alias": artist.nameVariations,
+            "foaf:homepage": artist.urlOfficialWebsite,
+            "mo:label":artist.recordLabel,
+            "mo:origin":artist.locationInfo
+        };
+        return res.json(_result)
+    });
+}
+
 exports.getInfos = getInfos;
 exports.getYouTubeLinkDead = getYouTubeLinkDead;
 exports.checkPreviewDeezerExist = checkPreviewDeezerExist;
@@ -458,3 +548,6 @@ exports.updatePreviewDeezerNull = updatePreviewDeezerNull;
 exports.getYouTubeLinkFromLW = getYouTubeLinkFromLW;
 exports.checkUrlYouTubeExist = checkUrlYouTubeExist;
 exports.getReprises = getReprises;
+exports.getNbMultitrackSongs = getNbMultitrackSongs;
+exports.convertToRDF = convertToRDF;
+exports.doMappingID = doMappingID;
