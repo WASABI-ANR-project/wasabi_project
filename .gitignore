@@ -1,4 +1,24 @@
+# See https://help.github.com/ignore-files/ for more about ignoring files.
+
+# dependencies
+node_modules/*
+public/bower_components/*
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+.history
 .vscode/*
+
+# protected
 animux_*
 cert_https/*
 
@@ -9,11 +29,8 @@ mongo/deezer/*
 mongo/discogs/*
 mongo/old_animux/*
 
-node_modules/*
-
 public/AmpSim3/*
 public/AmpSimFA/*
-public/bower_components/*
 public/download/*
 public/TER-Pedalboard-creation/*
 public/my_components/MT5/multitrack/*
