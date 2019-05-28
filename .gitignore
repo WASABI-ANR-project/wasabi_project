@@ -1,20 +1,22 @@
+.vscode/*
+animux_*
+cert_https/*
+
+mongo/aligned_id/*
+mongo/animux/*
 mongo/backup_mongo/*
 mongo/deezer/*
-mongo/animux/*
 mongo/discogs/*
 mongo/old_animux/*
-animux_*
-public/my_components/MT5/multitrack/*
-public/download/*
-public/AmpSim3/*
-public/AmpSimFA/*
-public/TER-Pedalboard-creation/*
-
-routes/conf/login.json
-routes/conf/confJwt.json
 
 node_modules/*
 
-cert_https/*
+public/AmpSim3/*
+public/AmpSimFA/*
+public/bower_components/*
+public/download/*
+public/TER-Pedalboard-creation/*
+public/my_components/MT5/multitrack/*
 
-.vscode/*
+routes/conf/confJwt.json
+routes/conf/login.json
