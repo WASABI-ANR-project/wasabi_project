@@ -871,32 +871,31 @@ router.get('/more/:searchText', new RateLimit(config.http.limit_request.search),
 
 router.get('/auth', searchController.get_auth);
 
-/**
- * API permettant de lister les songs multitracks
- */
 //==========================================================================================================================\\
 //===================================== API REST POUR RECUPERER LES SONGS MULTITRACKS ======================================\\
 //==========================================================================================================================\\
 /**
- * @api {get} search/song/multitrack Get multitracks songs
+ * @api {get} search/song/multitrack/:skip Song - Get multitracks songs
  * @apiExample Example usage: 
- *      wasabi.i3s.unice.fr/search/song/multitrack
+ *      wasabi.i3s.unice.fr/search/song/multitrack/0
  * @apiVersion 1.0.0
- * @apiName GetMultitracksSongs
+ * @apiName getSongsMultitrack
  * @apiGroup Search
  *
- *
+ * @apiParam {Number} skip  from skip to skip+20 (limit=20)
+ * 
  * @apiSuccessExample Success-Response:
     HTTP/1.1 200 OK
     [{
-        _id: "5714dedb25ac0d8aee4ad816",
-        name: "Metallica",
-        title: "Battery",
-        albumTitle: "Master Of Puppets"
+        "_id": "5714dedb25ac0d8aee4ad816",
+        "name": "Metallica",
+        "title": "Battery",
+        "albumTitle": "Master Of Puppets"
+    },{
+        ...
     }]
  *
  */
-//router.get('/song/multitrack', new RateLimit(config.http.limit_request.search), searchController.getSongsMultitrack);
 router.get('/song/multitrack/:skip', new RateLimit(config.http.limit_request.search), searchController.getSongsMultitrack);
 /**
  * API permettant de retourner tous les songs multitracks
@@ -919,6 +918,33 @@ router.get('/album/song/:artistName/:songName', new RateLimit(config.http.limit_
 
 /**
  * API permettant de retrouver des covers versions d'une chanson
+ * https://localhost/
+ */
+//==========================================================================================================================\\
+//===================================== API REST POUR RECUPERER LES COVERS VERSION D'UNE SONG ======================================\\
+//==========================================================================================================================\\
+/**
+ * @api {get} search/get_cover_song/:songname/:songlyrics Song - Get covers versions of a song
+ * @apiExample Example usage: 
+ *      wasabi.i3s.unice.fr/search/get_cover_song/Beat%20It/They%20told%20him%20don
+ * @apiVersion 1.0.0
+ * @apiName get_cover_song
+ * @apiGroup Search
+ *
+ * @apiParam {Number} skip song
+ * 
+ * @apiSuccessExample Success-Response:
+    HTTP/1.1 200 OK
+    [{
+        "_id": "5714dedc25ac0d8aee4aef8c",
+        "name": "Michael Jackson",
+        "title": "Beat It/State Of Shock (Immortal Version)",
+        "albumTitle": "Other Songs",
+        "preview": "http://e-cdn-preview-f.deezer.com/stream/fa3e8b3173dd2439a4ac29d0ba7da2d7-1.mp3"
+    },{
+        ...
+    }]
+ *
  */
 router.get('/get_cover_song/:songname/:songlyrics', searchController.get_cover_song);
 export default router;

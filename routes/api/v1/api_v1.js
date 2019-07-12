@@ -1260,10 +1260,78 @@ router.get('/_stats/song/count', apiV1Controller.get_statsSongCount);
 
 router.get('/artist/count/song', apiV1Controller.get_artistWithMostSong);
 
-
-
+//==========================================================================================================================\\
+//=========================================API REST POUR RECUPERER LA VERSION RDF D'UN ARTIST=======================================\\
+//==========================================================================================================================\\
 /**
- * API permettant de récupérer un artist par son nom au format RDF
+ * @api {get} api/v1/get_rdf/:artistname Artist - Get rdf version of an artist
+ * @apiExample Example usage: 
+ *      wasabi.i3s.unice.fr/api/v1/get_rdf/Michael%20Jackson
+ * @apiVersion 1.0.0
+ * @apiName get_rdf
+ * @apiGroup Api/v1
+ * 
+ * @apiParam {String} artistname Artist's name
+ *
+ * @apiSuccessExample Success-Response for an artist:
+    HTTP/1.1 200 OK
+    {
+        "@context": {
+            "mo": "http://purl.org/ontology/mo/",
+            "dc": "http://purl.org/dc/elements/1.1/",
+            "xsd": "http://www.w3.org/2001/XMLSchema#",
+            "tl": "http://purl.org/NET/c4dm/timeline.owl#",
+            "event": "http://purl.org/NET/c4dm/event.owl#",
+            "foaf": "http://xmlns.com/foaf/0.1/",
+            "rdfs": "http://www.w3.org/2000/01/rdf-schema#"
+        },
+        "rdf:type": "mo:MusicArtist",
+        "foaf:name": "Michael Jackson",
+        "foaf:homepage": "http://www.michaeljackson.com",
+        "mo:activity_start": "1958-08-29",
+        "mo:activity_end": "2009-06-25",
+        "mo:Genre": [
+            "Pop",
+            "Soul",
+            "Rock",
+            "Disco",
+            "New Jack Swing"
+        ],
+        "mo:discogs": "http://www.discogs.com/artist/15885",
+        "mo:musicbrainz": "http://musicbrainz.org/artist/f27ec8db-af05-4f36-916e-3d57f91ecf5e",
+        "mo:myspace": "https://myspace.com/michaeljackson",
+        "mo:wikipedia": "http://en.wikipedia.org/wiki/Michael_Jackson",
+        "mo:image": "http://api.deezer.com/artist/259/image",
+        "vocab:alias": [
+            "J.Jackson",
+            "Jacko",
+            "Jackson",
+            "Jackson, Michael Joe",
+            "Jaxson",
+            "Just Michael",
+            "M J",
+            ...
+        ],
+        "mo:label": [
+            "MJJ Music",
+            "Steeltown Records",
+            "Sony Music Entertainment",
+            "Epic Records",
+            "Legacy Recordings",
+            "Motown"
+        ],
+        "mo:origin": [
+            "United States",
+            "Indiana",
+            "Gary"
+        ]
+    }
+ * @apiError error the database does not respond.
+ * @apiErrorExample Error-Response internal error:
+    HTTP/1.1 404 Not Found
+    {
+        "error": "An internal error occurred"
+    }
  */
 router.get('/get_rdf/:artistname', apiV1Controller.get_rdf);
 
