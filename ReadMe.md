@@ -7,7 +7,7 @@ Il est conseillé de lire ce que fait chaque API avant de l'utiliser notamment c
 
 **Répertoires et fichiers du .gitignore**
 =======
- Vous pouvez trouvez la listes des fichiers/dossiers non présent sur le git ici: https://github.com/fabrice126/wasabi_project/blob/master/.gitignore  :
+ Vous pouvez trouvez la listes des fichiers/dossiers non présent sur le git ici: https://github.com/ElmahdiK/wasabi_project/blob/master/.gitignore  :
 1. `mongo/backup_mongo/*` : contient les dumps de la base de données wasabi
 2. `mongo/deezer/*` : fichier csv contenant le matching de nos musiques avec les musiques de Deezer (fichier généré par Deezer)
 3. `mongo/animux/*` : arborescence contenant les informations permettant d'aligner l'audio avec les lyrics
@@ -33,7 +33,7 @@ Il est conseillé de lire ce que fait chaque API avant de l'utiliser notamment c
 *4.1.* Lancer elasticsearch, voir : *"<a href="#elasticsearch-sous-windows">Comment lancer les bases de données>Elasticsearch sous Windows</a>"*  
 5. Lancer le serveur Node-JS  
 *5.1.* En ligne de commande : `cd path/to/wasabi_project`  
-*5.2.* /!\ Par souci de sécurité le fichier contenant le login / mot de passe n'est pas sur le git vous devez donc créer le fichier `routes/conf/login.json` . Ce fichier contient le json suivant : `{"login": "ADemanderALAdmin","password": "ADemanderALAdmin"}`. Idem pour le fichier `routes/conf/confJwt.json`  contenant la clé des Tokens JWT ce fichier contient le json suivant :  `{"secretOrKey": "ADemanderALAdmin"}`  . Vous pouvez trouver la listes des fichiers/dossiers non présent sur le git ici : https://github.com/fabrice126/wasabi_project/blob/master/.gitignore  
+*5.2.* /!\ Par souci de sécurité le fichier contenant le login / mot de passe n'est pas sur le git vous devez donc créer le fichier `routes/conf/login.json` . Ce fichier contient le json suivant : `{"login": "ADemanderALAdmin","password": "ADemanderALAdmin"}`. Idem pour le fichier `routes/conf/confJwt.json`  contenant la clé des Tokens JWT ce fichier contient le json suivant :  `{"secretOrKey": "ADemanderALAdmin"}`  . Vous pouvez trouver la listes des fichiers/dossiers non présent sur le git ici : https://github.com/ElmahdiK/wasabi_project/blob/master/.gitignore  
 *5.3.* Voir la partie : *"<a href="#comment-installer-le-certificat-https">Comment installer un certificat https</a>"*  
 *5.4.* Taper la commande : `npm install`  (cela installera les dépendances du package.json)  
 *5.5.* Taper la commande : `npm start`  (cela exécutera la commande npm start du package.json)  
@@ -46,9 +46,9 @@ Il est conseillé de lire ce que fait chaque API avant de l'utiliser notamment c
 =======
 1. Récupérer l'application sur le GIT  
 *1.1.*  Taper la commande : `sudo yum install git` et vérifier qu'il s'est bien installé : `git --version`  
-*1.2.* Taper la commande : `git clone https://github.com/fabrice126/wasabi_project.git`  
+*1.2.* Taper la commande : `git clone https://github.com/ElmahdiK/wasabi_project.git`  
 *1.3.* /!\ Les dumps de la base de données ne sont pas sur le git. Mettre les dumps de la base de données dans le dossier `backup_mongo`. Créer le dossier dans `wasabi_project/mongo/` pour cela rendez-vous dans le bon dossier `cd wasabi_project/mongo/` puis tapez la commande : `mkdir backup_mongo`. Placer les dumps à cet endroit (conseil : envoyer les dumps via *<a href="https://filezilla-project.org/" target="_blank">filezilla</a>*)  
-*1.4.* /!\ Par souci de sécurité le fichier contenant le login / mot de passe n'est pas sur le git. Vous devez donc créer `routes/conf/login.json` . Ce fichier contient le json suivant : `{"login": "ADemanderALAdmin","password": "ADemanderALAdmin"}`. Idem pour le fichier `routes/conf/confJwt.json` contenant la clé des Tokens JWT ce fichier contient le json suivant :  `{"secretOrKey": "ADemanderALAdmin"}`. Vous pouvez trouver la liste des fichiers/dossiers non présents sur le git ici : https://github.com/fabrice126/wasabi_project/blob/master/.gitignore  
+*1.4.* /!\ Par souci de sécurité le fichier contenant le login / mot de passe n'est pas sur le git. Vous devez donc créer `routes/conf/login.json` . Ce fichier contient le json suivant : `{"login": "ADemanderALAdmin","password": "ADemanderALAdmin"}`. Idem pour le fichier `routes/conf/confJwt.json` contenant la clé des Tokens JWT ce fichier contient le json suivant :  `{"secretOrKey": "ADemanderALAdmin"}`. Vous pouvez trouver la liste des fichiers/dossiers non présents sur le git ici : https://github.com/ElmahdiK/wasabi_project/blob/master/.gitignore  
 2. Installer Node-JS : *<a href="https://nodejs.org/en/download/package-manager/#enterprise-linux-and-fedora" target="_blank">ici</a>*
 3. Installer mongodb : version >= 3.2 : *<a href="https://docs.mongodb.com/manual/tutorial/install-mongodb-on-red-hat/" target="_blank">ici</a>*  
 *3.1.* Lancer mongodb, voir : *"<a href="#mongodb-sous-linux-redhatcentos-7">Comment lancer les bases de données>MongoDB sous Linux RedHat/Centos 7</a>"*

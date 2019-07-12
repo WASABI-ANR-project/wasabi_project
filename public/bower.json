@@ -1,8 +1,9 @@
 {
   "name": "wasabi",
-  "homepage": "https://github.com/fabrice126/wasabi_project",
+  "homepage": "https://github.com/ElmahdiK/wasabi_project",
   "authors": [
-    "fabrice jauvat <fjauvat@gmail.com>"
+    "fabrice jauvat <fjauvat@gmail.com>",
+    "elmahdi korfed <elmahdi.korfed@gmail.com>"
   ],
   "description": "",
   "main": "",
