@@ -13,7 +13,7 @@ router.get('/', extractdeezerController.getInfos);
  */
 router.get('/update_preview_deezer', extractdeezerController.update_preview_deezer);
 /**
- * API permettant d'afficher d'enregistrer la suite d'accords d'une chanson depuis l'api deezer
+ * API permettant d'enregistrer la suite d'accords d'une chanson depuis l'api deezer
  */
 router.get('/put_chords_deezer', extractdeezerController.put_chords_deezer);
 /**
