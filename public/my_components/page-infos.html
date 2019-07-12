@@ -1,0 +1,437 @@
+<link href="../../bower_components/polymer/polymer.html" rel="import">
+<link href="../../bower_components/iron-ajax/iron-ajax.html" rel="import">
+<link href="../../bower_components/paper-material/paper-material.html" rel="import">
+<dom-module id="page-infos">
+    <template>
+        <style>
+            paper-card:hover {
+                background: #eee;
+            }
+
+            paper-card {
+                color: black;
+                border-bottom: 1px solid #eee;
+                width: 100%;
+                padding: 5px;
+                cursor: pointer;
+                display: flex;
+                justify-content: flex-start;
+                align-items: center;
+            }
+
+            .inherit {
+                background-color: inherit;
+                color: inherit;
+                display: flex;
+                align-items: center;
+                text-decoration: none;
+            }
+
+            .search_title {
+                padding: 0px 40px;
+            }
+
+            .div_infos {
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+                align-items: stretch;
+                align-content: center;
+            }
+
+            .searchText-info {
+                background: #3e51b5;
+                color: #eee;
+                font-size: 18px;
+                padding: 30px;
+                text-align: center;
+            }
+
+            .song_search_bar,
+            .band_search_bar {
+                width: 60px;
+            }
+
+            .band_search_bar {
+                border-radius: 100%;
+            }
+        </style>
+        <paper-material elevation="0">
+            <!-- recorded -->
+            <template is="dom-if" if="{{_isEqualTo(infoType,'recorded')}}">
+                <iron-ajax id="get_content" auto url="/search/recorded/{{_encodeUri(infoName)}}"
+                    last-response="{{elements}}" handleAs="json"> </iron-ajax>
+                <iron-ajax id="get_count" auto url="/search/count/song/recorded/{{_encodeUri(infoName)}}"
+                    last-response="{{countField}}" handleAs="json"> </iron-ajax>
+
+                <p class="searchText-info">We have <u>{{countField.count}}</u> music(s) having for information:
+                    <u>"{{infoName}}"</u></p>
+                <div class="div_infos">
+                    <template class="flex-wrap" is="dom-repeat" items="{{elements}}" as="element" initial-count="1">
+                        <a href="#/search/artist/{{_encodeUri(element.name)}}/album/{{_encodeUri(element.albumTitle)}}/song/{{_encodeUri(element.title)}}"
+                            class="inherit">
+                            <img class="song_search_bar" src="../../img/song_search_bar.svg" alt="Band">
+                            <span class="search_title">{{element.title}} - {{element.name}} -
+                                {{element.albumTitle}}</span>
+                        </a>
+                    </template>
+                </div>
+            </template>
+
+            <!-- recordlabel -->
+            <template is="dom-if" if="{{_isEqualTo(infoType,'recordlabel')}}">
+                <iron-ajax id="get_content" auto url="/search/recordlabel/{{_encodeUri(infoName)}}"
+                    last-response="{{elements}}" handleAs="json"> </iron-ajax>
+                <iron-ajax id="get_count" auto url="/search/count/song/recordLabel/{{_encodeUri(infoName)}}"
+                    last-response="{{countField}}" handleAs="json"> </iron-ajax>
+
+                <p class="searchText-info">We have <u>{{countField.count}}</u> music(s) having for with label:
+                    <u>"{{infoName}}"</u></p>
+                <div class="div_infos">
+                    <template class="flex-wrap" is="dom-repeat" items="{{elements}}" as="element" initial-count="1">
+                        <a href="#/search/artist/{{_encodeUri(element.name)}}/album/{{_encodeUri(element.albumTitle)}}/song/{{_encodeUri(element.title)}}"
+                            class="inherit">
+                            <img class="song_search_bar" src="../../img/song_search_bar.svg" alt="Band">
+                            <span class="search_title">{{element.title}} - {{element.name}} -
+                                {{element.albumTitle}}</span>
+                        </a>
+                    </template>
+                </div>
+            </template>
+
+            <!-- genre -->
+            <template is="dom-if" if="{{_isEqualTo(infoType,'genre')}}">
+                <iron-ajax id="get_content" auto url="/search/genre/{{_encodeUri(infoName)}}"
+                    last-response="{{elements}}" handleAs="json"> </iron-ajax>
+                <iron-ajax id="get_count" auto url="/search/count/song/genre/{{_encodeUri(infoName)}}"
+                    last-response="{{countField}}" handleAs="json"> </iron-ajax>
+
+                <p class="searchText-info">We have <u>{{countField.count}}</u> with genre <u>"{{infoName}}"</u></p>
+                <div class="div_infos">
+                    <template class="flex-wrap" is="dom-repeat" items="{{elements}}" as="element" initial-count="1">
+                        <a href="#/search/artist/{{_encodeUri(element.name)}}/album/{{_encodeUri(element.albumTitle)}}/song/{{_encodeUri(element.title)}}"
+                            class="inherit">
+                            <img class="song_search_bar" src="../../img/song_search_bar.svg" alt="Band">
+                            <span class="search_title">{{element.title}} - {{element.name}} -
+                                {{element.albumTitle}}</span>
+                        </a>
+                    </template>
+                </div>
+            </template>
+
+            <!-- award -->
+            <template is="dom-if" if="{{_isEqualTo(infoType,'award')}}">
+                <iron-ajax id="get_content" auto url="/search/award/{{_encodeUri(infoName)}}"
+                    last-response="{{elements}}" handleAs="json"> </iron-ajax>
+                <iron-ajax id="get_count" auto url="/search/count/song/award/{{_encodeUri(infoName)}}"
+                    last-response="{{countField}}" handleAs="json"> </iron-ajax>
+
+                <p class="searchText-info">We have <u>{{countField.count}}</u> music(s) with an award
+                    <u>"{{infoName}}"</u></p>
+                <div class="div_infos">
+
+                    <template class="flex-wrap" is="dom-repeat" items="{{elements}}" as="element" initial-count="1">
+                        <a href="#/search/artist/{{_encodeUri(element.name)}}/album/{{_encodeUri(element.albumTitle)}}/song/{{_encodeUri(element.title)}}"
+                            class="inherit">
+                            <img class="song_search_bar" src="../../img/song_search_bar.svg" alt="Band">
+                            <span class="search_title">{{element.title}} - {{element.name}} -
+                                {{element.albumTitle}}</span>
+                        </a>
+                    </template>
+                </div>
+            </template>
+
+            <!-- writer -->
+            <template is="dom-if" if="{{_isEqualTo(infoType,'writer')}}">
+                <iron-ajax id="get_content" auto url="/search/writer/{{_encodeUri(infoName)}}"
+                    last-response="{{elements}}" handleAs="json"> </iron-ajax>
+                <iron-ajax id="get_count" auto url="/search/count/song/writer/{{_encodeUri(infoName)}}"
+                    last-response="{{countField}}" handleAs="json"> </iron-ajax>
+
+                <p class="searchText-info">We have <u>{{countField.count}}</u> music(s) written by <u>"{{infoName}}"</u>
+                </p>
+                <div class="div_infos">
+
+                    <template class="flex-wrap" is="dom-repeat" items="{{elements}}" as="element" initial-count="1">
+                        <a href="#/search/artist/{{_encodeUri(element.name)}}/album/{{_encodeUri(element.albumTitle)}}/song/{{_encodeUri(element.title)}}"
+                            class="inherit">
+                            <img class="song_search_bar" src="../../img/song_search_bar.svg" alt="Band">
+                            <span class="search_title">{{element.title}} - {{element.name}} -
+                                {{element.albumTitle}}</span>
+                        </a>
+                    </template>
+                </div>
+            </template>
+
+            <!-- producer -->
+            <template is="dom-if" if="{{_isEqualTo(infoType,'producer')}}">
+                <iron-ajax id="get_content" auto url="/search/producer/{{_encodeUri(infoName)}}"
+                    last-response="{{elements}}" handleAs="json"> </iron-ajax>
+                <iron-ajax id="get_count" auto url="/search/count/song/producer/{{_encodeUri(infoName)}}"
+                    last-response="{{countField}}" handleAs="json"> </iron-ajax>
+
+                <p class="searchText-info">We have <u>{{countField.count}}</u> music(s) created by <u>"{{infoName}}"</u>
+                </p>
+                <div class="div_infos">
+
+                    <template class="flex-wrap" is="dom-repeat" items="{{elements}}" as="element" initial-count="1">
+                        <a href="#/search/artist/{{_encodeUri(element.name)}}/album/{{_encodeUri(element.albumTitle)}}/song/{{_encodeUri(element.title)}}"
+                            class="inherit">
+                            <img class="song_search_bar" src="../../img/song_search_bar.svg" alt="Band">
+                            <span class="search_title">{{element.title}} - {{element.name}} -
+                                {{element.albumTitle}}</span>
+                        </a>
+                    </template>
+                </div>
+            </template>
+
+            <!-- format -->
+            <template is="dom-if" if="{{_isEqualTo(infoType,'format')}}">
+                <iron-ajax id="get_content" auto url="/search/format/{{_encodeUri(infoName)}}"
+                    last-response="{{elements}}" handleAs="json"> </iron-ajax>
+                <iron-ajax id="get_count" auto url="/search/count/song/format/{{_encodeUri(infoName)}}"
+                    last-response="{{countField}}" handleAs="json"> </iron-ajax>
+
+                <p class="searchText-info">We have <u>{{countField.count}}</u> music(s) with the format
+                    <u>"{{infoName}}"</u></p>
+                <div class="div_infos">
+
+                    <template class="flex-wrap" is="dom-repeat" items="{{elements}}" as="element" initial-count="1">
+                        <a href="#/search/artist/{{_encodeUri(element.name)}}/album/{{_encodeUri(element.albumTitle)}}/song/{{_encodeUri(element.title)}}"
+                            class="inherit">
+                            <img class="song_search_bar" src="../../img/song_search_bar.svg" alt="Band">
+                            <span class="search_title">{{element.title}} - {{element.name}} -
+                                {{element.albumTitle}}</span>
+                        </a>
+                    </template>
+                </div>
+            </template>
+
+            <!-- anomalies -->
+            <template is="dom-if" if="{{_isEqualTo(infoType,'anomalies')}}">
+                <iron-ajax id="get_content" auto url="/search/anomalies/{{_encodeUri(infoName)}}"
+                    last-response="{{elements}}" handleAs="json"> </iron-ajax>
+
+                <p class="searchText-info">We have <u>{{elements.length}}</u> anomalies detected</p>
+                <div class="div_infos">
+
+                    <template class="flex-wrap" is="dom-repeat" items="{{elements}}" as="element" initial-count="1">
+                        <a href="javascript:return false" class="inherit">
+                            <img class="song_search_bar" src="../../img/song_search_bar.svg" alt="Band">
+                            <span class="search_title">{{element.title}} <br>=>
+                                {{_displayArtistnames(element.artistnames)}}</span>
+                        </a>
+                    </template>
+                </div>
+            </template>
+
+            <!-- member -->
+            <template is="dom-if" if="{{_isEqualTo(infoType,'member')}}">
+                <iron-ajax id="get_content" auto url="/search/member/name/{{_encodeUri(infoName)}}"
+                    last-response="{{elements}}" handleAs="json"> </iron-ajax>
+
+                <p class="searchText-info"><u>{{infoName}}</u> has played in <u>"{{elements.length}}"</u> music(s) band
+                </p>
+                <div class="div_infos">
+
+                    <template class="flex-wrap" is="dom-repeat" items="{{elements}}" as="element" initial-count="1">
+                        <a href="#/search/artist/{{_encodeUri(element.name)}}" class="inherit">
+                            <img class="song_search_bar" src="../../img/song_search_bar.svg" alt="Band">
+                            <span class="search_title">{{element.name}}</span>
+                        </a>
+                    </template>
+                </div>
+            </template>
+
+            <!-- category -->
+            <template is="dom-if" if="{{_isEqualTo(infoType,'category')}}">
+                <iron-ajax id="get_content" auto
+                    url="/search/category/{{_encodeUri(infoName)}}/{{_encodeUri(categoryName)}}"
+                    last-response="{{elements}}" handleAs="json"> </iron-ajax>
+                <iron-ajax id="get_count" auto
+                    url="/search/count/{{_encodeUri(infoName)}}/subject/{{_encodeUri(categoryName)}}"
+                    last-response="{{countField}}" handleAs="json"> </iron-ajax>
+
+                <p class="searchText-info">We have <u>{{countField.count}}</u> {{infoName}}(s) in the category
+                    <u>"{{categoryName}}"</u></p>
+                <div class="div_infos">
+                    <template is="dom-if" if="{{_isArtist(infoName)}}">
+                        <template class="flex-wrap" is="dom-repeat" items="{{elements}}" as="element" initial-count="1">
+                            <a href="#/search/artist/{{_encodeUri(element.name)}}" class="inherit">
+                                <paper-card elevation="0">
+                                    <img class="song_search_bar" src="{{putPictureArtist(element)}}" alt="Band">
+                                    <span class="search_title">{{element.name}}</span>
+                                    <paper-ripple></paper-ripple>
+                                </paper-card>
+                            </a>
+                        </template>
+                    </template>
+
+                    <template is="dom-if" if="{{_isAlbum(infoName)}}">
+                        <template class="flex-wrap" is="dom-repeat" items="{{elements}}" as="element" initial-count="1">
+                            <a href="#/search/artist/{{_encodeUri(element.name)}}/album/{{_encodeUri(element.albumTitle)}}"
+                                class="inherit">
+                                <paper-card elevation="0">
+                                    <img class="song_search_bar" src="{{putPictureAlbum(element)}}" alt="Album">
+                                    <span class="search_title">{{element.title}} - {{element.name}}</span>
+                                    <paper-ripple></paper-ripple>
+                                </paper-card>
+                            </a>
+                        </template>
+                    </template>
+
+                    <template is="dom-if" if="{{_isSong(infoName)}}">
+                        <template class="flex-wrap" is="dom-repeat" items="{{elements}}" as="element" initial-count="1">
+                            <a href="#/search/artist/{{_encodeUri(element.name)}}/album/{{_encodeUri(element.albumTitle)}}/song/{{_encodeUri(element.title)}}"
+                                class="inherit">
+                                <paper-card elevation="0">
+                                    <img class="song_search_bar" src="../../img/song_search_bar.svg" alt="Song">
+                                    <span class="search_title">{{element.title}} - {{element.name}} -
+                                        {{element.albumTitle}}</span>
+                                    <paper-ripple></paper-ripple>
+                                </paper-card>
+                            </a>
+                        </template>
+                    </template>
+                </div>
+            </template>
+
+            <!-- more -->
+            <template is="dom-if" if="{{_isEqualTo(infoType,'more')}}">
+                <iron-ajax id="get_content" auto url="/search/more/{{_encodeUri(infoName)}}"
+                    last-response="{{elements}}" handleAs="json"> </iron-ajax>
+
+
+                <template is="dom-if" if="{{!elements.length}}">
+                    <p class="center searchText-info">No artists and songs found for "{{infoName}}"</p>
+                    <div class="center icon-home">
+                        <a href="/" tabindex="-1" class="inherit">
+                            <paper-icon-button icon="icons:home"></paper-icon-button>
+                        </a>
+                    </div>
+                </template>
+                <template is="dom-if" if="{{elements.length}}">
+                    <p class="center searchText-info">Artists and songs found for "{{infoName}}"</p>
+                </template>
+                <template is="dom-repeat" items="{{elements}}" as="result" initial-count="1">
+                    <template is="dom-if" if="{{_isArtistMore(result)}}">
+                        <a href="#/search/artist/{{_encodeUri(result.name)}}" class="inherit">
+                            <paper-card elevation="0">
+                                <img class="band_search_bar" src="{{putPictureArtistMore(result)}}" alt="Band">
+                                <span class="search_title">{{result.name}}</span>
+                                <paper-ripple></paper-ripple>
+                            </paper-card>
+                        </a>
+                    </template>
+
+                    <template is="dom-if" if="{{_isSongMore(result)}}">
+                        <a href="#/search/artist/{{_encodeUri(result.name)}}/album/{{_encodeUri(result.albumTitle)}}/song/{{_encodeUri(result.title)}}"
+                            class="inherit">
+                            <paper-card elevation="0">
+                                <img class="song_search_bar" src="{{putPictureSongMore(result)}}" alt="Song">
+                                <span class="search_title">{{result.title}} - {{result.name}}
+                                    <span class="search_album">(album: {{result.albumTitle}})</span>
+                                </span>
+                                <paper-ripple></paper-ripple>
+                            </paper-card>
+                        </a>
+                    </template>
+                </template>
+            </template>
+
+        </paper-material>
+    </template>
+
+    <script>
+        // element registration
+        Polymer({
+            is: "page-infos",
+            // add properties and methods on the element's prototype
+            properties: {},
+            ready: function (e) { },
+            _encodeUri: function (nameArtist) {
+                return encodeURIComponent(nameArtist);
+            },
+            _isEqualTo: function (elementA, elementB) {
+                return elementA == elementB;
+            },
+            // Erreur: 1 producteur produit la même musique pour plusieurs artistes
+            _displayArtistnames: (_artistnames) => {
+                return _artistnames.join(' + ');
+            },
+            _isArtist: function (collection) {
+                return collection == "artist";
+            },
+            _isAlbum: function (collection) {
+                return collection == "album";
+            },
+            _isSong: function (collection) {
+                return collection == "song";
+            },
+            _isArtistMore: function (data) {
+                var isArtist = false;
+                if (typeof data.albumTitle == 'undefined') {
+                    isArtist = true;
+                }
+                return isArtist;
+            },
+            _isSongMore: function (data) {
+                var isSong = false;
+                if (typeof data.albumTitle !== 'undefined') {
+                    isSong = true;
+                }
+                return isSong;
+            },
+            putPictureSongMore: function (suggestion) {
+                return suggestion.picture || "../../img/song_search_bar.svg";
+            },
+            putPictureArtistMore: function (suggestion) {
+                return suggestion.picture || "../img/band_search_bar.svg";
+            },
+            putPictureArtist: function (category) {
+                return category.picture ? category.picture.small : "../../img/band_search_bar.svg";
+            },
+            putPictureAlbum: function (category) {
+                return category.cover ? category.cover.small : "../../img/album_search_bar.svg";
+            }
+        });
+
+        /***
+         * BEFORE => AFTER
+         *
+         * // recorded = Page recorded contenant les musiques ayant le même recorded (ex: London)
+         * https://localhost/#/search/recorded/London => https://localhost/#/search/infos/recorded/London
+         *
+         * // recordlabel = Page recordlabel contenant les musiques ayant étaient enregistrées par un studio d'enregistrement (ex: Epic%20Records)
+         * https://localhost/#/search/recordlabel/Epic%20Records => https://localhost/#/search/infos/recordlabel/Epic%20Records
+         *
+         * // genre = Page genre contenant les musiques ayant le même genre de musique (ex: Hard Rock)
+         * https://localhost/#/search/genre/Hard%20rock => https://localhost/#/search/infos/genre/Hard%20rock
+         *
+         * // award = Page award contenant les musiques ayant le même award (ex: Toutes les musiques ayant un disque d'or)
+         * https://localhost/#/search/award/Platinum => https://localhost/#/search/infos/award/Platinum
+         *
+         * // writer = Page writer contenant les musiques ayant le même writer (ex: Toutes les musiques écrites par Jimmy Page)
+         * https://localhost/#/search/writer/Michael%20Jackson => https://localhost/#/search/infos/writer/Michael%20Jackson
+         *
+         * // producer = Page producer contenant les musiques d'un producteur
+         * https://localhost/#/search/producer/Quincy%20Jones => https://localhost/#/search/infos/producer/Quincy%20Jones
+         *
+         * // format = Page format contenant les musiques ayant le même format lors de la sortie (ex: format CD)
+         * https://localhost/#/search/format/CD%20single => https://localhost/#/search/infos/format/CD%20single
+         *
+         * // anomalies = Page anomalies contenant les musiques d'un producteur
+         * https://localhost/#/search/anomalies/Quincy%20Jones => https://localhost/#/search/infos/anomalies/Quincy%20Jones
+         *
+         * // member = Page member contenant les groupes dans lesquels un artiste (au sens d'un membre d'un groupe) a joué
+         * https://localhost/#/search/member/name/The%20Jackson%205 => https://localhost/#/search/infos/member/The%20Jackson%205
+         *
+         * // category = Page categorie contenant les artistes/albums/musiques contenant la categorie cherchée en commun
+         * https://localhost/#/search/category/artist/American%20dance%20musicians => https://localhost/#/search/infos/category/artist/American%20dance%20musicians
+         * https://localhost/#/search/category/song/John%20Mayer%20songs => https://localhost/#/search/infos/category/song/John%20Mayer%20songs
+         *
+         * // More: contient plus de résultats de recherche
+         * https://localhost/#/search/more/Beat%20IT => https://localhost/#/search/infos/more/Beat%20IT
+         * */
+    </script>
+</dom-module>

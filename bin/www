@@ -51,7 +51,7 @@ function normalizePort(val) {
     return val;
   }
   if (port >= 0) {
-    console.log('Le serveur écoute sur le port ' + port);
+    console.log(`Le serveur écoute sur le port: ${port}`);
     return port;
   }
   return false;

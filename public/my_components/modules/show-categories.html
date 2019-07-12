@@ -1,0 +1,54 @@
+<!-- MODULE -->
+<dom-module id="show-categories">
+    <template>
+        <!-- CSS -->
+        <style>
+            .nav_subject {
+                background-color: #3f50b5;
+                flex-wrap: wrap;
+                text-align: center;
+                display: flex;
+                justify-content: center;
+            }
+
+            .nav_subject a:hover {
+                background-color: #eee;
+                color: #3f50b5;
+            }
+
+            .nav_subject a {
+                color: #eee;
+                font-size: 12px;
+                padding: 20px;
+                display: flex;
+                text-decoration: none;
+            }
+        </style>
+        <!-- HTML -->
+        <template is="dom-if" if="{{content.subject.length}}">
+            <nav class="nav_subject">
+                <template is="dom-repeat" items="{{content.subject}}" as="subject">
+                    <a href="#/search/infos/category/{{category}}/{{_encodeUri(subject)}}">{{subject}}</a>
+                </template>
+            </nav>
+        </template>
+    </template>
+    <!-- JS -->
+    <script>
+        // element registration
+        Polymer({
+            is: "show-categories",
+            // add properties and methods on the element's prototype
+            properties: {
+                category: {
+                    type: String,
+                    value: ""
+                }
+            },
+            ready: function (e) { },
+            _encodeUri: function (_string) {
+                return encodeURIComponent(_string);
+            }
+        })
+    </script>
+</dom-module>

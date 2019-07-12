@@ -576,6 +576,44 @@ var get_statsSongCount = (req, res) => {
     });
 }
 
+let get_rdf= (req, res) => {
+    var db = req.db;
+    let _artistName = req.params.artistname;
+    let _query = {
+        name: _artistName
+    };
+    db.collection(COLLECTIONARTIST).findOne(_query, config.request.projection.search.get_artist.artist, (err, artist) => {
+        if (artist === null) return res.status(404).json(config.http.error.artist_404);
+        let _result = {
+            "@context": {
+                "mo": "http://purl.org/ontology/mo/",
+                "dc": "http://purl.org/dc/elements/1.1/",
+                "xsd": "http://www.w3.org/2001/XMLSchema#",
+                "tl": "http://purl.org/NET/c4dm/timeline.owl#",
+                "event": "http://purl.org/NET/c4dm/event.owl#",
+                "foaf": "http://xmlns.com/foaf/0.1/",
+                "rdfs": "http://www.w3.org/2000/01/rdf-schema#"
+            },
+            "rdf:type": "mo:MusicArtist",
+            "foaf:name": artist.name,
+            "foaf:homepage": artist.urlOfficialWebsite,
+            "mo:activity_start": artist.lifeSpan.begin,
+            "mo:activity_end": artist.lifeSpan.end,
+            "mo:Genre": artist.genres,
+            "mo:discogs": artist.urlDiscogs,
+            "mo:musicbrainz": artist.urlMusicBrainz,
+            "mo:myspace": artist.urlMySpace,
+            "mo:wikipedia": artist.urlWikipedia,
+            "mo:image": artist.picture.standard,
+            "vocab:alias": artist.nameVariations,
+            "foaf:homepage": artist.urlOfficialWebsite,
+            "mo:label": artist.recordLabel,
+            "mo:origin": artist.locationInfo
+        };
+        return res.json(_result)
+    });
+}
+
 exports.get_artistAll = get_artistAll;
 exports.get_artistAllById = get_artistAllById;
 exports.get_artistAllByName = get_artistAllByName;
@@ -599,3 +637,4 @@ exports.get_artistMemberWithMostGroup = get_artistMemberWithMostGroup;
 exports.get_statsArtistCount = get_statsArtistCount;
 exports.get_statsAlbumCount = get_statsAlbumCount;
 exports.get_statsSongCount = get_statsSongCount;
+exports.get_rdf = get_rdf;

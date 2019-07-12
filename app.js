@@ -10,8 +10,6 @@ import compression from 'compression';
 //Import DB
 import elasticsearch from 'elasticsearch';
 import mongoose from 'mongoose';
-import graphqlHTTP from 'express-graphql';
-import schema from './graphql';
 import {
     db as dbMongo
 } from 'mongoskin';
@@ -32,12 +30,12 @@ import confPassport from './routes/conf/passport';
 import search from './routes/api_search/search';
 import api_v1 from './routes/api/v1/api_v1';
 import MT5 from './routes/api_MT5/MT5';
-import download from './routes/api_download/download';
 import jwt_api from './routes/api_jwt/jwt';
 import updatedb from './routes/api_updatedb/updatedb';
 import extractdiscoveryhub from './routes/api_extractdiscoveryhub/extractdiscoveryhub';
-import feedback from './routes/api_feedback/feedback';
-import helper from './routes/api_helper/helper';
+import extractdeezer from './routes/api_extractdeezer/extractdeezer';
+import python from './routes/api_python/python';
+
 import mergedb from './routes/api_mergedb/mergedb';
 import createdb from './routes/api_createdb/createdb';
 import extractdbpedia from './routes/api_extractdbpedia/extractdbpedia';
@@ -126,13 +124,16 @@ app.use('/AmpSimFA', express.static(path.join(__dirname, 'public/AmpSimFA')));
 app.use('/AmpSim3', express.static(path.join(__dirname, 'public/AmpSim3')));
 app.use('/AmpDesigner', express.static(path.join(__dirname, 'public/AmpDesigner')));
 app.use('/dev', express.static(path.join(__dirname, 'public/dev')));
+app.use('/Wasabi-Pedalboard', express.static(path.join(__dirname, 'public/Wasabi-Pedalboard')));
+app.use('/wapguibuilder', express.static(path.join(__dirname, 'public/wapguibuilder')));
+app.use('/WebAudioPluginBank', express.static(path.join(__dirname, 'public/WebAudioPluginBank')));
+
 
 app.use('/MT5', MT5);
 app.use('/search', search);
 app.use('/api/v1', new RateLimit(config.http.limit_request.api), api_v1);
 app.use('/jwt', jwt_api);
 app.use('/apidoc', express.static(path.join(__dirname, 'apidoc')));
-app.use('/helper', helper);
 
 
 //Allows the authentication, at the moment the /download api have to stay private
@@ -145,18 +146,14 @@ if (process.env.NODE_ENV === config.launch.env.dev) {
     console.error("/!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\\");
     console.error("/!\\ Project running in " + process.env.NODE_ENV + " mode. Please, turn on the prod mode before pushing your code to github (routes/conf/conf.js)/!\\");
     console.error("/!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\\");
-    // app.use('/graphql', graphqlHTTP({
-    //     schema: schema,
-    //     rootValue: root,
-    //     graphiql: true,
-    // }));
-    app.use('/download', download);
+    
     app.use('/updatedb', updatedb);
     app.use('/mergedb', mergedb);
     app.use('/createdb', createdb);
     app.use('/extractdbpedia', extractdbpedia);
+    app.use('/extractdeezer', extractdeezer);
     app.use('/extractdiscoveryhub', extractdiscoveryhub);
-    app.use('/feedback', feedback);
+    app.use('/python', python);
     
     // development error handler
     // will print stacktrace
@@ -166,7 +163,6 @@ if (process.env.NODE_ENV === config.launch.env.dev) {
 //Return page-404.html 
 app.get('*', (req, res) => {
     //We return the path wrote by the user. this path will be not recognize by <app-router> which will display a 404 page
-    console.log(req.path);
     res.status(404).redirect('/#/page-404.html');
 });
 // error handlers
@@ -184,6 +180,5 @@ app.use((err, req, res, next) => {
         error: {}
     });
 });
-
 
 module.exports = app;

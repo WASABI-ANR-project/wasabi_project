@@ -146,7 +146,7 @@ module.exports = {
             "search": {
                 "get_artist": {
                     "artist": {
-                        "urlWikia": 0,
+                        //"urlWikia": 0,
                         "wordCount": 0,
                         "animux_path": 0,
                         "disambiguation": 0,
@@ -176,7 +176,7 @@ module.exports = {
                         "name": 1
                     },
                     "album": {
-                        "urlAlbum": 0,
+                        //"urlAlbum": 0,
                         "wordCount": 0,
                         "disambiguation": 0,
                         "id_album_musicbrainz": 0
@@ -194,7 +194,7 @@ module.exports = {
                         "title": 1
                     },
                     "song": {
-                        "urlSong": 0,
+                        //"urlSong": 0,
                         "wordCount": 0,
                         "animux_content": 0,
                         "animux_path": 0,

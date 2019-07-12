@@ -4,7 +4,6 @@
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../bower_components/iron-form/iron-form.html">
 <link rel="import" href="../bower_components/paper-toast/paper-toast.html">
-
 <dom-module id="page-login">
     <template>
         <style>
@@ -14,34 +13,29 @@
             }
 
             paper-button {
-                padding: 0;
+                background-color: #3f51b5;
+                color: #fff;
                 margin: 0;
-                height: 40px;
-                margin-top: 15px;
-                /* text-align: center; */
+                margin-top:20px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                background-color: #3f51b5;
-                color: white;
             }
 
             paper-material {
+                padding: 50px;
+                width:60%;
                 display: flex;
-                margin-bottom: 5%;
                 justify-content: center;
-                flex: 1;
-                border-radius: 3px;
-                padding: 10% 0% 10% 0%;
             }
 
             form {
                 display: flex;
                 flex-direction: column;
-                flex: 0.5;
+                flex: 1;
             }
         </style>
-        <paper-material elevation="1">
+        <paper-material elevation="0">
             <paper-toast id="toast" duration=5000 text="Wrong email or password" class="fit-bottom"></paper-toast>
 
             <iron-ajax auto url="/search/auth" method="GET" headers="[[headers]]" handle-as="json" last-response="{{auth}}"></iron-ajax>
@@ -80,8 +74,7 @@
                     computed: '_computeHeader(token)'
                 }
             },
-            ready: function (e) {
-            },
+            ready: function (e) { },
             logoutUser: function () {
                 localStorage.removeItem("token");
                 window.location.reload();

@@ -1,0 +1,57 @@
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/scale-up-animation.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/fade-out-animation.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<dom-module id="show-dialog">
+    <template>
+        <style>
+            paper-dialog {
+                overflow: auto;
+                padding: 2%;
+                margin: 5%;
+            }
+
+            paper-button {
+                margin: 10px;
+                background-color: #3f51b5;
+                color: white;
+            }
+        </style>
+        <paper-button toggles raised on-tap="toggleDialog">
+            <iron-icon icon="code"></iron-icon>
+            Show RDF
+        </paper-button>
+
+        <paper-dialog id="dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation">
+            <h2>{{labeldialog}}</h2>
+            <p>{{content}}</p>
+            <paper-button toggles raised dialog-dismiss>
+                <iron-icon icon="close"></iron-icon>
+                CLOSE
+            </paper-button>
+        </paper-dialog>
+
+    </template>
+
+    <script>
+        // element registration
+        Polymer({
+            is: "show-dialog",
+            // add properties and methods on the element's prototype
+            properties: {
+                labeldialog: {
+                    type: String,
+                    value: ""
+                },
+                content: {
+                    type: String,
+                    value: "",
+                },
+            },
+            ready: function (e) {},
+            toggleDialog: function () {
+                this.$.dialog.toggle();
+            }
+        });
+    </script>
+</dom-module>

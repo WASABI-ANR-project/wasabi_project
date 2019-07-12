@@ -1,0 +1,184 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html">
+<link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/app-layout/app-drawer/app-drawer.html">
+<!--my_components-->
+<link rel="import" href="carbon-search-input.html">
+<dom-module id="nav-bar">
+    <template>
+        <style>
+            app-drawer {
+                z-index: 1;
+            }
+
+            a paper-icon-button,
+            a:active paper-icon-button,
+            a:visited paper-icon-button {
+                color: #FFFFFF;
+            }
+
+            carbon-search-input {
+                max-width: 500px;
+                min-width: 220px;
+                height: 40px;
+            }
+
+            .drawer-contents {
+                height: 100%;
+                overflow-y: auto;
+                color: grey;
+            }
+
+            .linkMenu {
+                line-height: 64px;
+                display: block;
+                position: relative;
+                padding-left: 16px;
+                padding-right: 16px;
+                cursor: pointer;
+                color: white;
+                text-decoration: none;
+                outline-style: none;
+            }
+
+            .colorTextMenu {
+                color: #3f51b5;
+            }
+
+            .colorTextMenuSelected {
+                color: white;
+            }
+
+            .linkMenu:hover {
+                background-color: #5767bb;
+            }
+
+            .linkMenu:hover>span,
+            .linkMenu:hover>iron-icon {
+                color: white;
+            }
+
+            .linkMenuSelected {
+                background-color: #3f51b5;
+            }
+
+            #bt_nav_goUp {
+                display: none;
+
+                position: fixed;
+                bottom: 0px;
+                right: 0px;
+            }
+        </style>
+        <paper-toolbar id="top_menu" justify="justified" middleJustify="justified">
+            <app-drawer id="appDrawer" swipe-open opened="{{isOpen}}">
+                <div class="drawer-contents">
+                    <template is="dom-repeat" id="menu" items="[[labelsAppDrawer]]">
+                        <a href="[[item.link]]" class="linkMenu" on-tap="_closeAppDrawer" target="[[item.target]]">
+                            <iron-icon class="colorTextMenu" icon="[[item.icon]]" item-icon> </iron-icon>
+                            <span class="colorTextMenu">[[item.label]]</span>
+                            <paper-ripple></paper-ripple>
+                        </a>
+                    </template>
+                </div>
+            </app-drawer>
+            <paper-icon-button icon="menu" on-tap="menuAction" title="Menu"></paper-icon-button>
+            <carbon-search-input placeholder="Search" voice-enabled></carbon-search-input>
+            <a href="#/login" tabindex="-1">
+                <paper-icon-button icon="account-circle" title="Login"></paper-icon-button>
+            </a>
+        </paper-toolbar>
+
+        <paper-button id="bt_nav_goUp" raised role="button" class="style-scope show-dialog x-scope paper-button-0" on-tap="goToUp">
+            <iron-icon icon="arrow-drop-up"></iron-icon>
+        </paper-button>
+    </template>
+    <script>
+        // element registration
+        Polymer({
+            is: "nav-bar",
+            properties: {
+                isOpen: {
+                    type: Boolean,
+                    value: false
+                },
+                labelsAppDrawer: {
+                    type: Array,
+                    value: [{
+                        label: "Home",
+                        icon: "home",
+                        link: "/#/",
+                        target: "_self"
+                    }, {
+                        label: "Multitrack",
+                        icon: "work",
+                        link: "#/search/song/multitrack",
+                        target: "_self"
+                    }, {
+                        label: "Stats",
+                        icon: "info-outline",
+                        link: "#/stats",
+                        target: "_self"
+                    }, {
+                        label: "---",
+                        icon: "",
+                        link: "",
+                        target: "_self"
+                    }, {
+                        label: "API",
+                        icon: "swap-vertical-circle",
+                        link: "/apidoc",
+                        target: "_blank"
+                    }, {
+                        label: "Blog",
+                        icon: "today",
+                        link: "http://wasabihome.i3s.unice.fr",
+                        target: "_blank"
+                    }, {
+                        label: "Github",
+                        icon: "social:share",
+                        link: "https://github.com/ElmahdiK/wasabi_project",
+                        target: "_blank"
+                    }
+                    ]
+                },
+                elementSelected: {
+                    type: Object,
+                }
+            },
+            ready: function (e) {
+                window.onscroll = () => {
+                    if ((document.body.scrollTop || document.documentElement.scrollTop) > 80) this.$.bt_nav_goUp.style.display = "inline-flex";
+                    else this.$.bt_nav_goUp.style.display = "none";
+                }
+             },
+             goToUp: function() {
+                  this.$.top_menu.scrollIntoView({ behavior: 'smooth', block: "start", inline: "nearest" });
+            },
+            _closeAppDrawer: function (event) {
+                //Si il y a un element selectionné on lui enléve la class linkMenuSelected
+                if (this.elementSelected) {
+                    this.elementSelected.classList.remove("linkMenuSelected");
+                    //On change la classe des elements contenu dans la balise <a> du menu afin que la couleur du text soit bleu
+                    this.elementSelected.querySelectorAll(".colorTextMenuSelected").forEach(function (currElt) {
+                        currElt.classList.remove("colorTextMenuSelected");
+                        currElt.classList.add("colorTextMenu");
+                    });
+                }
+                event.currentTarget.classList.add("linkMenuSelected");
+                //On change la classe des elements contenu dans la balise <a> du menu afin que la couleur du text soit blanche
+                event.currentTarget.querySelectorAll(".colorTextMenu").forEach(function (currElt) {
+                    currElt.classList.remove("colorTextMenu");
+                    currElt.classList.add("colorTextMenuSelected");
+                });
+                this.elementSelected = event.currentTarget;
+                this.$.appDrawer.close();
+            },
+            menuAction: function () {
+                this.isOpen = !this.isOpen;
+            }
+        });
+    </script>
+</dom-module>

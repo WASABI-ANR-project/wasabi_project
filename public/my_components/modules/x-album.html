@@ -1,0 +1,200 @@
+<!-- IMPORTS -->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<!-- MODULE -->
+<dom-module id="x-album">
+    <template>
+        <style>
+            :host {
+                display: flex;
+                margin-top: 0px !important;
+                padding: 10px;
+            }
+
+            .done {
+                background: green;
+            }
+
+            article {
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+                align-items: center;
+                position: relative;
+            }
+
+            .album {
+                font-size: 22px;
+                flex: 1;
+                cursor: pointer;
+                padding: 37px 50px;
+                display: block;
+            }
+
+            .album:hover {
+                background-color: #F2F2F2;
+            }
+
+            ol {
+                list-style-position: inside;
+                margin: 0px;
+                padding: 0px;
+            }
+
+            .img_title {
+                display: flex;
+                justify-content: center;
+                flex-flow: wrap;
+                flex: 1;
+            }
+
+            .imageAlbum {
+                width: 100%;
+                height: 250px;
+                vertical-align: top;
+            }
+
+            .div_column {
+                padding: 0px;
+                flex: 1;
+                display: flex;
+                justify-content: flex-start;
+                align-content: stretch;
+                position: relative;
+            }
+
+            .div_column #div_listbox {
+                background: rgba(255, 255, 255, 0.9);
+                max-height: 250px;
+                flex: 2;
+                overflow: scroll;
+            }
+
+            .div_edit {
+                position: absolute;
+                top: -10px;
+                right: -10px;
+            }
+
+            .div_album:hover {
+                background: #fff;
+            }
+
+            .div_album {
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+                align-content: stretch;
+                width: 100%;
+                transition: 0.2s;
+            }
+
+            .album_title {
+                background: rgba(0, 0, 0, 0.8);
+                color: #eee;
+                font-size: 12px;
+                padding: 10px;
+                text-align: left;
+                position: absolute;
+                bottom: 0px;
+                right: 0px;
+                left: 0px;
+            }
+
+            #listSong li {
+                font-size: 16px;
+                padding: 0px 10px;
+                display: flex;
+                flex-direction: row;
+                justify-content: flex-start;
+                align-items: center;
+            }
+        </style>
+        <!-- HTML -->
+        <iron-ajax auto url="/search/auth" method="GET" headers="[[headers]]" handle-as="json" last-response="{{auth}}">
+        </iron-ajax>
+
+        <div class="div_album">
+            <div class="div_column" title="{{album.title}} {{album.publicationDate}} ">
+
+                <article id="container">
+                    <a href="#/search/artist/{{_encodeUri(album.name)}}/album/{{_encodeUri(album.title)}}">
+                        <div class="img_title">
+                            <template is="dom-if" if="{{album.cover.medium}}">
+                                <img class="imageAlbum" src$="{{album.cover.medium}}" alt="Image Album">
+                                <span class="album_title">
+                                    {{album.title}}
+                                    <template is="dom-if" if="{{album.publicationDate}}"> -
+                                        {{album.publicationDate}}</template>
+                                </span>
+                            </template>
+                        </div>
+                    </a>
+                </article>
+
+                <div role="listbox" id="div_listbox">
+                    <ul id="listSong">
+                        <template id="songs" is="dom-repeat" items="{{album.songs}}" as="song">
+                            <li>
+                                <span>[[addOne(index)]].</span>
+
+                                <edit-field idfield="id-song-{{index}}" field="title" label="" idsong="{{song._id}}"
+                                    value="{{song.title}}" artistname={{album.name}}
+                                    albumtitle="{{album.title}}" songtitle="{{song.title}}" link="{{_getLink(album.name,album.title,song.title)}}">
+                                </edit-field>
+                            </li>
+                        </template>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </template>
+    <script>
+        Polymer({
+            is: "x-album",
+            properties: {
+                content: {
+                    type: Object,
+                    value: {}
+                },
+                album: {
+                    type: Object,
+                    value: {}
+                },
+                editing: {
+                    type: Boolean,
+                    value: false,
+                },
+                token: {
+                    type: String,
+                    value: localStorage.getItem("token") || ""
+                },
+                headers: {
+                    computed: '_computeHeader(token)'
+                }
+            },
+            ready: function (e) {
+                console.log(this.content);
+            },
+            doEdit: function (e) {
+                this.editing = !this.editing;
+            },
+            addOne: function (_index) {
+                return (_index + 1);
+            },
+            _computeHeader: function () {
+                this.token = localStorage.getItem("token") || "";
+                return {
+                    Authorization: this.token
+                };
+            },
+            _encodeUri: function (title) {
+                return encodeURIComponent(title);
+            },
+            _getLink:function(artistname,albumtitle,songtitle){
+                return "#/search/artist/"+this._encodeUri(artistname)+"/album/"+this._encodeUri(albumtitle)+"/song/"+this._encodeUri(songtitle);
+            }
+        });
+    </script>
+</dom-module>

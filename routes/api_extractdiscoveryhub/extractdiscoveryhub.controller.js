@@ -2,8 +2,22 @@ import request from 'request';
 import xml from 'xml';
 import sparql from 'sparql';
 
-var getInfos=(req,res)=>{
-    res.json({msg:'welcome'});
+/**
+ * http://semreco.inria.fr/semreco?node=http://dbpedia.org/resource/Michael_Jackson
+ * http://api.discoveryhub.co/recommendations/49e51e2564
+ */
+
+/**
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ */
+var getInfos = (req, res) => {
+    res.json({ services: [
+        '/link/:elementA/:elementB',
+        '/suggestions/:element',
+        '/semreco/:element'
+    ] });
 }
 
 /**
@@ -13,8 +27,8 @@ var getInfos=(req,res)=>{
  */
 var getSuggestions = (req, res) => {
     let _element = req.params.element;
-    let _url='http://dbpedia-test.inria.fr/lookup/api/search.asmx/PrefixSearch?format=json&QueryClass=&MaxHits=30&QueryString='+_element;
-    res.json({url:_url});
+    let _url = 'http://dbpedia-test.inria.fr/lookup/api/search.asmx/PrefixSearch?format=json&QueryClass=&MaxHits=30&QueryString=' + _element;
+    res.json({ url: _url });
 }
 
 /**
@@ -25,7 +39,6 @@ var getSuggestions = (req, res) => {
 var getCommonalities = (req, res) => {
     let _elementA = req.params.elementA;
     let _elementB = req.params.elementB;
-
 
     let client = new sparql.Client("http://dbpedia-test.inria.fr/sparql");
     let same = "";
@@ -62,9 +75,15 @@ var getCommonalities = (req, res) => {
         res.json({
             linkBetween: [_elementA, _elementB],
             similarity: objSimilarity
-            // urlAPI:_urlAPI
-            //res: results
         });
+    })
+};
+
+// recommendations discoveryhub with semreco
+var getRecommendations = (req, res, next) => {
+    // Michael_Jackson
+    requestDH(`http://semreco.inria.fr/semreco?node=http://dbpedia.org/resource/${req.params.element}`).then((data) => {
+        res.json(JSON.parse(data));
     })
 };
 
@@ -85,3 +104,4 @@ var requestDH = (urlDH) => {
 exports.getInfos = getInfos;
 exports.getCommonalities = getCommonalities;
 exports.getSuggestions = getSuggestions;
+exports.getRecommendations = getRecommendations;

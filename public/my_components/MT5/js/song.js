@@ -165,7 +165,6 @@ function Song(songName, context) {
     this.toggleRecording = function(e) {
     if (this.recording) {
         // stop recording
-        console.log("stopping recording");
         this.masterRecorderNode.stop();
 
         // We save the mix when we stop recording
@@ -174,7 +173,6 @@ function Song(songName, context) {
         // start recording
         if (!this.masterRecorderNode)
             return;
-        console.log("start recording");
         this.masterRecorderNode.clear();
         this.masterRecorderNode.record();
     }

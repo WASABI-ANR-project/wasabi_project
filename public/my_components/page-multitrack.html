@@ -1,0 +1,199 @@
+<link href="../../bower_components/polymer/polymer.html" rel="import">
+<link href="../../bower_components/iron-ajax/iron-ajax.html" rel="import">
+<link href="../../bower_components/paper-button/paper-button.html" rel="import">
+
+<dom-module id="page-multitrack">
+    <template>
+        <style>
+            .app_content {
+                width: 100%;
+                margin: 0 auto;
+            }
+
+            .searchText-info {
+                font-size: 1.5em;
+                padding: 25px;
+                color: #333333;
+                text-align: center;
+            }
+
+            #ul_content {
+                background: linear-gradient(#fafafa, #fff);
+                list-style: none;
+                margin: 0px !important;
+                padding: 0px !important;
+            }
+
+            #ul_content li a:hover {
+                background: #3f51b5;
+                color: #fff;
+                text-indent: 5px;
+            }
+
+            #ul_content li a {
+                color: #111;
+                border-bottom: 1px solid #ddd;
+                padding: 20px;
+                transition: 0.5s;
+                display: block;
+                text-decoration: none;
+            }
+
+            .app_pagination {
+                background: #3f51b5;
+                margin: 0 auto;
+                padding: 10px;
+                margin-top: 50px;
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                position: relative;
+            }
+
+            .app_pagination paper-button:hover {
+                color: #fff;
+            }
+
+            .app_pagination paper-button {
+                color: #aaa;
+            }
+
+            .hidden {
+                display: none;
+            }
+
+            .img_loading {
+                height: 50px;
+                vertical-align: middle;
+            }
+
+            #img_loading {
+                position: absolute;
+                left: 0px;
+                top: 7px;
+            }
+        </style>
+        <iron-ajax auto url="/search/auth" method="GET" headers="[[headers]]" handle-as="json" last-response="{{auth}}">
+        </iron-ajax>
+        <template is="dom-if" if="{{auth.isConnected}}">
+            <iron-ajax id="get_count" on-response='_countFinished' auto url="/search/song/count/multitrack"
+                last-response="{{countField}}" handleAs="json"></iron-ajax>
+        </template>
+
+        <div hidden="{{!auth.isConnected}}" class="app_content">
+            <p class="center searchText-info">We have
+                <template id="templateForm" is="dom-if" if="{{!indicator}}">
+                    <img class='img_loading' src="../../img/loading.gif">
+                </template>
+                <template id="templateForm" is="dom-if" if="{{indicator}}">
+                    <b>{{indicator}}</b>
+                </template>
+                multitrack songs
+            </p>
+            <div id="app_pagination" class="app_pagination hidden">
+                <img id='img_loading' class='img_loading' src="../../img/loading.gif">
+                <paper-button id='bt_previous'>previous</paper-button>
+                <paper-button id='bt_next'>next</paper-button>
+            </div>
+            <ul id="ul_content"></ul>
+        </div>
+
+        <div hidden="{{auth.isConnected}}"
+            style="height: 200px; justify-content: center; display: flex; align-items: center;">
+            <b>Only for registered users. Please contact micbuffa@gmail.com for an access</b>
+        </div>
+    </template>
+
+    <script>
+        Polymer({
+            is: "page-multitrack",
+            properties: {
+                pagination: {
+                    type: Object,
+                    value: null
+                },
+                indicator: {
+                    type: Object,
+                    value: null
+                },
+                token: {
+                    type: String,
+                    value: localStorage.getItem("token") || ""
+                },
+                headers: {
+                    computed: '_computeHeader(token)'
+                }
+            },
+            ready: function (e) {
+                if (this.token) {
+                    this.pagination = new Pagination(this.$.ul_content, this.$.img_loading);
+                    this.$.bt_previous.onclick = () => this.pagination.previous();
+                    this.$.bt_next.onclick = () => this.pagination.next();
+                }
+            },
+            _countFinished: function (e) {
+                const _nbSongs = e.detail.response.count;
+                this.pagination.lastPage = parseInt(_nbSongs / 10);
+                this.$.app_pagination.classList.remove('hidden');
+                this.indicator = _nbSongs;
+            },
+            _computeHeader: function () {
+                this.token = localStorage.getItem("token") || "";
+                return {
+                    Authorization: this.token
+                };
+            }
+        });
+
+        class Pagination {
+            constructor(_container, _indicator) {
+                this.container = _container;
+                this.indicator = _indicator;
+                this.tabPage = [0];
+                this.page = 0;
+                this.lastPage = 1;
+                this.urlAPI = `/search/song/multitrack`;
+                this.getAPIResults();
+            }
+            getAPIResults() {
+                this.indicator.style.display = "flex";
+                fetch(`${this.urlAPI}/${this.tabPage[this.page]}`).
+                    then(response => {
+                        response.json().then(res => {
+                            let _listHTML = "";
+                            Object.keys(res).map(
+                                (elem, index) => {
+                                    _listHTML += this.render(res[elem]);
+                                    if (index == 9 && !this.tabPage.includes(res[elem]._id)) this.tabPage.push(res[elem]._id);
+                                }
+                            )
+                            this.container.innerHTML = _listHTML;
+                            this.indicator.style.display = "none";
+                        })
+                    })
+            }
+            next() {
+                if (this.page < this.lastPage) {
+                    this.page += 1;
+                    this.getAPIResults();
+                }
+            }
+            previous() {
+                if (this.page > 0) {
+                    this.page -= 1;
+                    this.getAPIResults();
+                }
+            }
+            _encodeUri(nameArtist) {
+                return encodeURIComponent(nameArtist);
+            }
+            render(data) {
+                return `<li class="style-scope page-multitrack">
+                    <a href="#/search/artist/${this._encodeUri(data.name)}/album/${this._encodeUri(data.albumTitle)}/song/${this._encodeUri(data.title)}?multitrack=true" class="style-scope page-multitrack">
+                        <b>${(data.name)}</b> - <i>${(data.albumTitle)}</i> - <u>${(data.title)}</u>
+                        </a>
+                    </li>`;
+            }
+        }
+    </script>
+</dom-module>

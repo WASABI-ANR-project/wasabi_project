@@ -5,8 +5,6 @@ $(function($) {
                         setMasterVolume(value);
                     },
                     release : function (value) {
-                        //console.log(this.$.attr('value'));
-                        //console.log("release : " + value);
                         setMasterVolume(value);
                     },
                     cancel : function () {

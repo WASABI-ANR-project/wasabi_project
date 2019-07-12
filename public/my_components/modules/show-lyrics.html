@@ -1,0 +1,313 @@
+<!-- IMPORTS -->
+<!-- MODULE -->
+<dom-module id="show-lyrics">
+    <template>
+        <!-- CSS -->
+        <style>
+            :root {
+                flex: 1;
+            }
+
+            #section_lyrics {
+                display: flex;
+                flex-direction: column;
+            }
+
+            #section_lyrics paper-fab {
+                align-self: flex-end;
+            }
+
+            #articleLyrics {
+                border: 2px solid transparent;
+                font-size: 18px;
+                width: 100%;
+                margin: 0 auto;
+                text-align: center;
+            }
+
+            .div_splited_br {
+                background-color: #aed581 !important;
+            }
+
+            #articleLyrics[contenteditable=true] {
+                background: #eee;
+                border: 2px solid #ccc;
+            }
+
+            form {
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                margin: 0 auto;
+                margin-bottom: 10px;
+            }
+
+            form label {
+                border: 3px solid #ccc;
+                width: 40px;
+                height: 40px;
+                border-radius: 100%;
+                cursor: pointer;
+                text-align: center;
+            }
+
+            form label[for=view_green] {
+                background: #aed581;
+            }
+
+            form label[for=view_color] {
+                background: linear-gradient(purple, blue);
+            }
+
+            form input {
+                visibility: hidden;
+            }
+
+            form input:checked+label {
+                border: 3px solid #333;
+            }
+
+            .done {
+                background: green;
+            }
+        </style>
+
+        <!-- HTML -->
+        <iron-ajax auto url="/search/auth" method="GET" headers="[[headers]]" handle-as="json" last-response="{{auth}}">
+        </iron-ajax>
+        <!--permet de faire des requêtes de modification-->
+        <iron-ajax id="get_content" headers="[[headers]]" method="GET" on-response="responseHandler" handle-as="json">
+        </iron-ajax>
+        <iron-ajax id="put_content" headers="[[headers]]" method="PUT" content-type="application/json"></iron-ajax>
+
+        <section id="section_lyrics">
+            <form hidden="{{!auth.isConnected}}">
+                <input type='radio' name='view_lyrics' id='view_normal' checked on-change='handleClick' value='normal'>
+                <label for='view_normal' title='Normal representation'></label>
+                <input type='radio' name='view_lyrics' id='view_green' on-change='handleClick' value='green'>
+                <label for='view_green' title='Lyrics segmentation'></label>
+                <input type='radio' name='view_lyrics' id='view_color' on-change='handleClick' value='color'>
+                <label for='view_color'></label>
+            </form>
+
+            <template is="dom-if" if="{{_isEqualTo(editNormal,auth.isConnected)}}">
+                <paper-fab hidden={{editing}} icon="icons:create" on-tap="doEditLyrics" class="edit" mini></paper-fab>
+                <paper-fab hidden={{!editing}} icon="icons:done" on-tap="doEditLyrics" class="done" mini></paper-fab>
+            </template>
+
+            <article id='articleLyrics'></article>
+            
+        </section>
+    </template>
+
+    <!-- JS -->
+    <script>
+        // element registration
+        Polymer({
+            is: "show-lyrics",
+            // add properties and methods on the element's prototype
+            properties: {
+                lyricscontent: {
+                    type: String,
+                    value: "",
+                    observer: '_lyricsUpdated'
+                },
+                lyricsartist: {
+                    type: String,
+                    value: ""
+                },
+                fieldf: {
+                    type: String,
+                    value: ""
+                },
+                editing: {
+                    type: Boolean,
+                    value: false,
+                    observer: '_editLyrics'
+                },
+                editNormal: {
+                    type: Boolean,
+                    value: false
+                },
+                token: {
+                    type: String,
+                    value: localStorage.getItem("token") || ""
+                },
+                headers: {
+                    computed: '_computeHeader(token)'
+                }
+            },
+            ready: function (e) { },
+            _computeHeader: function () {
+                this.token = localStorage.getItem("token") || "";
+                return {
+                    Authorization: this.token
+                };
+            },
+            _isEqualTo: function (_stringA, _stringB) {
+                return _stringA == _stringB;
+            },
+            handleClick: function () {
+                if (this.$.view_normal.checked) this.viewNormal();
+                if (this.$.view_green.checked) this.viewGreen();
+                if (this.$.view_color.checked) this.viewColor();
+            },
+            _lyricsUpdated: function (newValue, oldValue) {
+                this.viewNormal();
+            },
+            doEditLyrics: function (e) {
+                this.editing = !this.editing;
+                if (!this.editing) {
+                if (confirm(`Are you sure you want to update this ${this.fieldf} fields ?`)) {
+                        this.lyricscontent = this.$.articleLyrics.innerHTML.replace(/<div>|<p>/ig, "<br>").replace(/\\n|\\r|\\r\\n|(<((?!br)[^>]+)>)/ig, "");
+
+                        let _body = {
+                            "_id": this.lyricsartist.albums.songs._id,
+                            "newvalue": this.lyricscontent
+                        };
+
+                        this.$.put_content.body = JSON.stringify(_body);
+                        this.$.put_content.url = this.getURLSong(this.fieldf);
+                        this.$.put_content.generateRequest();
+                    } else {
+                        this.updateView(this.lyricscontent);
+                    }
+                }
+            },
+            _editLyrics: function () {
+                this.$.articleLyrics.setAttribute('contenteditable', this.editing);
+            },
+            // see: searchController.put_songNotes in search.js
+            getURLSong: function (_param) {
+                return "/search/artist/" + this._encodeUri(this.lyricsartist.name) + "/album/" + this._encodeUri(this.lyricsartist.albums.title) + "/song/" + this._encodeUri(this.lyricsartist.albums.songs.title) + "/edit/" + _param;
+            },
+            _encodeUri: function (title) {
+                return encodeURIComponent(title);
+            },
+            // normal
+            viewNormal: function () {
+                this.editNormal = true;
+
+                this.updateView(this.lyricscontent);
+            },
+            // paragraphes sur fond vert
+            viewGreen: function () {
+                this.editing = false;
+                this.editNormal = false;
+
+                this.updateView(this._filter(this.lyricscontent, 'br'));
+            },
+            // pour consulter la structure des lyrics 
+            viewColor: function () {
+                this.editing = false;
+                this.editNormal = false;
+
+                this.updateView(new AnalyseLyrics(this.lyricscontent).render());
+            },
+            updateView: function (_content) {
+                this.$.articleLyrics.innerHTML = _content;
+            },
+            _filter(_string, _type) {
+                let _stringSplited = "";
+                let _stringFiltered = "";
+                switch (_type) {
+                    case "br": {
+                        _stringSplited = _string.split('<br><br>');
+                        for (let i = 0; i < _stringSplited.length; i++) {
+                            _stringFiltered += `<div class="div_splited_br" style="background-color:#aed581;padding:0px;">${_stringSplited[i]}</div><br>`;
+                        }
+                    }
+                        break;
+                }
+                return _stringFiltered;
+            }
+        });
+
+
+        class AnalyseLyrics {
+            constructor(_text) {
+                this.text = _text;
+            }
+
+            // Compute the edit distance between the two given strings
+            getEditDistance(a, b) {
+                if (a.length == 0) return b.length;
+                if (b.length == 0) return a.length;
+
+                var matrix = [];
+
+                // increment along the first column of each row
+                var i;
+                for (i = 0; i <= b.length; i++) {
+                    matrix[i] = [i];
+                }
+
+                // increment each column in the first row
+                var j;
+                for (j = 0; j <= a.length; j++) {
+                    matrix[0][j] = j;
+                }
+
+                // Fill in the rest of the matrix
+                for (i = 1; i <= b.length; i++) {
+                    for (j = 1; j <= a.length; j++) {
+                        if (b.charAt(i - 1) == a.charAt(j - 1)) {
+                            matrix[i][j] = matrix[i - 1][j - 1];
+                        } else {
+                            matrix[i][j] = Math.min(matrix[i - 1][j - 1] + 1, // substitution
+                                Math.min(matrix[i][j - 1] + 1, // insertion
+                                    matrix[i - 1][j] + 1)); // deletion
+                        }
+                    }
+                }
+
+                return matrix[b.length][a.length];
+            }
+
+            setColor(_numDist) {
+                let _htmlColor = '';
+                let _opacity = 0.7;
+                if (_numDist == 0) {
+                    _htmlColor = `rgba(44, 19, 55,${_opacity})`;
+                } else if (_numDist < 0.2) {
+                    _htmlColor = `rgba(23, 12, 39,${_opacity})`;
+                } else if (_numDist < 0.4) {
+                    _htmlColor = `rgba(96, 22, 82,${_opacity});`;
+                } else if (_numDist < 0.6) {
+                    _htmlColor = `rgba(212, 0, 81,${_opacity})`;
+                } else if (_numDist < 0.8) {
+                    _htmlColor = `rgba(255, 81, 52,${_opacity})`;
+                } else if (_numDist < 1) {
+                    _htmlColor = `rgba(255, 157, 113,${_opacity})`;
+                } else {
+                    _htmlColor = `rgba(253, 218, 195,${_opacity})`;
+                }
+                return _htmlColor;
+            }
+
+            render() {
+                let _arrayLyrics = this.text.split('<br>');
+                let _width = (100 / _arrayLyrics.length).toFixed(2) + '%';
+
+                let _numDist = 0;
+                let _html = '';
+                let _normalizedDist = 0;
+                for (let i = 0; i < _arrayLyrics.length; i++) {
+                    _html += `<div style='position:relative;display: flex;flex-direction: row;justify-content: flex-start;width:100%'>`;
+                    if (_arrayLyrics[i] == '') {
+                        _html += `<br>`;
+                    } else {
+                        for (let j = 0; j < _arrayLyrics.length; j++) {
+                            _numDist = this.getEditDistance(_arrayLyrics[i], _arrayLyrics[j]);
+                            _normalizedDist = 1 - _numDist / (Math.max(_arrayLyrics[i].length, _arrayLyrics[j].length));
+                            _html += `<span style='width:${_width};height:20px;background:${this.setColor(_normalizedDist)}' title='${_numDist}'></span>`;
+                        }
+                        _html += `<span class='line' style='color: #00ffe0;text-shadow: 0px 1px 1px #000;font-size: 18px;line-height: 20px;width:100%;position: absolute;text-align: center;'>${_arrayLyrics[i]}</span>`;
+                    }
+                    _html += `</div>`;
+                }
+                return _html;
+            }
+        }
+    </script>
+</dom-module>

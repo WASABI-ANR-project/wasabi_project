@@ -2,154 +2,37 @@
 <link rel="import" href="../bower_components/paper-material/paper-material.html">
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../bower_components/iron-collapse/iron-collapse.html">
-<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../bower_components/paper-tabs/paper-tab.html">
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 <!--my_components-->
-<link rel="import" href="show-dialog.html">
-<link rel="import" href="x-album.html">
-
+<link rel="import" href="./modules/show-dialog.html">
+<link rel="import" href="./modules/external-links.html">
+<link rel="import" href="./modules/external-infos.html">
 <dom-module id="page-artist">
     <template>
-        <!-- CSS -->
         <style>
             * {
                 padding: 0px;
                 margin: 0px;
                 border: 0px;
-
                 border-collapse: collapse;
                 box-sizing: border-box;
             }
 
-            /* ----- .nav_subject ----- */
-
-            .nav_subject {
-                background-color: #3f50b5;
-
-                flex-wrap: wrap;
-                text-align: center;
-                display: flex;
-                justify-content: center;
+            paper-tab {
+                --paper-tab-ink: #E0E0E0;
             }
 
-            .nav_subject a:hover {
-                background-color: #eee;
-                color: #3f50b5;
+            paper-tab:hover {
+                background-color: #f2f2f2;
             }
 
-            .nav_subject a {
-                color: #eee;
-
-                font-size: 12px;
-                padding: 10px;
-                margin: 5px;
-                transition: 0.2s;
-
-                text-decoration: none;
+            paper-tabs {
+                --paper-tabs-selection-bar-color: #3f51b5;
             }
-
-            /* ----- #externalLink ----- */
-
-            #externalLink {
-                background: #fff;
-                /* box-shadow: inset 0px 2px 18px rgba(162, 162, 162, 0.26); */
-                border-top: 1px solid #eee;
-                border-bottom: 1px solid #eee;
-
-                display: flex;
-                justify-content: center;
-                flex-wrap: wrap;
-            }
-
-            #externalLink paper-icon-button:hover {
-                background: #eee;
-            }
-
-            #externalLink paper-icon-button {
-                width: 50px;
-                height: 50px;
-
-                /*permet de ne pas déformer les icones*/
-                font-size: 0;
-                padding: 10px;
-            }
-
-            /* ----- #abstract ----- */
-
-            #abstract {
-                background: #fafafa;
-                border-bottom: 1px solid #eee;
-
-                padding: 50px 100px;
-                font-size: 16px;
-
-                text-align: justify;
-            }
-
-            /* ----- .metadata_list ----- */
-
-            .metadata_list {
-                list-style: none;
-            }
-
-            .metadata_list li {
-                border-bottom: 1px solid #eee;
-
-                display: flex;
-                flex-direction: row;
-                justify-content: flex-start;
-            }
-
-            .metadata_list li span {
-                padding: 10px;
-                font-size: 14px;
-
-                display: flex;
-                flex-direction: row;
-                justify-content: flex-start;
-                align-items: flex-start;
-                flex-wrap: wrap;
-            }
-
-            .metadata_list li span:nth-child(1) {
-                background: #fafafa;
-
-                min-width: 170px;
-            }
-
-            .metadata_list li span:nth-child(2) {
-                background: #fff;
-
-                flex: 1;
-            }
-
-            .metadata_list li span a {
-                padding: 5px;
-
-                text-decoration: none;
-                display: inline-block;
-            }
-
-
-
-            /* ----- #div_bgImg ----- */
-
-            #div_bgImg {
-                background-repeat: no-repeat;
-                background-size: cover !important;
-                /* filter: blur(10px) grayscale(50%) contrast(80%); */
-                position: fixed;
-                height: 100%;
-                top: 0;
-                left: 0;
-                right: 0;
-                z-index: -1;
-            }
-
-            /* ----- #artistInfo ----- */
 
             #artistInfo {
-                color: #333;
-
                 display: flex;
                 flex-direction: column;
                 justify-content: flex-start;
@@ -159,18 +42,14 @@
 
             #artistInfo span {
                 color: #333;
-
                 padding: 30px 10px;
                 font-size: 36px;
-
                 display: inline-block;
                 text-decoration: none;
                 text-align: center;
             }
 
             #artistInfo #div_img_artist {
-                padding-bottom: 30px;
-
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
@@ -181,348 +60,47 @@
             #artistInfo #div_img_artist img {
                 border-radius: 100%;
             }
-
-            /* ----- details ----- */
-
-            #li_members {
-                display: none;
-            }
-
-            .details_memberInfo summary {
-                padding: 15px;
-                cursor: pointer;
-            }
-
-            .details_memberInfo summary::-webkit-details-marker {
-                display: none
-            }
-
-            .details_memberInfo summary:before {
-                content: "+ ";
-            }
-
-            .details_memberInfo[open] summary:before {
-                content: "- ";
-            }
-
-            .details_memberInfo:hover {
-                background: #eee;
-            }
-
-            .details_memberInfo {
-                background: #fafafa;
-
-                margin: 0px 2px;
-                flex: 1;
-
-                display: none;
-                flex-direction: column;
-            }
-
-            .details_memberInfo ul {
-                padding: 15px;
-
-                list-style: none;
-            }
-
-            /* ----- others ----- */
-
-            paper-material {
-                background: rgba(255, 255, 255, 0.95);
-
-                margin-bottom: 100px;
-                border-radius: 3px;
-            }
-
-            x-album {
-                border-bottom: 1px solid #ddd;
-            }
-
-            .inherit:focus {
-                background-color: inherit;
-                color: inherit;
-
-                outline-width: 0px;
-                text-decoration: none;
-            }
-
-            .collapse-content {
-                padding: 15px;
-            }
         </style>
+        <iron-ajax auto url="/search/auth" method="GET" headers="[[headers]]" handle-as="json" last-response="{{auth}}">
+        </iron-ajax>
+        <iron-ajax id="get_content" auto url="/search/artist/{{_encodeUri(nameArtist)}}" last-response="{{artist}}"
+            headers="[[headers]]" handle-as="json" on-response='handleResponse'></iron-ajax>
+        <iron-ajax id="get_artistDH" auto url="/extractdiscoveryhub/semreco/{{_splitName(nameArtist)}}"
+            last-response="{{recommendationsDH}}" headers="[[headers]]" handle-as='json' on-response='handleResponseDH'>
+        </iron-ajax>
 
-        <!-- HTML -->
+        <paper-material elevation="0">
+            <paper-tabs selected="{{idxCurrentTab}}">
+                <paper-tab>Artist</paper-tab>
+                <paper-tab>DiscoveryHub</paper-tab>
+            </paper-tabs>
 
-        <!-- ajax request to get api information about : auth, artist -->
-        <iron-ajax auto url="/search/auth" method="GET" headers="[[headers]]" handle-as="json" last-response="{{auth}}"></iron-ajax>
-        <iron-ajax id="get_content" auto url="/search/artist/{{_encodeUri(nameArtist)}}" last-response="{{artist}}" headers="[[headers]]"
-            handle-as="json"></iron-ajax>
+            <iron-pages selected="{{idxCurrentTab}}">
+                <div hidden={{_hidden}}>
+                    <template is="dom-if" if="{{checkLogin(auth.isConnected,artist.rdf)}}">
+                        <show-dialog labeldialog="RDF {{artist.name}} :" content="{{artist.rdf}}"></show-dialog>
+                    </template>
 
-        <!-- artist's background picture -->
-        <template is="dom-if" if="{{checkIfPicture(artist.picture.xl)}}">
-            <div id="div_bgImg" style$="background-image:url( {{artist.picture.xl}} );" alt="Artist's background picture"></div>
-        </template>
-
-        <!-- paper-material : a Material Design container that looks like a lifted piece of paper. Elevation is box-shadow -->
-        <paper-material elevation="1">
-
-            <!-- if user is connected : SHOW RDF -->
-            <template is="dom-if" if="{{checkLogin(auth.isConnected,artist.rdf)}}">
-                <show-dialog labeldialog="RDF {{artist.name}} :" labelbutton="Show RDF" content="{{artist.rdf}}" labelexitdialog="Close"></show-dialog>
-            </template>
-
-            <!-- artistInfo : name & picture -->
-            <div id="artistInfo">
-                <span>{{artist.name}}</span>
-                <template is="dom-if" if="{{artist.picture.medium}}">
-                    <div id="div_img_artist">
-                        <img src$="{{artist.picture.medium}}" alt="Artist's picture">
+                    <div id="artistInfo">
+                        <template is="dom-if" if="{{artist.picture.medium}}">
+                            <div id="div_img_artist">
+                                <img src$="{{artist.picture.medium}}" alt="Artist's picture">
+                            </div>
+                        </template>
+                        <span>{{artist.name}}</span>
                     </div>
-                </template>
-            </div>
 
-            <!-- externalLink (x16) -->
-            <nav id="externalLink">
-                <template is="dom-if" if="{{artist.urlWikipedia}}">
-                    <a target="_blank" tabindex="-1" href="{{artist.urlWikipedia}}" alt="url Wikipedia" title="Wikipedia">
-                        <paper-icon-button src="../img/wikipedia_icon.svg"></paper-icon-button>
-                    </a>
-                </template>
-                <template is="dom-if" if="{{artist.urlFacebook}}">
-                    <a target="_blank" tabindex="-1" href="{{artist.urlFacebook}}" alt="url Facebook" title="Facebook">
-                        <paper-icon-button src="../img/facebook_icon.svg"></paper-icon-button>
-                    </a>
-                </template>
-                <template is="dom-if" if="{{artist.urlTwitter}}">
-                    <a target="_blank" tabindex="-1" href="{{artist.urlTwitter}}" alt="url Twitter" title="Twitter">
-                        <paper-icon-button src="../img/twitter_icon.svg"></paper-icon-button>
-                    </a>
-                </template>
-                <template is="dom-if" if="{{artist.urlAmazon}}">
-                    <a target="_blank" tabindex="-1" href="{{artist.urlAmazon}}" alt="url Amazon" title="Amazon">
-                        <paper-icon-button src="../img/amazon_icon.svg"></paper-icon-button>
-                    </a>
-                </template>
-                <template is="dom-if" if="{{artist.urlYouTube}}">
-                    <a target="_blank" tabindex="-1" href="{{artist.urlYouTube}}" alt="url YouTube" title="YouTube">
-                        <paper-icon-button src="../img/youtube_icon.svg"></paper-icon-button>
-                    </a>
-                </template>
-                <template is="dom-if" if="{{artist.urlSpotify}}">
-                    <a target="_blank" tabindex="-1" href="{{artist.urlSpotify}}" alt="url Spotify" title="Spotify">
-                        <paper-icon-button src="../img/spotify_icon.svg"></paper-icon-button>
-                    </a>
-                </template>
-                <template is="dom-if" if="{{artist.urlDeezer}}">
-                    <a target="_blank" tabindex="-1" href="{{artist.urlDeezer}}" alt="url Deezer" title="Deezer">
-                        <paper-icon-button src="../img/deezer_icon.svg"></paper-icon-button>
-                    </a>
-                </template>
-                <template is="dom-if" if="{{artist.urlITunes}}">
-                    <a target="_blank" tabindex="-1" href="{{artist.urlITunes}}" alt="url iTunes" title="iTunes">
-                        <paper-icon-button src="../img/itunes_icon.svg"></paper-icon-button>
-                    </a>
-                </template>
-                <template is="dom-if" if="{{artist.urlSoundCloud}}">
-                    <a target="_blank" tabindex="-1" href="{{artist.urlSoundCloud}}" alt="url SoundCloud" title="SoundCloud">
-                        <paper-icon-button src="../img/soundcloud_icon.svg"></paper-icon-button>
-                    </a>
-                </template>
-                <template is="dom-if" if="{{artist.urlMySpace}}">
-                    <a target="_blank" tabindex="-1" href="{{artist.urlMySpace}}" alt="url MySpace" title="MySpace">
-                        <paper-icon-button src="../img/myspace_icon.svg"></paper-icon-button>
-                    </a>
-                </template>
-                <template is="dom-if" if="{{artist.urlMusicBrainz}}">
-                    <a target="_blank" tabindex="-1" href="{{artist.urlMusicBrainz}}" alt="url MusicBrainz" title="MusicBrainz">
-                        <paper-icon-button src="../img/musicbrainz_icon.svg"></paper-icon-button>
-                    </a>
-                </template>
-                <template is="dom-if" if="{{artist.urlOfficialWebsite}}">
-                    <a target="_blank" tabindex="-1" href="{{artist.urlOfficialWebsite}}" alt="url Official Website" title="Official Website">
-                        <paper-icon-button src="../img/website_icon.svg"></paper-icon-button>
-                    </a>
-                </template>
-                <template is="dom-if" if="{{artist.urlAllmusic}}">
-                    <a target="_blank" tabindex="-1" href="{{artist.urlAllmusic}}" alt="url AllMusic" title="AllMusic">
-                        <paper-icon-button src="../img/allmusic_icon.svg"></paper-icon-button>
-                    </a>
-                </template>
-                <template is="dom-if" if="{{artist.urlDiscogs}}">
-                    <a target="_blank" tabindex="-1" href="{{artist.urlDiscogs}}" alt="url Discogs" title="Discogs">
-                        <paper-icon-button src="../img/discogs_icon.svg"></paper-icon-button>
-                    </a>
-                </template>
-                <template is="dom-if" if="{{artist.urlPureVolume}}">
-                    <a target="_blank" tabindex="-1" href="{{artist.urlPureVolume}}" alt="url PureVolume" title="PureVolume">
-                        <paper-icon-button src="../img/purevolume_icon.svg"></paper-icon-button>
-                    </a>
-                </template>
-                <template is="dom-if" if="{{artist.urlRateYourMusic}}">
-                    <a target="_blank" tabindex="-1" href="{{artist.urlRateYourMusic}}" alt="url RateYourMusic" title="RateYourMusic">
-                        <paper-icon-button src="../img/rateyourmusic_icon.svg"></paper-icon-button>
-                    </a>
-                </template>
-            </nav>
+                    <external-links content="{{artist}}" type="artist"></external-links>
+                    <external-infos content="{{artist}}" category="artist"></external-infos>
+                </div>
 
-            <!-- infosArtist -->
-            <div class="infosArtist">
-                <!-- abstract -->
-                <template is="dom-if" if="{{artist.dbp_abstract.length}}">
-                    <article id="abstract">{{artist.dbp_abstract}}</article>
-                </template>
-
-                <!-- informations (x12) -->
-                <ul class="metadata_list">
-
-                    <template is="dom-if" if="{{artist.lifeSpan.begin.length}}">
-                        <li>
-                            <span>Birthdate</span>
-                            <span>
-                                {{artist.lifeSpan.begin}}
-                                <template is="dom-if" if="{{artist.lifeSpan.end.length}}">
-                                    - {{artist.lifeSpan.end}}
-                                </template>
-                            </span>
-                        </li>
-                    </template>
-
-
-                    <template is="dom-if" if="{{artist.endArea.name.length}}">
-                        <li>
-                            <span>End Area</span>
-                            <span>{{artist.endArea.name}}</span>
-                        </li>
-                    </template>
-
-                    <template is="dom-if" if="{{artist.locationInfo.length}}">
-                        <li>
-                            <span>Location</span>
-                            <span>
-                                <template is="dom-repeat" items="{{artist.locationInfo}}" as="locationInfo">
-                                    {{locationInfo}}
-                                    <template is="dom-if" if="{{lastItem(index,artist.locationInfo.length)}}">- </template>
-                                </template>
-                            </span>
-                        </li>
-                    </template>
-
-                    <!-- <template is="dom-if" if="{{artist.gender.length}}">
-                        <li>
-                            <span>Gender</span>
-                            <span>{{artist.gender}}</span>
-                        </li>
-                    </template> -->
-
-                    <template is="dom-if" if="{{artist.genres.length}}">
-                        <li>
-                            <span>Genre</span>
-                            <span>
-                                <template is="dom-repeat" items="{{artist.genres}}" as="genres">
-                                    {{genres}}
-                                    <template is="dom-if" if="{{lastItem(index,artist.genres.length)}}">- </template>
-                                </template>
-                            </span>
-                        </li>
-                    </template>
-
-                    <template is="dom-if" if="{{artist.dbp_genre.length}}">
-                        <li>
-                            <span>Genre (DBpedia)</span>
-                            <span>
-                                <template is="dom-repeat" items="{{artist.dbp_genre}}" as="dbp_genre">
-                                    {{dbp_genre}}
-                                    <template is="dom-if" if="{{lastItem(index,artist.dbp_genre.length)}}">- </template>
-                                </template>
-                            </span>
-                        </li>
-                    </template>
-
-                    <template is="dom-if" if="{{artist.labels.length}}">
-                        <li>
-                            <span>Label</span>
-                            <span>
-                                <template is="dom-repeat" items="{{artist.labels}}" as="labels">
-                                    {{labels}}
-                                    <template is="dom-if" if="{{lastItem(index,artist.labels.length)}}">- </template>
-                                </template>
-                            </span>
-                        </li>
-                    </template>
-
-                    <template is="dom-if" if="{{artist.recordLabel.length}}">
-                        <li>
-                            <span>Label (DBpedia)</span>
-                            <span>
-                                <template is="dom-repeat" items="{{artist.recordLabel}}" as="recordLabel">
-                                    {{recordLabel}}
-                                    <template is="dom-if" if="{{lastItem(index,artist.recordLabel.length)}}">- </template>
-                                </template>
-                            </span>
-
-                        </li>
-                    </template>
-
-                    <template is="dom-if" if="{{artist.deezerFans}}">
-                        <li>
-                            <span>Number of Deezer fans</span>
-                            <span>{{artist.deezerFans}}</span>
-                        </li>
-                    </template>
-
-                    <template is="dom-if" if="{{artist.associatedMusicalArtist.length}}">
-                        <li>
-                            <span>Associated artist(s)</span>
-                            <span>
-                                <template is="dom-repeat" items="{{artist.associatedMusicalArtist}}" as="associate">
-                                    {{deleteUnderscore(associate)}}
-                                    <template is="dom-if" if="{{lastItem(index,artist.associatedMusicalArtist.length)}}">- </template>
-                                </template>
-                            </span>
-                        </li>
-                    </template>
-
-                    <template is="dom-if" if="{{artist.members.length}}">
-                        {{filterMember(artist.members)}}
-                    </template>
-                    <li id="li_members">
-                        <span>Members</span>
-                        <span>
-                            <details id="details_member_continue" class="details_memberInfo">
-                                <summary>See members</summary>
-                                <ul id="member_continue"></ul>
-                            </details>
-                            <details id="details_member_ended" class="details_memberInfo">
-                                <summary>See former members</summary>
-                                <ul id="member_ended"></ul>
-                            </details>
-                        </span>
-                    </li>
-
-                </ul>
-            </div>
-
-            <template is="dom-repeat" items="{{artist.albums}}" as="album" initial-count="1">
-                <x-album album={{album}} is-connected={{artist.isConnected}}></x-album>
-            </template>
-
-            <template is="dom-if" if="{{artist.subject.length}}">
-                <nav class="nav_subject">
-                    <template is="dom-repeat" items="{{artist.subject}}" as="subject">
-                        <a href="#/search/category/artist/{{_encodeUri(subject)}}">{{subject}}</a>
-                    </template>
-                </nav>
-            </template>
-
+                <main id='main' hidden={{!_hidden}}></main>
+            </iron-pages>
         </paper-material>
     </template>
-
-    <!-- JS -->
     <script>
-        // element registration
         Polymer({
             is: "page-artist",
-            // add properties and methods on the element's prototype
             properties: {
                 artist: {
                     type: Object,
@@ -534,80 +112,87 @@
                 },
                 headers: {
                     computed: '_computeHeader(token)'
+                },
+                idxCurrentTab: {
+                    type: Number,
+                    value: 0,
+                    observer: '_currentTabSelected'
+                },
+                _hidden: {
+                    type: Boolean,
+                    value: false
                 }
             },
-            ready: function (e) {
-
+            ready: function (e) { },
+            handleResponse: function (request) {
+                document.querySelector(`#search`).value = `${this.artist.name}`;
             },
-            filterMember: function (members) {
-                var li_members = this.$.li_members;
-
-                let nbMember_continue = 0;
-                var member_continue = this.$.member_continue;
-                var details_member_continue = this.$.details_member_continue;
-
-                let nbMember_ended = 0;
-                let member_ended = this.$.member_ended;
-                let details_member_ended = this.$.details_member_ended;
-
-                details_member_continue.style.display = "none";
-                details_member_ended.style.display = "none";
-
-                member_continue.innerHTML = "";
-                member_ended.innerHTML = "";
-
-                if (!members.length) {
-                    li_members.style.display = "none";
-                } else {
-                    li_members.style.display = "flex";
-
-                    for (let i = 0; i < members.length; i++) {
-                        if (!members[i].ended) {
-                            nbMember_continue++;
-                            if (members[i].name) member_continue.insertAdjacentHTML('beforeEnd', `<li><a href="#/search/member/name/${this._encodeUri(members[i].name)}">${members[i].name}</a></li>`);
-                            if (members[i].instruments.length > 0) member_continue.insertAdjacentHTML('beforeEnd', '<li class="li_memberInfo">- Instruments: ' + (members[i].instruments).toString().split(',').join(', ') + '</li>');
-                            if (members[i].begin) member_continue.insertAdjacentHTML('beforeEnd', '<li class="li_memberInfo">- Years of activities: ' + members[i].begin + '</li>');
-                            member_continue.insertAdjacentHTML('beforeEnd', `<li><br></li>`);
-                        } else {
-                            nbMember_ended++;
-                            if (members[i].name) member_ended.insertAdjacentHTML('beforeEnd', `<li><a href="#/search/member/name/${this._encodeUri(members[i].name)}">${members[i].name}</a></li>`);
-                            if (members[i].instruments.length > 0) member_ended.insertAdjacentHTML('beforeEnd', '<li class="li_memberInfo">- Instruments: ' + (members[i].instruments).toString().split(',').join(', ') + '</li>');
-                            if (members[i].begin) member_ended.insertAdjacentHTML('beforeEnd', '<li class="li_memberInfo">- Begin: ' + members[i].begin + '</li>');
-                            if (members[i].end) member_ended.insertAdjacentHTML('beforeEnd', '<li class="li_memberInfo">- End: ' + members[i].end + '</li>');
-                            member_ended.insertAdjacentHTML('beforeEnd', `<li><br></li>`);
-                        }
+            handleResponseDH: function (_d) {
+                let _html = '';
+                this.recommendationsDH.forEach(r => {
+                    if (r.label) _html += this._render(r.label, r.results);
+                });
+                this.$.main.innerHTML = _html;
+            },
+            _getIMG: function (_img) {
+                let _image;
+                let _defaultIMG = '../img/notfound_icon.png';
+                if (_img != null) {
+                    _image = _img.trim();
+                    if (_image) return _image;
+                }
+                return _defaultIMG;
+            },
+            _render: function (_label, _results) {
+                let _html = `<div class='div_element' style='background: #fff;margin: 0 auto;margin-bottom:20px;width: 100%;
+                display: flex;flex-direction: column;justify-content: flex-start;align-items: stretch;position:relative;'>`;
+                _html += `<ul style='overflow: scroll;display: flex;flex-direction: row;list-style: none;'>`;
+                _results.forEach(r => {
+                    if (r.label) _html += `
+                    <li style='position: relative;display: flex;flex-direction: column;justify-content: flex-start;align-items: stretch;cursor: pointer;'>
+                    <a  style='color:#222;text-decoration: none;display: flex; flex-direction: column;justify-content: flex-start;align-items: stretch;' href='${this._getURLDiscoveryHub(r.label)}' target='_blank'>
+                    <img style='background: #fff;width: 200px;height: 240px;object-fit: cover;' src='${this._getIMG(r.image)}' onerror="this.onerror=null; this.src='../img/notfound_icon.png'">
+                    <span onmouseout="this.style.opacity='0'" onmouseover="this.style.opacity='1'" style='opacity:0;background:rgba(0,0,0,0.7);color:#fff;text-align:center;bottom: 0px;left: 0px;right: 0px;font-size:18px;padding-top:15px;width: 200px;transition: 0.2s;display: inline-block;position:absolute;bottom:0px;left:0px;top:0px;right:0px'>${r.label}</span>
+                    </a>
+                    </li>
+                    `;
+                })
+                _html += `</ul>`;
+                _html += `<span class='span_label' style='position:absolute;bottom:0px;left:0px;right:0px;background: rgba(0,0,0,0.5);color: #fff;font-size: 22px;padding: 10px;text-transform: uppercase;text-align:left;text-shadow:0px 2px 4px #000'>${_label}</span>`;
+                _html += `</div>`;
+                return _html;
+            },
+            _getURLDiscoveryHub: function (_artistName) {
+                return `http://discoveryhub.co/#search/wasabi?topic=${this._splitName(_artistName)}&from=http://dbpedia.org/resource/${this._splitName(this.artist.name)}`;
+            },
+            _splitName: function (_name) {
+                if (_name) return _name.split(' ').join('_');
+                else return _name;
+            },
+            _currentTabSelected: function (selectedTab) {
+                switch (this.idxCurrentTab) {
+                    case 0: {
+                        this._hidden = false;
                     }
-                    if (nbMember_continue > 0) details_member_continue.style.display = "flex";
-                    if (nbMember_ended > 0) details_member_ended.style.display = "flex";
+                        break;
+                    case 1: {
+                        this._hidden = true;
+                    }
+                        break;
                 }
             },
             checkLogin: function (isConnected, data) {
                 return (isConnected && data);
             },
-            lastItem: function (index, nbTotal) {
-                return (index < nbTotal - 1);
-            },
-            _stringify: function (obj) {
-                return JSON.stringify(obj);
-            },
             _encodeUri: function (nameArtist) {
                 return encodeURIComponent(nameArtist);
-            },
-            deleteUnderscore: function (nameArtist) {
-                let name = encodeURIComponent(nameArtist);
-                return name.split('_').join(' ');
-            },
-            checkIfPicture: function (picture) {
-                //Une url bien formé est: http://e-cdn-images.deezer.com/images/artist/b4719bc7a0ddb4a5be41277f37856ae6/1000x1000-000000-80-0-0.jpg
-                //Si une url n'a pas d'image elle sera : http://e-cdn-images.deezer.com/images/artist//1000x1000-000000-80-0-0.jpg
-                if (picture) return !new RegExp("artist//").test(picture);
             },
             _computeHeader: function () {
                 this.token = localStorage.getItem("token") || "";
                 return {
                     Authorization: this.token
                 };
-            },
+            }
         });
     </script>
 </dom-module>

@@ -3,7 +3,6 @@
 
 <head>
     <meta charset="utf-8">
-    <!-- <title>Lyrics Rock</title> -->
     <title>Welcome to WASABI</title>
     <!--Disable zoom on mobile devices-->
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1 user-scalable=no">
@@ -12,90 +11,90 @@
     <!--Regroupe le code permettant la creation de webcomponent -->
     <script src="bower_components/webcomponentsjs/webcomponents-lite.min.js" async></script>
     <link href="bower_components/app-router/app-router.html" rel="import" async>
-    <link href="my_components/nav-bar.html" rel="import">
+    <link href="my_components/modules/nav-bar.html" rel="import">
     <style is="custom-style" include="iron-flex"></style>
-
-
-    <!-- Use element -->
 </head>
 
-<body class="layout vertical">
+<body>
     <nav-bar></nav-bar>
     <style>
-        body {
-            font-family: 'Roboto', sans-serif !important;
-            margin: 0;
-            background-color: #f2f2f2;
+        * {
+            margin: 0px;
+            padding: 0px;
+            border: 0px;
+            box-sizing: border-box;
         }
 
-        html {
-            overflow: scroll;
+        *:focus {
+            outline: none;
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            background-color: #f2f2f2;
+            font-family: 'Roboto', sans-serif !important;
         }
 
         #mainContent {
             width: 60%;
-            margin: auto;
-            margin-top: 5%;
-            min-width: 345px;
+            margin: 0 auto;
+            margin-top: 100px;
         }
 
         paper-material {
-            background-color: white;
+            background-color: #fff;
         }
 
         paper-toolbar {
-            z-index: 1000;
+            z-index: 2;
+        }
+
+        li.paper-tabs-content {
+            padding: 10px;
         }
     </style>
+
     <div id="mainContent">
         <app-router trailingSlash="ignore">
-            <!--Page d'accueil-->
-            <app-route path="/" onUrlChange="updateModel" import="my_components/paper-tabs-content.html"></app-route>
-            <!--Page de login de l'application-->
-            <app-route path="/login" onUrlChange="updateModel" import="my_components/page-login.html"></app-route>
-            <!--Page contenant des statistiques de l'application-->
-            <app-route path="/stats" onUrlChange="updateModel" import="my_components/page-stats.html"></app-route>
-            <app-route path="/example" onUrlChange="updateModel" import="my_components/page-example.html"></app-route>
+            <!--LISTE DES PAGES-->
+            <!--Accueil-->
+            <app-route onUrlChange="updateModel" path="/" import="my_components/paper-tabs-content.html"></app-route>
+            <!--Login-->
+            <app-route onUrlChange="updateModel" path="/login" import="my_components/page-login.html"></app-route>
+            <!--Statistiques-->
+            <app-route onUrlChange="updateModel" path="/stats" import="my_components/page-stats.html"></app-route>
+            <!-- Multitracks -->
+            <app-route onUrlChange="updateModel" path="/search/song/multitrack/"
+                import="my_components/page-multitrack.html"></app-route>
 
-            <!--Page d'accueil + recherche d'artistes/albums/musiques par lettre-->
-            <app-route path="/search/categorie/:categorie/lettre/:lettre/page/:numPage" onUrlChange="updateModel" import="my_components/paper-tabs-content.html"></app-route>
-            <!--Page d'un artiste contenant des infos + sa discographie-->
-            <app-route path="/search/artist/:nameArtist" onUrlChange="updateModel" import="my_components/page-artist.html"></app-route>
-            <!--Page d'un album contenant des infos + les titles de l'album-->
-            <app-route path="/search/artist/:nameArtist/album/:nameAlbum" onUrlChange="updateModel" import="my_components/page-album.html"></app-route>
-            <!--Page d'une musiques contenant des infos + les lyrics de la musique-->
-            <app-route path="/search/artist/:nameArtist/album/:nameAlbum/song/:nameSong" import="my_components/page-song.html"></app-route>
-            <!--Page more contenant plus de résultats de recherche-->
-            <app-route path="/search/more/:searchText" onUrlChange="updateModel" import="my_components/page-search.html"></app-route>
+            <!--Accueil + recherche d'artistes/albums/musiques par lettre-->
+            <app-route onUrlChange="updateModel" path="/search/categorie/:categorie/lettre/:lettre/page/:numPage"
+                import="my_components/paper-tabs-content.html"></app-route>
+            <!--Artiste: contient des infos + sa discographie-->
+            <app-route onUrlChange="updateModel" path="/search/artist/:nameArtist"
+                import="my_components/page-artist.html"></app-route>
+            <!--Album: contient des infos + les titres de l'album-->
+            <app-route onUrlChange="updateModel" path="/search/artist/:nameArtist/album/:nameAlbum"
+                import="my_components/page-album.html"></app-route>
+            <!--Musique: contient des infos sur la musique-->
+            <app-route path="/search/artist/:nameArtist/album/:nameAlbum/song/:nameSong"
+                import="my_components/page-song.html"></app-route>
 
-            <!--LISTE DES FACETS-->
-            <!--Page categorie contenant les artistes/albums/musiques contenant la categorie cherchée en commun-->
-            <app-route path="/search/category/:collection/:categoryName" onUrlChange="updateModel" import="my_components/facet/page-category.html"></app-route>
-            <!--Page producer contenant les musiques d'un producteur -->
-            <app-route path="/search/producer/:producerName" onUrlChange="updateModel" import="my_components/facet/page-producer.html"></app-route>
-            <!--Page recordlabel contenant les musiques ayant étaient enregistrées par un studio d'enregistrement-->
-            <app-route path="/search/recordlabel/:recordLabelName" onUrlChange="updateModel" import="my_components/facet/page-recordlabel.html"></app-route>
-            <!--Page genre contenant les musiques ayant étaient le même genre de musique (ex: Hard Rock)-->
-            <app-route path="/search/genre/:genreName" onUrlChange="updateModel" import="my_components/facet/page-genre.html"></app-route>
-            <!--Page recorded contenant les musiques ayant étaient le même recorded (ex: London and Rockfield)-->
-            <app-route path="/search/recorded/:recordedName" onUrlChange="updateModel" import="my_components/facet/page-recorded.html"></app-route>
-            <!--Page award contenant les musiques ayant le même award(ex: Toutes les musiques ayant un disque d'or)-->
-            <app-route path="/search/award/:awardName" onUrlChange="updateModel" import="my_components/facet/page-award.html"></app-route>
-            <!--Page writer contenant les musiques ayant le même writer(ex: Toutes les musiques écrites par Jimmy Page)-->
-            <app-route path="/search/writer/:writerName" onUrlChange="updateModel" import="my_components/facet/page-writer.html"></app-route>
-            <!--Page format contenant les musiques ayant le même format lors de la sortie(ex: format CD)-->
-            <app-route path="/search/format/:formatName" onUrlChange="updateModel" import="my_components/facet/page-format.html"></app-route>
-            <!--Page member contenant les groupes dans lesquels un artiste (au sens d'un membre d'un groupe) a joué)-->
-            <app-route path="/search/member/name/:memberName" onUrlChange="updateModel" import="my_components/facet/page-group-member.html"></app-route>
-            <!--<app-route path="public/my_components/MT5"  onUrlChange="updateModel" import="my_components/MT5/index.html"></app-route>-->
+            <!--Infos (anciennement FACETS)-->
+            <app-route onUrlChange="updateModel" path="/search/infos/:infoType/:infoName"
+                import="my_components/page-infos.html"></app-route>
+            <app-route onUrlChange="updateModel" path="/search/infos/:infoType/:infoName/:categoryName"
+                import="my_components/page-infos.html"></app-route>
 
-            <!--Page format contenant les musiques ayant un lien multitrack -->
-            <app-route path="/search/song/multitrack/" onUrlChange="updateModel" import="my_components/facet/page-multitrack.html"></app-route>
-            <!--Lorsqu'une mauvaise URL est saisie-->
-            <app-route path="*" onUrlChange="updateModel" import="my_components/page-404.html"></app-route>
+            <!--404: lorsqu'une mauvaise URL est saisie-->
+            <app-route onUrlChange="updateModel" path="*" import="my_components/page-404.html"></app-route>
         </app-router>
     </div>
-    <!--	<todo-app></todo-app>-->
+
 </body>
 
 </html>

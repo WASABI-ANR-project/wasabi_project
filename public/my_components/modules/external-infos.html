@@ -1,0 +1,748 @@
+<!-- IMPORTS -->
+<link rel="import" href="bar-code.html">
+<link rel="import" href="show-lyrics.html">
+<link rel="import" href="show-categories.html">
+<link rel="import" href="edit-field.html">
+<link rel="import" href="x-album.html">
+<!-- MODULE -->
+<dom-module id="external-infos">
+    <template>
+        <!-- CSS -->
+        <style>
+            show-lyrics {
+                width: 100%;
+                margin: 0 auto;
+            }
+
+            .metadata_list {
+                list-style: none;
+            }
+
+            .metadata_list li {
+                display: flex;
+                flex-direction: row;
+                justify-content: flex-start;
+                position: relative;
+            }
+
+            .metadata_list li span {
+                padding: 10px;
+                font-size: 14px;
+                display: flex;
+                flex-direction: row;
+                justify-content: flex-start;
+                align-items: flex-start;
+                flex-wrap: wrap;
+            }
+
+            .metadata_list li span:nth-child(1) {
+                background: #fafafa;
+                min-width: 170px;
+            }
+
+            .metadata_list li span:nth-child(2) {
+                background: #fff;
+                flex: 1;
+                align-items: center;
+            }
+
+            .metadata_list li span a {
+                padding: 5px;
+                text-decoration: none;
+                display: inline-block;
+            }
+
+            /* ----- #abstract ----- */
+            #abstract {
+                background: #fafafa;
+
+                padding: 50px 100px;
+                font-size: 16px;
+
+                text-align: justify;
+            }
+
+            /* ----- details ----- */
+            #li_members {
+                display: flex
+            }
+
+            .details_memberInfo summary {
+                padding: 15px;
+                cursor: pointer;
+            }
+
+            .details_memberInfo summary::-webkit-details-marker {
+                display: none
+            }
+
+            .details_memberInfo summary:before {
+                content: "+ ";
+            }
+
+            .details_memberInfo[open] summary:before {
+                content: "- ";
+            }
+
+            .details_memberInfo:hover {
+                background: #eee;
+            }
+
+            .details_memberInfo {
+                background: #fafafa;
+                margin: 0px 2px;
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .details_memberInfo ul {
+                padding: 15px;
+                list-style: none;
+            }
+
+            .span_members {
+                display: flex;
+                justify-content: flex-start;
+                align-items: stretch;
+            }
+
+            .span_members details {
+                align-self: flex-start
+            }
+
+            #songLyricsSection {
+                background: linear-gradient(45deg, #fafafa, #fefefe);
+                background-size: cover;
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                padding: 50px;
+                font-size: 16px;
+                position: relative;
+            }
+
+            x-album {
+                flex: 1;
+            }
+        </style>
+        <!-- HTML -->
+        <ul class="metadata_list">
+            <!-- SONG -->
+            <template is="dom-if" if="{{viewSong}}">
+                <!-- abstract -->
+                <div id='div_abstract'>
+                    <template is="dom-if" if="{{content.abstract.length}}">
+                        <article id="abstract">{{content.abstract}}</article>
+                    </template>
+                </div>
+                <!-- isrc -->
+                <template is="dom-if" if="{{content.isrc.length}}">
+                    <li id="tooltip_isrc" title="{{tooltip.isrc}}">
+                        <span>ISRC</span>
+                        <span>{{content.isrc}}</span>
+                        <!-- <edit-field idfield="id-isrc" field="isrc" label="ISRC" idsong="{{contentartist.albums.songs._id}}" value="{{content.isrc}}"
+                            artistname={{contentartist.name}} albumtitle="{{contentartist.albums.title}}"
+                            songtitle="{{contentartist.albums.songs.title}}">
+                        </edit-field> -->
+                    </li>
+                </template>
+                <!-- Duration -->
+                <template is="dom-if" if="{{displayDuration(content)}}">
+                    <li title={{tooltip.duration}}>
+                        <span>Duration</span>
+                        <span>{{displayDuration(content)}}</span>
+                    </li>
+                </template>
+                <!-- rank -->
+                <template is="dom-if" if="{{content.rank}}">
+                    <li title={{tooltip.rank}}>
+                        <span>Rank</span>
+                        <span>{{content.rank}}</span>
+                        <!-- <edit-field idfield="id-rank" field="rank" label="Rank"
+                            idsong="{{contentartist.albums.songs._id}}" value="{{content.rank}}"
+                            artistname={{contentartist.name}} albumtitle="{{contentartist.albums.title}}"
+                            songtitle="{{contentartist.albums.songs.title}}">
+                        </edit-field> -->
+                    </li>
+                </template>
+                <!-- releaseDate -->
+                <template is="dom-if" if="{{content.releaseDate.length}}">
+                    <li>
+                        <span>Release Date</span>
+                        <span>{{content.releaseDate}}</span>
+                    </li>
+                </template>
+                <!-- publicationDate -->
+                <template is="dom-if" if="{{!content.releaseDate.length}}">
+                    <template is="dom-if" if="{{content.publicationDate.length}}">
+                        <li>
+                            <span>Publication Date</span>
+                            <span>{{content.publicationDate}}</span>
+                        </li>
+                    </template>
+                </template>
+                <!-- begin -->
+                <template is="dom-if" if="{{content.begin.length}}">
+                    <li>
+                        <span>Begin Date</span>
+                        <span>{{content.begin}}</span>
+                    </li>
+                </template>
+                <!-- end -->
+                <template is="dom-if" if="{{content.end.length}}">
+                    <li>
+                        <span>End Date</span>
+                        <span>{{content.end}}</span>
+                    </li>
+                </template>
+                <!-- recorded -->
+                <template is="dom-if" if="{{content.recorded.length}}">
+                    <li>
+                        <span>Recorded</span>
+                        <span>
+                            <template is="dom-repeat" items="{{content.recorded}}" as="recorded">
+                                <a href="#/search/infos/recorded/{{_encodeUri(recorded)}}">{{recorded}}</a>
+                                <template is="dom-if" if="{{lastItem(index,content.recorded.length)}}">-
+                                </template>
+                            </template>
+                        </span>
+                    </li>
+                </template>
+                <!-- genre -->
+                <template is="dom-if" if="{{content.genre.length}}">
+                    <li>
+                        <span>Genre</span>
+                        <span>
+                            <template is="dom-repeat" items="{{content.genre}}" as="genre">
+                                <a href="#/search/infos/genre/{{_encodeUri(genre)}}">{{genre}}</a>
+                                <template is="dom-if" if="{{lastItem(index,content.genre.length)}}">-
+                                </template>
+                            </template>
+                        </span>
+                    </li>
+                </template>
+                <!-- format -->
+                <template is="dom-if" if="{{content.format.length}}">
+                    <li title={{tooltip.format}}>
+                        <span>Format</span>
+                        <span>
+                            <template is="dom-repeat" items="{{content.format}}" as="format">
+                                <a href="#/search/infos/format/{{_encodeUri(format)}}">{{format}}</a>
+                                <template is="dom-if" if="{{lastItem(index,content.format.length)}}">-
+                                </template>
+                            </template>
+                        </span>
+                    </li>
+                </template>
+                <!-- writer -->
+                <template is="dom-if" if="{{content.writer.length}}">
+                    <li>
+                        <span>Writer</span>
+                        <span>
+                            <template is="dom-repeat" items="{{content.writer}}" as="writer">
+                                <a href="#/search/infos/writer/{{_encodeUri(writer)}}">{{writer}}</a>
+                                <template is="dom-if" if="{{lastItem(index,content.writer.length)}}">-
+                                </template>
+                            </template>
+                        </span>
+                    </li>
+                </template>
+                <!-- producer -->
+                <template is="dom-if" if="{{content.producer.length}}">
+                    <li>
+                        <span>Producer</span>
+                        <span>
+                            <template is="dom-repeat" items="{{content.producer}}" as="producer">
+                                <a href="#/search/infos/producer/{{_encodeUri(producer)}}">{{producer}}</a>
+                                <template is="dom-if" if="{{lastItem(index,content.producer.length)}}">-
+                                </template>
+                            </template>
+                        </span>
+                    </li>
+                </template>
+                <!-- award -->
+                <template is="dom-if" if="{{content.award.length}}">
+                    <li>
+                        <span>Award</span>
+                        <span>
+                            <template is="dom-repeat" items="{{content.award}}" as="award">
+                                <a href="#/search/infos/award/{{_encodeUri(award)}}">{{award}}</a>
+                                <template is="dom-if" if="{{lastItem(index,content.award.length)}}">-
+                                </template>
+                            </template>
+                        </span>
+                    </li>
+                </template>
+                <!-- recordLabel -->
+                <template is="dom-if" if="{{content.recordLabel.length}}">
+                    <li>
+                        <span>RecordLabel</span>
+                        <span>
+                            <template is="dom-repeat" items="{{content.recordLabel}}" as="recordLabel">
+                                <a href="#/search/infos/recordlabel/{{_encodeUri(recordLabel)}}">{{recordLabel}}</a>
+                                <template is="dom-if" if="{{lastItem(index,content.recordLabel.length)}}">-
+                                </template>
+                            </template>
+                        </span>
+                    </li>
+                </template>
+                <!-- language -->
+                <template is="dom-if" if="{{content.language.length}}">
+                    <li>
+                        <span>Language</span>
+                        <span>{{content.language}}</span>
+                    </li>
+                </template>
+                <!-- bpm -->
+                <template is="dom-if" if="{{content.bpm.length}}">
+                    <li title="{{tooltip.bpm}}">
+                        <span>BPM</span>
+                        <span>{{content.bpm}}</span>
+                        <!-- <edit-field idfield="id-bpm" field="bpm" label="BPM" idsong="{{contentartist.albums.songs._id}}"
+                            value="{{content.bpm}}" artistname={{contentartist.name}}
+                            albumtitle="{{contentartist.albums.title}}"
+                            songtitle="{{contentartist.albums.songs.title}}">
+                        </edit-field> -->
+                    </li>
+                </template>
+                <!-- gain -->
+                <template is="dom-if" if="{{content.gain.length}}">
+                    <li title="{{tooltip.gain}}">
+                        <span>Gain</span>
+                        <span>{{content.gain}}</span>
+                        <!-- <edit-field idfield="id-gain" field="gain" label="Gain"
+                            idsong="{{contentartist.albums.songs._id}}" value="{{content.gain}}"
+                            artistname={{contentartist.name}} albumtitle="{{contentartist.albums.title}}"
+                            songtitle="{{contentartist.albums.songs.title}}">
+                        </edit-field> -->
+                    </li>
+                </template>
+                <!-- notes -->
+                <!-- <template is="dom-if" if="{{content.notes.length}}"> -->
+                <li title="{{tooltip.notes}}">
+                    <edit-field idfield="id-notes" field="notes" label="Notes"
+                        idsong="{{contentartist.albums.songs._id}}" value="{{content.notes}}"
+                        artistname={{contentartist.name}} albumtitle="{{contentartist.albums.title}}"
+                        songtitle="{{contentartist.albums.songs.title}}">
+                    </edit-field>
+                </li>
+                <!-- </template> -->
+                <!-- explicitLyrics -->
+                <template is="dom-if" if="{{content.explicitLyrics}}">
+                    <li>
+                        <span>Explicit lyrics</span>
+                        <span>This song contain explicit lyrics</span>
+                    </li>
+                </template>
+                <!-- albumsong -->
+                <template is="dom-if" if="{{checkAlbumSong(albumsong.length)}}">
+                    <li>
+                        <span>Also available in</span>
+                        <span>
+                            <template is="dom-repeat" items="{{albumsong}}" as="albumSong" initial-count="1"
+                                class="flex-wrap">
+                                <a
+                                    href="#/search/artist/{{_encodeUri(albumSong.name)}}/album/{{_encodeUri(albumSong.albumTitle)}}/song/{{_encodeUri(albumSong.title)}}">{{albumSong.albumTitle}}</a>
+                                <template is="dom-if" if="{{lastItem(index,nbTotalAlbumSong)}}">-
+                                </template>
+                            </template>
+                        </span>
+                    </li>
+                </template>
+                <!-- coverssong -->
+                <template is="dom-if" if="{{coverssong}}">
+                    <li>
+                        <span>Cover versions ({{coverssong.res.length}})</span>
+                        <span>
+                            <template is="dom-repeat" items="{{coverssong.res}}" as="reprise">
+                                <a
+                                    href="#/search/artist/{{_encodeUri(reprise.name)}}/album/{{_encodeUri(reprise.albumTitle)}}/song/{{_encodeUri(reprise.title)}}">
+                                    <template is="dom-if" if="{{!reprise.preview}}">
+                                        {{reprise.name}} ({{reprise.albumTitle}})
+                                    </template>
+                                    <template is="dom-if" if="{{reprise.preview}}">
+                                        <b>{{reprise.name}} ({{reprise.albumTitle}})</b>
+                                    </template>
+                                </a>
+                                <template is="dom-if" if="{{lastItem(index,coverssong.res.length)}}">-
+                                </template>
+                            </template>
+                        </span>
+                    </li>
+                </template>
+
+                <li id="songLyricsSection">
+                    <show-lyrics lyricsartist="{{contentartist}}" lyricscontent="{{content.lyrics}}" fieldf="lyrics">
+                    </show-lyrics>
+                </li>
+                <li>
+                    <show-categories content="{{content}}" category="song"></show-categories>
+                </li>
+            </template>
+
+            <!-- ARTIST -->
+            <template is="dom-if" if="{{viewArtist}}">
+
+                <!-- abstract -->
+                <template is="dom-if" if="{{content.dbp_abstract.length}}">
+                    <article id="abstract">{{content.dbp_abstract}}</article>
+                </template>
+                <template is="dom-if" if="{{content.lifeSpan.begin.length}}">
+                    <li>
+                        <span>Birthdate</span>
+                        <span>
+                            {{content.lifeSpan.begin}}
+                            <template is="dom-if" if="{{content.lifeSpan.end.length}}">
+                                - {{content.lifeSpan.end}}
+                            </template>
+                        </span>
+                    </li>
+                </template>
+                <template is="dom-if" if="{{content.gender.length}}">
+                    <li>
+                        <span>Gender</span>
+                        <span>{{content.gender}}</span>
+                    </li>
+                </template>
+                <template is="dom-if" if="{{content.endArea.name.length}}">
+                    <li>
+                        <span>End Area</span>
+                        <span>{{content.endArea.name}}</span>
+                    </li>
+                </template>
+                <template is="dom-if" if="{{content.locationInfo.length}}">
+                    <li>
+                        <span>Location</span>
+                        <span>
+                            <template is="dom-repeat" items="{{content.locationInfo}}" as="locationInfo">
+                                {{locationInfo}}
+                                <template is="dom-if" if="{{lastItem(index,content.locationInfo.length)}}">-
+                                </template>
+                            </template>
+                        </span>
+                    </li>
+                </template>
+                <template is="dom-if" if="{{content.genres.length}}">
+                    <li>
+                        <span>Genre</span>
+                        <span>
+                            <template is="dom-repeat" items="{{content.genres}}" as="genres">
+                                {{genres}}
+                                <template is="dom-if" if="{{lastItem(index,content.genres.length)}}">-
+                                </template>
+                            </template>
+                        </span>
+                    </li>
+                </template>
+                <template is="dom-if" if="{{content.dbp_genre.length}}">
+                    <li>
+                        <span>Genre (DBpedia)</span>
+                        <span>
+                            <template is="dom-repeat" items="{{content.dbp_genre}}" as="dbp_genre">
+                                {{dbp_genre}}
+                                <template is="dom-if" if="{{lastItem(index,content.dbp_genre.length)}}">-
+                                </template>
+                            </template>
+                        </span>
+                    </li>
+                </template>
+                <template is="dom-if" if="{{content.labels.length}}">
+                    <li>
+                        <span>Label</span>
+                        <span>
+                            <template is="dom-repeat" items="{{content.labels}}" as="labels">
+                                {{labels}}
+                                <template is="dom-if" if="{{lastItem(index,content.labels.length)}}">-
+                                </template>
+                            </template>
+                        </span>
+                    </li>
+                </template>
+                <template is="dom-if" if="{{content.recordLabel.length}}">
+                    <li>
+                        <span>Label (DBpedia)</span>
+                        <span>
+                            <template is="dom-repeat" items="{{content.recordLabel}}" as="recordLabel">
+                                {{recordLabel}}
+                                <template is="dom-if" if="{{lastItem(index,content.recordLabel.length)}}">-
+                                </template>
+                            </template>
+                        </span>
+                    </li>
+                </template>
+                <template is="dom-if" if="{{content.deezerFans}}">
+                    <li>
+                        <span>Number of Deezer fans</span>
+                        <span>{{content.deezerFans}}</span>
+                    </li>
+                </template>
+
+                <template is="dom-if" if="{{content.associatedMusicalArtist.length}}">
+                    <li>
+                        <span>Associated artist(s)</span>
+                        <span>
+                            <template is="dom-repeat" items="{{content.associatedMusicalArtist}}" as="associate">
+                                {{deleteUnderscore(associate)}}
+                                <template is="dom-if" if="{{lastItem(index,content.associatedMusicalArtist.length)}}">-
+                                </template>
+                            </template>
+                        </span>
+                    </li>
+                </template>
+                <li id="li_members" hidden="{{!viewMembers}}">
+                    <span>Members</span>
+                    <span class='span_members'>
+                        <details id="details_members" class="details_memberInfo">
+                            <summary>See members</summary>
+                            <ul id="members"></ul>
+                        </details>
+                        <details id="details_members_former" class="details_memberInfo">
+                            <summary>See former members</summary>
+                            <ul id="members_former"></ul>
+                        </details>
+                    </span>
+                </li>
+
+                <!-- x-album: LIST ALBUM -->
+                <template is="dom-repeat" items="{{content.albums}}" as="album" initial-count="1">
+                    <li>
+                        <x-album content={{content}} album="{{album}}"></x-album>
+                    </li>
+                </template>
+                <li>
+                    <show-categories content="{{content}}" category="artist"></show-categories>
+                </li>
+            </template>
+
+            <!-- ALBUM -->
+            <template is="dom-if" if="{{viewAlbum}}">
+                <template is="dom-if" if="{{content.albums.songs.abstract}}">
+                    <li>
+                        <article id="abstract">{{content.albums.songs.abstract}}</article>
+                    </li>
+                </template>
+                <li>
+                    <span>Artist</span>
+                    <span><a href="#/search/artist/{{_encodeUri(content.name)}}" tabindex="-1"
+                            class="inherit">{{content.name}}</a></span>
+                </li>
+                <template is="dom-if" if="{{content.albums.genre}}">
+                    <li>
+                        <span>Genre</span>
+                        <span>{{content.albums.genre}}</span>
+                    </li>
+                </template>
+
+                <template is="dom-if" if="{{content.albums.length}}">
+                    <li>
+                        <span>Length</span>
+                        <span>{{content.albums.length}}</span>
+                    </li>
+                </template>
+                <template is="dom-if" if="{{content.albums.dateRelease}}">
+                    <li>
+                        <span>Release Date</span>
+                        <span>{{content.albums.dateRelease}}</span>
+                    </li>
+                </template>
+                <template is="dom-if" if="{{content.albums.country}}">
+                    <li>
+                        <span>Country</span>
+                        <span>{{content.albums.country}}</span>
+                    </li>
+                </template>
+                <template is="dom-if" if="{{content.albums.language}}">
+                    <li>
+                        <span>Language</span>
+                        <span>{{content.albums.language}}</span>
+                    </li>
+                </template>
+                <template is="dom-if" if="{{content.albums.deezerFans}}">
+                    <li>
+                        <span>Number of fans</span>
+                        <span>{{content.albums.deezerFans}}</span>
+                    </li>
+                </template>
+                <template is="dom-if" if="{{content.albums.upc}}">
+                    <li>
+                        <span>UPC</span>
+                        <span>{{content.albums.upc}}</span>
+                    </li>
+                </template>
+                <template is="dom-if" if="{{content.albums.explicitLyrics}}">
+                    <li><span>Contain explicit lyrics</span><span>YES</span></li>
+                </template>
+                <template is="dom-if" if="{{content.albums.barcode}}">
+                    <li>
+                        <span>Bar code</span>
+                        <span>
+                            <bar-code num="{{content.albums.barcode}}"></bar-code>
+                        </span>
+                    </li>
+                </template>
+            </template>
+        </ul>
+    </template>
+    <!-- JS -->
+    <script>
+        Polymer({
+            is: "external-infos",
+            properties: {
+                viewAlbum: {
+                    type: Boolean,
+                    value: false
+                },
+                viewArtist: {
+                    type: Boolean,
+                    value: false
+                },
+                viewSong: {
+                    type: Boolean,
+                    value: false
+                },
+                content: {
+                    type: Object,
+                    value: {},
+                    observer: '_contentUpdated'
+                },
+                category: {
+                    type: Object,
+                    observer: '_categoryUpdated'
+                },
+                viewMembers: {
+                    type: Boolean,
+                    value: false
+                },
+                tooltip: {
+                    type: String,
+                    value: {
+                        isrc: "International Standard Recording Code ou 'ISRC', est un code unique d'identification mis en place par l'International Federation of Phonographic Industry (IFPI) pour identifier les enregistrements musicaux (sonores et audiovisuels) dans le monde entier.",
+                        bpm: "Battement par minute ou 'bpm', est une unité de mesure utilisée pour exprimer le tempo de la musique ou le rythme cardiaque, quantifié par le nombre de battements se produisant en une minute.",
+                        gain: "Réglage produit lors de l'enregistrement",
+                        duration: "Durée de la musique en seconde",
+                        format: "Format (vinyl, CD;)",
+                        notes: "Informations supplémentaires ajouté par l'admin",
+                        rank: "Rang de la musique selon Deezer "
+                    }
+                }
+            },
+            ready: function (e) { },
+            _contentUpdated: function (obj) {
+                if (this.category == 'artist') {
+                    if (!(Object.entries(obj).length === 0 && obj.constructor === Object)) {
+                        if (obj.members.length > 0) this.filterMember();
+                    }
+                }
+            },
+            _categoryUpdated: function (value) {
+                switch (value) {
+                    case "album": {
+                        this.viewAlbum = true;
+                        this.viewArtist = false;
+                        this.viewSong = false;
+                    } break;
+                    case "artist": {
+                        this.viewAlbum = false;
+                        this.viewArtist = true;
+                        this.viewSong = false;
+                    } break;
+                    case "song": {
+                        this.viewAlbum = false;
+                        this.viewArtist = false;
+                        this.viewSong = true;
+                    } break;
+                }
+            },
+            _splitName: function (_string) {
+                if (_string) return _string.split(' ').join('_');
+                else return _string;
+            },
+            _isEqualTo: function (elementA, elementB) {
+                return elementA == elementB;
+            },
+            displayDuration: function (songs) {
+                if (typeof songs !== 'undefined') {
+                    // duration
+                    // - from deezer
+                    if (songs.length) {
+                        let length = parseInt(songs.length);
+                        return this.convertSongDuration(length);
+                    }
+                    // - from dbpedia (can have different duration depend to the music's version)
+                    else if (songs.runtime) {
+                        let runtime = 0;
+                        if (songs.runtime.length > 1) {
+                            let duration = '';
+                            for (let i = 0; i < songs.runtime.length; i++) {
+                                runtime = parseInt(songs.runtime[i]);
+                                duration += this.convertSongDuration(runtime);
+                                if (i < songs.runtime.length - 1) duration += '; '
+                            }
+                            return `${duration} (depend to the music's version)`;
+                        } else {
+                            let runtime = parseInt(songs.runtime);
+                            return this.convertSongDuration(runtime);
+                        }
+                    } else {
+                        return false;
+                    }
+
+                }
+            },
+            convertSongDuration: function (time) {
+                if (time < 60) return `00:${this.toDecimal(time)}`;
+                else {
+                    let minutes = (Math.floor(time / 60));
+                    let seconds = this.toDecimal(time - (minutes * 60));
+                    return `${minutes}:${seconds}`;
+                }
+            },
+            toDecimal: function (number) {
+                return (number < 10) ? ("0" + number) : number;
+            },
+            lastItem: function (index, nbTotal) {
+                return (index < nbTotal - 1);
+            },
+            _encodeUri: function (title) {
+                return encodeURIComponent(title);
+            },
+            checkAlbumSong: function (_value) {
+                this.nbTotalAlbumSong = _value;
+                return (_value > 1);
+            },
+            deleteUnderscore: function (nameArtist) {
+                let name = encodeURIComponent(nameArtist);
+                return name.split('_').join(' ');
+            },
+            filterMember: function () {
+                let content_members = this.content.members;
+                var members = document.querySelector('#members');
+                let members_former = document.querySelector('#members_former');
+
+                members.innerHTML = "";
+                members_former.innerHTML = "";
+
+                if (!content_members.length) this.viewMembers = false;
+                else {
+                    this.viewMembers = true;
+
+                    for (let i = 0; i < content_members.length; i++) {
+                        if (!content_members[i].ended) {
+                            if (content_members[i].name) members.insertAdjacentHTML('beforeEnd', `<li><a href="#/search/infos/member/${this._encodeUri(content_members[i].name)}">${content_members[i].name}</a></li>`);
+                            if (content_members[i].instruments.length > 0) members.insertAdjacentHTML('beforeEnd', '<li class="li_memberInfo">- Instruments: ' + (content_members[i].instruments).toString().split(',').join(', ') + '</li>');
+                            if (content_members[i].begin) members.insertAdjacentHTML('beforeEnd', '<li class="li_memberInfo">- Years of activities: ' + content_members[i].begin + '</li>');
+                            members.insertAdjacentHTML('beforeEnd', `<li><br></li>`);
+                        } else {
+                            if (content_members[i].name) members_former.insertAdjacentHTML('beforeEnd', `<li><a href="#/search/infos/member/${this._encodeUri(content_members[i].name)}">${content_members[i].name}</a></li>`);
+                            if (content_members[i].instruments.length > 0) members_former.insertAdjacentHTML('beforeEnd', '<li class="li_memberInfo">- Instruments: ' + (content_members[i].instruments).toString().split(',').join(', ') + '</li>');
+                            if (content_members[i].begin) members_former.insertAdjacentHTML('beforeEnd', '<li class="li_memberInfo">- Begin: ' + content_members[i].begin + '</li>');
+                            if (content_members[i].end) members_former.insertAdjacentHTML('beforeEnd', '<li class="li_memberInfo">- End: ' + content_members[i].end + '</li>');
+                            members_former.insertAdjacentHTML('beforeEnd', `<li><br></li>`);
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</dom-module>

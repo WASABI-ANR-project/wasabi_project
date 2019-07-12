@@ -1,91 +1,326 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../bower_components/paper-tabs/paper-tab.html">
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 <dom-module id="page-stats">
     <template>
         <style>
+            paper-tab {
+                --paper-tab-ink: #E0E0E0;
+            }
+
+            paper-tab:hover {
+                background-color: #f2f2f2;
+            }
+
+            paper-tabs {
+                --paper-tabs-selection-bar-color: #3f51b5;
+            }
+
+            paper-button:hover {
+                @apply(--shadow-elevation-6dp);
+            }
+
             paper-material {
-                margin-bottom: 5%;
-                border-radius: 3px;
+                width: 50%;
+                margin: 0 auto;
+                display: flex;
+                flex-direction: column;
+            }
+
+            paper-material div {
+                border-bottom: 1px solid #ccc;
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+                align-items: stretch;
+            }
+
+            paper-material div span {
+                color: #222;
+            }
+
+            paper-material div span.span_title {
+                background: #fafafa;
+                font-size: 40px;
+                padding: 20px;
+                text-transform: uppercase;
+            }
+
+            paper-material div ul {
+                list-style: none;
+            }
+
+            paper-material div ul li {
+                border-bottom: 1px solid #eee;
+                display: flex;
+                flex-direction: row;
+            }
+
+            paper-material div ul li span {
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            paper-material div ul li span:nth-child(1) {
+                background: #fafafa;
+                width: 170px;
+                text-transform: capitalize;
+            }
+
+            paper-material div ul li span:nth-child(2) {
+                flex: 1;
+                text-align: right;
             }
         </style>
-        <paper-material elevation="1">
-            {{_stringify(statsArtist)}}<br> {{_stringify(statsAlbum)}}
-            <br> {{_stringify(statsSong)}}
-            <br> {{_stringify(statsTotal)}}
-            <br>
-            <br>
-            <br> award: 7 227 / 77 492
-            <br> releaseDate: 40 794 / 77 492
-            <br> runtime: 59 988 / 77 492
-            <br> recorded: 47 807 / 77 492
-            <br> writer: 54 771 / 77 492
-            <br> recordLabel: 59 898 / 77 492
-            <br> producer: 50 203 / 77 492
-            <br> genre: 61 789 / 77 492
-            <br> format: 39 616 / 77 492
-            <br> subject: 73 141 / 77 492
-            <br> 15 187 unique subjects
-            <br>
-            <br> <b>Songs without lyrics: 367 120</b>
-            <br> <b>Songs with lyrics: 1 732 169</b>
-            <br>
-            <br>
-            <h2>Stats for Artists</h2>
 
-            <table>
-                <tr>
-                    <th>Property</th>
-                    <th>Stat</th>
-                </tr>
-                <tr>
-                    <td>Carmen</td>
-                    <td>33 ans</td>
-                </tr>
-                <tr>
-                    <td>Michelle</td>
-                    <td>26 ans</td>
-                </tr>
-            </table>
-            urlWikipedia: 40 397 / 77 492
-            <br> urlOfficialWebsite: 31 668 / 77 492
-            <br> urlFacebook: 16 293 / 77 492
-            <br> urlMySpace: 24 262 / 77 492
-            <br> urlTwitter: 11 978 / 77 492
-            <br> urlAmazon: 24 981 / 77 492
-            <br> urlITunes: 61 103 / 77 492
-            <br> urlDiscogs: 52 359 / 77 492
-            <br> urlYouTube: 9 129 / 77 492
-            <br> urlPureVolume: 1 265 / 77 492
-            <br> urlRateYourMusic: 11 155 / 77 492
-            <br> urlSoundCloud: 3 870 / 77 492
-            <br> urlAllmusic: 49 439 / 77 492
-            <br> urlBBC: 3 968 / 77 492
-            <br> urlSecondHandSongs: 3 037 / 77 492
-            <br> urlLastFm: 7 349 / 77 492
-            <br> urlInstagram: 2 409 / 77 492
-            <br> urlWikidata: 34 488 / 77 492
-            <br> urlTwitter: 11 978 / 77 492
-            <br> urlGooglePlus: 648 / 77 492
+        <paper-material elevation="0">
 
-            <h2>Stats for Albums</h2>
-            <h2>Stats for Songs</h2>
+            <paper-tabs selected="{{idxCurrentTab}}">
+                <paper-tab>Artists</paper-tab>
+                <paper-tab>Albums</paper-tab>
+                <paper-tab>Songs</paper-tab>
+                <paper-tab>Total</paper-tab>
+            </paper-tabs>
 
+            <iron-pages selected="{{idxCurrentTab}}">
+                <template is="dom-if" if="{{pageArtists}}">
+                    <div>
+                        <ul>
+                            <li>
+                                <span>documents</span>
+                                <span>{{_formatNumber(statsArtist.documents)}}</span>
+                            </li>
+                            <li>
+                                <span>urlWikipedia</span>
+                                <span>{{_formatNumber(statsArtist.urlWikipedia)}}</span>
+                            </li>
+                            <li>
+                                <span>usableRDF</span>
+                                <span>{{_formatNumber(statsArtist.usableRDF)}}</span>
+                            </li>
+                            <li>
+                                <span>unusableRDF</span>
+                                <span>{{_formatNumber(statsArtist.unusableRDF)}}</span>
+                            </li>
 
+                            <li>
+                                <span>award</span>
+                                <span>7 227</span>
+                            </li>
+                            <li>
+                                <span>releaseDate</span>
+                                <span>40 794</span>
+                            </li>
+                            <li>
+                                <span>runtime</span>
+                                <span>59 988</span>
+                            </li>
+                            <li>
+                                <span>recorded</span>
+                                <span>47 807</span>
+                            </li>
+                            <li>
+                                <span>writer</span>
+                                <span>54 771</span>
+                            </li>
 
-            <!--<a href="/download/multitrack_zip">Télécharger les multritracks</a>-->
+                            <li>
+                                <span>recordLabel</span>
+                                <span>59 898</span>
+                            </li>
+                            <li>
+                                <span>producer</span>
+                                <span>50 203</span>
+                            </li>
+                            <li>
+                                <span>genre</span>
+                                <span>61 789</span>
+                            </li>
+                            <li>
+                                <span>format</span>
+                                <span>39 616</span>
+                            </li>
+                            <li>
+                                <span>subject</span>
+                                <span>73 141 (15 187 uniques)</span>
+                            </li>
+
+                            <li>
+                                <span>urlWikipedia</span>
+                                <span>40 397</span>
+                            </li>
+                            <li>
+                                <span>urlOfficialWebsite</span>
+                                <span>31 668</span>
+                            </li>
+                            <li>
+                                <span>urlFacebook</span>
+                                <span>16 293</span>
+                            </li>
+                            <li>
+                                <span>urlMySpace</span>
+                                <span>24 262</span>
+                            </li>
+                            <li>
+                                <span>urlTwitter</span>
+                                <span>11 978</span>
+                            </li>
+                            <li>
+                                <span>urlAmazon</span>
+                                <span>24 981</span>
+                            </li>
+                            <li>
+                                <span>urlAmazon</span>
+                                <span>24 981</span>
+                            </li>
+                            <li>
+                                <span>urlITunes</span>
+                                <span>61 103</span>
+                            </li>
+                            <li>
+                                <span>urlDiscogs</span>
+                                <span>52 359</span>
+                            </li>
+                            <li>
+                                <span>urlYouTube</span>
+                                <span>9 129</span>
+                            </li>
+                            <li>
+                                <span>urlPureVolume</span>
+                                <span>1 265</span>
+                            </li>
+                            <li>
+                                <span>urlRateYourMusic</span>
+                                <span>11 155</span>
+                            </li>
+                            <li>
+                                <span>urlSoundCloud</span>
+                                <span>3 870</span>
+                            </li>
+                            <li>
+                                <span>urlAllmusic</span>
+                                <span>49 439</span>
+                            </li>
+                            <li>
+                                <span>urlBBC</span>
+                                <span>3 968</span>
+                            </li>
+                            <li>
+                                <span>urlSecondHandSongs</span>
+                                <span>3 037</span>
+                            </li>
+                            <li>
+                                <span>urlLastFm</span>
+                                <span>7 349</span>
+                            </li>
+                            <li>
+                                <span>urlInstagram</span>
+                                <span>2 409</span>
+                            </li>
+                            <li>
+                                <span>urlWikidata</span>
+                                <span>34 488</span>
+                            </li>
+                            <li>
+                                <span>urlTwitter</span>
+                                <span>11 978</span>
+                            </li>
+                            <li>
+                                <span>urlGooglePlus</span>
+                                <span>648</span>
+                            </li>
+                        </ul>
+                    </div>
+                </template>
+                <template is="dom-if" if="{{pageAlbums}}">
+                    <div>
+                        <ul>
+                            <li>
+                                <span>documents</span>
+                                <span>{{_formatNumber(statsAlbum.documents)}}</span>
+                            </li>
+                            <li>
+                                <span>urlWikipedia</span>
+                                <span>{{_formatNumber(statsAlbum.urlWikipedia)}}</span>
+                            </li>
+                            <li>
+                                <span>usableRDF</span>
+                                <span>{{_formatNumber(statsAlbum.usableRDF)}}</span>
+                            </li>
+                            <li>
+                                <span>unusableRDF</span>
+                                <span>{{_formatNumber(statsAlbum.unusableRDF)}}</span>
+                            </li>
+                        </ul>
+                    </div>
+                </template>
+                <template is="dom-if" if="{{pageSongs}}">
+                    <div>
+                        <ul>
+                            <li>
+                                <span>documents</span>
+                                <span>{{_formatNumber(statsSong.documents)}}</span>
+                            </li>
+                            <li>
+                                <span>urlWikipedia</span>
+                                <span>{{_formatNumber(statsSong.urlWikipedia)}}</span>
+                            </li>
+                            <li>
+                                <span>usableRDF</span>
+                                <span>{{_formatNumber(statsSong.usableRDF)}}</span>
+                            </li>
+                            <li>
+                                <span>unusableRDF</span>
+                                <span>{{_formatNumber(statsSong.unusableRDF)}}</span>
+                            </li>
+                            <li>
+                                <span>with lyrics</span>
+                                <span>1 730 921</span>
+                            </li>
+                            <li>
+                                <span>without lyrics</span>
+                                <span>368 366</span>
+                            </li>
+                        </ul>
+                    </div>
+                </template>
+                <template is="dom-if" if="{{pageTotal}}">
+                    <div>
+                        <ul>
+                            <li>
+                                <span>documents</span>
+                                <span>{{_formatNumber(statsTotal.documents)}}</span>
+                            </li>
+                            <li>
+                                <span>urlWikipedia</span>
+                                <span>{{_formatNumber(statsTotal.urlWikipedia)}}</span>
+                            </li>
+                            <li>
+                                <span>usableRDF</span>
+                                <span>{{_formatNumber(statsTotal.usableRDF)}}</span>
+                            </li>
+                            <li>
+                                <span>unusableRDF</span>
+                                <span>{{_formatNumber(statsTotal.unusableRDF)}}</span>
+                            </li>
+                        </ul>
+                    </div>
+                </template>
+            </iron-pages>
         </paper-material>
     </template>
     <script>
-        // element registration
         Polymer({
             is: "page-stats",
-            // add properties and methods on the element's prototype
             properties: {
                 statsArtist: {
                     type: Object,
                     value: {
-                        "documents": 77490,
-                        "urlWikipedia": 34490,
+                        "documents": 77492,
+                        "urlWikipedia": 40397,
                         "usableRDF": 32083,
                         "unusableRDF": 2407
                     }
@@ -93,8 +328,8 @@
                 statsAlbum: {
                     type: Object,
                     value: {
-                        "documents": 208717,
-                        "urlWikipedia": 50057,
+                        "documents": 208743,
+                        "urlWikipedia": 50075,
                         "usableRDF": 45152,
                         "unusableRDF": 4905
                     }
@@ -102,8 +337,8 @@
                 statsSong: {
                     type: Object,
                     value: {
-                        "documents": 2098719,
-                        "urlWikipedia": 77526,
+                        "documents": 2099287,
+                        "urlWikipedia": 79811,
                         "usableRDF": 73444,
                         "unusableRDF": 4082
                     }
@@ -119,7 +354,28 @@
                         }
                     },
                     notify: true
-                }
+                },
+                idxCurrentTab: {
+                    type: Number,
+                    value: 0,
+                    observer: '_currentTabSelected'
+                },
+                pageArtists: {
+                    type: Boolean,
+                    value: false
+                },
+                pageAlbums: {
+                    type: Boolean,
+                    value: false
+                },
+                pageSongs: {
+                    type: Boolean,
+                    value: false
+                },
+                pageTotal: {
+                    type: Boolean,
+                    value: false
+                },
             },
             ready: function (e) {
                 this.statsTotal = {
@@ -132,6 +388,30 @@
             _stringify: function (obj) {
                 return JSON.stringify(obj);
             },
+            _formatNumber: function (_number) {
+                return _number.toLocaleString('latn');
+            },
+            _currentTabSelected: function (selectedTab) {
+                this.pageArtists = this.pageAlbums = this.pageSongs = this.pageTotal = false;
+                switch (this.idxCurrentTab) {
+                    case 0: {
+                        this.pageArtists = true;
+                    }
+                        break;
+                    case 1: {
+                        this.pageAlbums = true;
+                    }
+                        break;
+                    case 2: {
+                        this.pageSongs = true;
+                    }
+                        break;
+                    case 3: {
+                        this.pageTotal = true;
+                    }
+                        break;
+                }
+            }
         });
     </script>
 </dom-module>

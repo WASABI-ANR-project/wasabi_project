@@ -6,6 +6,7 @@
 <link rel="import" href="../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+
 <dom-module id="paper-tabs-content">
     <template>
         <style>
@@ -119,24 +120,29 @@
                 margin: 10px;
             }
         </style>
+
         <!--Chargement automatique du contenu en ajax et vérification avec _checkUrlParams que les parametres sont les bons-->
         <template is="dom-if" if="{{_checkUrlParams(lettre,numPage)}}">
-            <iron-ajax id="get_content" url="/search/categorie/{{categorie}}/lettre/{{lettre}}/page/{{numPage}}" last-response="{{data}}" handleAs="json" auto> </iron-ajax>
+            <iron-ajax id="get_content" url="/search/categorie/{{categorie}}/lettre/{{lettre}}/page/{{numPage}}"
+                last-response="{{data}}" handleAs="json" auto> </iron-ajax>
         </template>
         <iron-ajax id="get_db_info" url="/search/dbinfo" last-response="{{db_info}}" auto handleAs="json"></iron-ajax>
         <template is="dom-if" if="{{categorie}}">
-            <iron-ajax id="get_db_info_count" url="/search/count/{{categorie}}/{{lettre}}" last-response="{{dbcount}}" auto handleAs="json"></iron-ajax>
+            <iron-ajax id="get_db_info_count" url="/search/count/{{categorie}}/{{lettre}}" last-response="{{dbcount}}"
+                auto handleAs="json"></iron-ajax>
         </template>
+
         <!-- Génération des listes de catégories -->
-        <paper-material elevation="1">
+        <paper-material elevation="0">
             <paper-tabs id="paperTabsCategorie" selected={{idxCurrentTab}}>
                 <template is="dom-repeat" items="{{categories}}" as="categorie">
                     <paper-tab id="categorie_{{categorie}}">{{categorie}}</paper-tab>
                 </template>
             </paper-tabs>
         </paper-material>
+
         <!--Génération de l'alphabet-->
-        <paper-material elevation="1">
+        <paper-material elevation="0">
             <nav id="nav_alphabet">
                 <iron-pages id="iron_alphabet" selected="0">
                     <!--Génération de l'alphabet pour chaque les categories : artist,album, song, label-->
@@ -161,15 +167,18 @@
                 </iron-pages>
             </nav>
         </paper-material>
+
         <!-- Chargement des liens -->
         <template is="dom-if" if="{{_isData(data)}}">
             <div id="loader">
-                <paper-material elevation="1">
+                <paper-material elevation="0">
                     <nav class="paginationButtons">
-                        <a href="#/search/categorie/{{categorie}}/lettre/{{lettre}}/page/{{_hasPrevious(numPage)}}" tabindex="-1">
+                        <a href="#/search/categorie/{{categorie}}/lettre/{{lettre}}/page/{{_hasPrevious(numPage)}}"
+                            tabindex="-1">
                             <paper-fab mini icon="chevron-left" title="previous" class="blue"></paper-fab>
                         </a>
-                        <a href="#/search/categorie/{{categorie}}/lettre/{{lettre}}/page/{{_hasNext(numPage,data)}}" tabindex="-1">
+                        <a href="#/search/categorie/{{categorie}}/lettre/{{lettre}}/page/{{_hasNext(numPage,data)}}"
+                            tabindex="-1">
                             <paper-fab mini icon="chevron-right" title="next" class="blue"></paper-fab>
                         </a>
                     </nav>
@@ -183,45 +192,53 @@
                         </ul>
                     </nav>
                 </paper-material>
+
                 <!-- Affichage des artists -->
                 <template is="dom-if" if="{{_isArtist(data)}}">
-                    <paper-material class="listData" elevation="1">
+                    <paper-material class="listData" elevation="0">
                         <!-- <div>Il y a actuellement {{_getNbCount(dbcount)}} artists commençant par la lettre {{lettre}}</div> -->
                         <template class="flex-wrap" is="dom-repeat" items="{{data.artists}}" as="artist">
-                            <paper-button on-tap='doLoadCategorie' id="#/search/artist/{{_encodeUri(artist.name)}}" raised>
+                            <paper-button on-tap='doLoadCategorie' id="#/search/artist/{{_encodeUri(artist.name)}}"
+                                raised>
                                 {{artist.name}}
                             </paper-button>
                         </template>
                     </paper-material>
                 </template>
+
                 <!-- Affichage des albums -->
                 <template is="dom-if" if="{{_isAlbum(data)}}">
-                    <paper-material class="listData" elevation="1">
+                    <paper-material class="listData" elevation="0">
                         <!-- <div>Il y a actuellement {{_getNbCount(dbcount)}} albums commençant par la lettre {{lettre}}</div> -->
                         <template class="flex-wrap" is="dom-repeat" items="{{data.albums}}" as="album">
-                            <paper-button on-tap='doLoadCategorie' id="#/search/artist/{{_encodeUri(album.name)}}/album/{{_encodeUri(album.titleAlbum)}}" raised>
+                            <paper-button on-tap='doLoadCategorie' id="#/search/artist/{{_encodeUri(album.name)}}/album/{{_encodeUri(album.titleAlbum)}}"
+                                raised>
                                 {{album.titleAlbum}}<br> de: {{album.name}}
                             </paper-button>
                         </template>
                     </paper-material>
                 </template>
+
                 <!-- Affichage des songs -->
                 <template is="dom-if" if="{{_isSong(data)}}">
-                    <paper-material class="listData" elevation="1">
+                    <paper-material class="listData" elevation="0">
                         <!-- <div>Il y a actuellement {{_getNbCount(dbcount)}} musiques commençant par la lettre {{lettre}}</div> -->
                         <template class="flex-wrap" is="dom-repeat" items="{{data.songs}}" as="song">
-                            <paper-button on-tap='doLoadCategorie' id="#/search/artist/{{_encodeUri(song.name)}}/album/{{_encodeUri(song.albumTitle)}}/song/{{_encodeUri(song.titleSong)}}" raised>
+                            <paper-button on-tap='doLoadCategorie' id="#/search/artist/{{_encodeUri(song.name)}}/album/{{_encodeUri(song.albumTitle)}}/song/{{_encodeUri(song.titleSong)}}"
+                                raised>
                                 {{song.titleSong}}<br> de: {{song.name}}
                             </paper-button>
                         </template>
                     </paper-material>
                 </template>
-                <paper-material id="paginationBottom" elevation="1">
+                <paper-material id="paginationBottom" elevation="0">
                     <nav class="paginationButtons">
-                        <a href="#/search/categorie/{{categorie}}/lettre/{{lettre}}/page/{{_hasPrevious(numPage)}}" tabindex="-1">
+                        <a href="#/search/categorie/{{categorie}}/lettre/{{lettre}}/page/{{_hasPrevious(numPage)}}"
+                            tabindex="-1">
                             <paper-fab mini icon="chevron-left" title="previous" class="blue"></paper-fab>
                         </a>
-                        <a href="#/search/categorie/{{categorie}}/lettre/{{lettre}}/page/{{_hasNext(numPage,data)}}" tabindex="-1">
+                        <a href="#/search/categorie/{{categorie}}/lettre/{{lettre}}/page/{{_hasNext(numPage,data)}}"
+                            tabindex="-1">
                             <paper-fab mini icon="chevron-right" title="next" class="blue"></paper-fab>
                         </a>
                     </nav>
@@ -229,11 +246,10 @@
             </div>
         </template>
     </template>
+
     <script>
-        // element registration
         Polymer({
             is: "paper-tabs-content",
-            // add properties and methods on the element's prototype
             properties: {
                 categories: {
                     type: Array,

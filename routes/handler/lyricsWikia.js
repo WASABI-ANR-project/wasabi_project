@@ -633,7 +633,7 @@ var embeddedToRelationalSchema = function (objArtist) {
             if (!artist) {
                 console.log("Erreur, aucun document trouvé dans la base de données"); //une fois le tObjArtist rempli resolve va indiquer que la promise s'est bien executée et va donc executer le then
             } else {
-                console.log("Traitement embedded to relational schema");
+                // Traitement embedded to relational schema
                 //On check les API pour ajouter les informations à l'artist
                 checkAPI(artist._id, COLLECTIONARTIST, artist.urlWikipedia);
                 for (var i = 0; i < artist.albums.length; i++) {

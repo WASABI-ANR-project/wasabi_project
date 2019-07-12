@@ -148,6 +148,7 @@ router.get('/category/:collection/:categoryName', new RateLimit(config.http.limi
  *
  */
 router.get('/producer/:producerName', new RateLimit(config.http.limit_request.search), searchController.get_songByProducer);
+router.get('/anomalies/:producerName', new RateLimit(config.http.limit_request.search), searchController.get_songByProducerAnomalies);
 
 //==========================================================================================================================\\
 //===================================WEBSERVICE REST POUR LA NAVIGATION ENTRE RECORDLABEL===================================\\
@@ -810,9 +811,7 @@ router.get('/artist/:artistName/album/:albumName/song/:songName', new RateLimit(
  */
 router.get('/artist_id/:artistId/album_id/:albumId/song_id/:songId', new RateLimit(config.http.limit_request.search), searchController.get_songById);
 //PUT SONG OBJECT
-router.put('/artist/:artistName/album/:albumName/song/:songName/lyrics', new RateLimit(config.http.limit_request.search), searchController.put_songLyrics);
-router.put('/artist/:artistName/album/:albumName/song/:songName/notes', new RateLimit(config.http.limit_request.search), searchController.put_songNotes);
-
+router.put('/artist/:artistName/album/:albumName/song/:songName/edit/:params', new RateLimit(config.http.limit_request.search), searchController.put_songNotes);
 router.put('/artist/:artistName/album/:albumName/song/:songName/is_classic', new RateLimit(config.http.limit_request.search), searchController.put_songIsClassic);
 //==========================================================================================================================\\
 //====================================API REST POUR RECUPERER UN ARTISTE PAR NOM DE MEMBRE==================================\\
@@ -872,7 +871,6 @@ router.get('/more/:searchText', new RateLimit(config.http.limit_request.search),
 
 router.get('/auth', searchController.get_auth);
 
-
 /**
  * API permettant de lister les songs multitracks
  */
@@ -898,15 +896,12 @@ router.get('/auth', searchController.get_auth);
     }]
  *
  */
-router.get('/song/multitrack', new RateLimit(config.http.limit_request.search), searchController.getSongsMultitrack);
+//router.get('/song/multitrack', new RateLimit(config.http.limit_request.search), searchController.getSongsMultitrack);
 router.get('/song/multitrack/:skip', new RateLimit(config.http.limit_request.search), searchController.getSongsMultitrack);
-
-
 /**
  * API permettant de retourner tous les songs multitracks
  */
 router.get('/song/multitrackAll', new RateLimit(config.http.limit_request.search), searchController.getAllSongsMultitrack);
-
 /**
  * API permettant de retourner le nombre de songs multitracks
  */
@@ -917,9 +912,13 @@ router.get('/song/count/multitrack', new RateLimit(config.http.limit_request.sea
  */
 router.get('/song/stream/:skip', new RateLimit(config.http.limit_request.search), searchController.getSongsStream);
 
-
 /**
  * API permettant de lister les albums contenant le song de l'artist recherché
  */
 router.get('/album/song/:artistName/:songName', new RateLimit(config.http.limit_request.search), searchController.getAlbumSong);
+
+/**
+ * API permettant de retrouver des covers versions d'une chanson
+ */
+router.get('/get_cover_song/:songname/:songlyrics', searchController.get_cover_song);
 export default router;

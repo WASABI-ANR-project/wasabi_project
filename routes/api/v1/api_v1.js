@@ -1260,4 +1260,11 @@ router.get('/_stats/song/count', apiV1Controller.get_statsSongCount);
 
 router.get('/artist/count/song', apiV1Controller.get_artistWithMostSong);
 
+
+
+/**
+ * API permettant de récupérer un artist par son nom au format RDF
+ */
+router.get('/get_rdf/:artistname', apiV1Controller.get_rdf);
+
 export default router;

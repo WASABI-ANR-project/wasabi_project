@@ -62,88 +62,16 @@ var artistFullTextQuery = (searchText, maxinfo) => {
  * @param {*} searchText user input
  * @param {*} maxinfo number max of object to return matching with user input
  */
-
-/**
- *  "query": {
-           "more_like_this": {
-               "fields": ["title"],
-               "like": searchText,
-               "min_term_freq" : 1,
-               "max_query_terms" : 12
-           }
-       },
-       "sort": { "rank":   { "order": "desc" }},
-       // "sort": [
-       //     { "rank":   { "order": "desc" }},
-       //     { "_score": { "order": "desc" }}
-       // ],
-       "size": maxinfo
-
-
-       -- AVANT MODIFICATION
-       var songFullTextQuery = (searchText, maxinfo) => {
-   return {
-       "query": {
-           "query_string": {
-               "query": searchText,
-               "fields": ["title^4", "name^2", "albumTitle"]
-           }
-       },
-       "size": maxinfo
-   };
-};
- */
 var songFullTextQuery = (searchText, maxinfo) => {
-    let query = {
-        // "query": {
-        //     "query_string": {
-        //         "query": searchText,
-        //         "fields": ["title^2", "titleSuggest.input"]
-        //     }
-        // },
-        // "size": maxinfo,
-        // "sort": [{
-        //     "rank": { "order": "desc" }
-        // }]
-
-        // "query": {
-        //     "bool": {
-        //         "must": [
-        //             {
-        //                 "fuzzy": {
-        //                     "titleSuggest.input": {
-        //                         "value": "/"+searchText+"/",
-        //                         "fuzziness": 3
-        //                     }
-        //                 }
-        //             }
-        //         ],
-        //         "must_not": [],
-        //         "should": []
-        //     }
-        // },
-
-        // "query": {
-        //     "query_string": {
-        //         "query": searchText,
-        //         "fields":["title^2", "titleSuggest.input"]
-        //     }
-        // },
-
+    return {
         "query": {
-            "match": {
-                "titleSuggest.input": {
-                    "query": searchText,
-                    "fuzziness":"AUTO",
-                    "operator": "and"
-                }
+            "query_string": {
+                "query": searchText,
+                "fields": ["title^4", "name^2", "albumTitle"]
             }
         },
-        "size": maxinfo,
-        "sort": [{ "titleSuggest.weight": { "order": "desc" } }]
-
+        "size": maxinfo
     };
-    return JSON.stringify(query);
 };
 /**
  * Permet de construire les requetes elasticsearch
@@ -157,7 +85,6 @@ var songFullTextQuery = (searchText, maxinfo) => {
 var fullTextQuery = function (req, maxinfo, queryArtist, querySong, maxinfoselected) {
     var promise = new Promise(function (resolve, reject) {
         var result = [];
-
         req.elasticsearchClient.search({
             index: config.database.index_artist,
             type: config.database.index_type_artist,
@@ -167,8 +94,6 @@ var fullTextQuery = function (req, maxinfo, queryArtist, querySong, maxinfoselec
             for (var i = 0; i < respArtists.suggest.artistSuggest[0].options.length; i++) {
                 artist.push(respArtists.suggest.artistSuggest[0].options[i]._source);
             }
-            console.log('----------------------- querySong : search ------------------');
-            console.log(querySong);
             req.elasticsearchClient.search({
                 index: config.database.index_song,
                 type: config.database.index_type_song,
@@ -224,7 +149,6 @@ var updateSongES = function (req, name, albumTitle, title, idSong) {
 var updateDirMultitrack = function (objSong) {
 
 };
-
 exports.constructData = constructData;
 exports.optimizeFind = optimizeFind;
 exports.fullTextQuery = fullTextQuery;

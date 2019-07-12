@@ -32,7 +32,6 @@ router.post('/logout', (req, res) => {
     //     return res.json(config.http.valid.user.user_created);
     // });
 
-    //console.log(localStorage);
     /*
     token: {
         type: String,

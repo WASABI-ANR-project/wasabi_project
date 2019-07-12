@@ -1,0 +1,229 @@
+<!-- IMPORTS -->
+<!-- MODULE -->
+<dom-module id="external-links">
+    <template>
+        <!-- CSS -->
+        <style>
+            #externalLink {
+                background: #fff;
+                border-top: 1px solid #eee;
+                border-bottom: 1px solid #eee;
+                display: flex;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            #externalLink paper-icon-button:hover {
+                background: #eee;
+            }
+
+            #externalLink paper-icon-button {
+                width: 50px;
+                height: 50px;
+                font-size: 0;
+                padding: 10px;
+            }
+        </style>
+        <!-- HTML -->
+        <nav id="externalLink">
+            <!-- urlWikipedia -->
+            <template is="dom-if" if="{{content.urlWikipedia}}">
+                <a target="_blank" tabindex="-1" href="{{content.urlWikipedia}}" alt="url Wikipedia" title="Wikipedia">
+                    <paper-icon-button src="../../img/wikipedia_icon.svg"></paper-icon-button>
+                </a>
+            </template>
+            <!-- urlFacebook -->
+            <template is="dom-if" if="{{content.urlFacebook}}">
+                <a target="_blank" tabindex="-1" href="{{content.urlFacebook}}" alt="url Facebook" title="Facebook">
+                    <paper-icon-button src="../../img/facebook_icon.svg"></paper-icon-button>
+                </a>
+            </template>
+            <!-- urlTwitter -->
+            <template is="dom-if" if="{{content.urlTwitter}}">
+                <a target="_blank" tabindex="-1" href="{{content.urlTwitter}}" alt="url Twitter" title="Twitter">
+                    <paper-icon-button src="../../img/twitter_icon.svg"></paper-icon-button>
+                </a>
+            </template>
+            <!-- urlAmazon -->
+            <template is="dom-if" if="{{content.urlAmazon}}">
+                <a target="_blank" tabindex="-1" href="{{content.urlAmazon}}" alt="url Amazon" title="Amazon">
+                    <paper-icon-button src="../../img/amazon_icon.svg"></paper-icon-button>
+                </a>
+            </template>
+            <!-- urlYouTube -->
+            <template is="dom-if" if="{{content.urlYouTube}}">
+                <template is="dom-if" if="{{!_isEqualTo(type,'song')}}">
+                    <a target="_blank" tabindex="-1" href="{{content.urlYouTube}}" alt="url YouTube" title="YouTube">
+                        <paper-icon-button src="../../img/youtube_icon.svg"></paper-icon-button>
+                    </a>
+                </template>
+                <template is="dom-if" if="{{_isEqualTo(type,'song')}}">
+                    <a target="_blank" tabindex="-1" href="http://www.youtube.com/watch?v={{content.urlYouTube}}"
+                        alt="url YouTube" title="YouTube">
+                        <paper-icon-button src="../../img/youtube_icon.svg"></paper-icon-button>
+                    </a>
+                </template>
+            </template>
+            <!-- urlSpotify -->
+            <template is="dom-if" if="{{content.urlSpotify}}">
+                <a target="_blank" tabindex="-1" href="{{content.urlSpotify}}" alt="url Spotify" title="Spotify">
+                    <paper-icon-button src="../../img/spotify_icon.svg"></paper-icon-button>
+                </a>
+            </template>
+            <!-- urlDeezer -->
+            <template is="dom-if" if="{{content.urlDeezer}}">
+                <a target="_blank" tabindex="-1" href="{{content.urlDeezer}}" alt="url Deezer" title="Deezer">
+                    <paper-icon-button src="../../img/deezer_icon.svg"></paper-icon-button>
+                </a>
+            </template>
+            <!-- urlITunes -->
+            <template is="dom-if" if="{{content.urlITunes}}">
+                <a target="_blank" tabindex="-1" href="{{content.urlITunes}}" alt="url iTunes" title="iTunes">
+                    <paper-icon-button src="../../img/itunes_icon.svg"></paper-icon-button>
+                </a>
+            </template>
+            <!-- urlSoundCloud -->
+            <template is="dom-if" if="{{content.urlSoundCloud}}">
+                <a target="_blank" tabindex="-1" href="{{content.urlSoundCloud}}" alt="url SoundCloud"
+                    title="SoundCloud">
+                    <paper-icon-button src="../../img/soundcloud_icon.svg"></paper-icon-button>
+                </a>
+            </template>
+            <!-- urlMySpace -->
+            <template is="dom-if" if="{{content.urlMySpace}}">
+                <a target="_blank" tabindex="-1" href="{{content.urlMySpace}}" alt="url MySpace" title="MySpace">
+                    <paper-icon-button src="../../img/myspace_icon.svg"></paper-icon-button>
+                </a>
+            </template>
+            <!-- urlMusicBrainz -->
+            <template is="dom-if" if="{{content.urlMusicBrainz}}">
+                <a target="_blank" tabindex="-1" href="{{content.urlMusicBrainz}}" alt="url MusicBrainz"
+                    title="MusicBrainz">
+                    <paper-icon-button src="../../img/musicbrainz_icon.svg"></paper-icon-button>
+                </a>
+            </template>
+            <!-- urlOfficialWebsite -->
+            <template is="dom-if" if="{{content.urlOfficialWebsite}}">
+                <a target="_blank" tabindex="-1" href="{{content.urlOfficialWebsite}}" alt="url Official Website"
+                    title="Official Website">
+                    <paper-icon-button src="../../img/website_icon.svg"></paper-icon-button>
+                </a>
+            </template>
+            <!-- urlAllmusic -->
+            <template is="dom-if" if="{{content.urlAllmusic}}">
+                <a target="_blank" tabindex="-1" href="{{content.urlAllmusic}}" alt="url AllMusic" title="AllMusic">
+                    <paper-icon-button src="../../img/allmusic_icon.svg"></paper-icon-button>
+                </a>
+            </template>
+            <!-- urlDiscogs -->
+            <template is="dom-if" if="{{content.urlDiscogs}}">
+                <a target="_blank" tabindex="-1" href="{{content.urlDiscogs}}" alt="url Discogs" title="Discogs">
+                    <paper-icon-button src="../../img/discogs_icon.svg"></paper-icon-button>
+                </a>
+            </template>
+            <!-- urlPureVolume -->
+            <template is="dom-if" if="{{content.urlPureVolume}}">
+                <a target="_blank" tabindex="-1" href="{{content.urlPureVolume}}" alt="url PureVolume"
+                    title="PureVolume">
+                    <paper-icon-button src="../../img/purevolume_icon.svg"></paper-icon-button>
+                </a>
+            </template>
+            <!-- urlRateYourMusic -->
+            <template is="dom-if" if="{{content.urlRateYourMusic}}">
+                <a target="_blank" tabindex="-1" href="{{content.urlRateYourMusic}}" alt="url RateYourMusic"
+                    title="RateYourMusic">
+                    <paper-icon-button src="../../img/rateyourmusic_icon.svg"></paper-icon-button>
+                </a>
+            </template>
+            <!-- urlLastFm -->
+            <template is="dom-if" if="{{content.urlLastFm}}">
+                <a target="_blank" tabindex="-1" href="{{content.urlLastFm}}" alt="url Last FM" title="Last FM">
+                    <paper-icon-button src="../../img/lastfm_icon.svg"></paper-icon-button>
+                </a>
+            </template>
+            <!-- urlPandora -->
+            <template is="dom-if" if="{{content.urlPandora}}">
+                <a target="_blank" tabindex="-1" href="{{content.urlPandora}}" alt="url Pandora" title="Pandora">
+                    <paper-icon-button src="../../img/pandora_icon.svg"></paper-icon-button>
+                </a>
+            </template>
+            <!-- urlGoEar -->
+            <template is="dom-if" if="{{content.urlGoEar}}">
+                <a target="_blank" tabindex="-1" href="{{content.urlGoEar}}" alt="url GoEar" title="GoEar">
+                    <paper-icon-button src="../../img/goear_icon.svg"></paper-icon-button>
+                </a>
+            </template>
+            <!-- urlHypeMachine -->
+            <template is="dom-if" if="{{content.urlHypeMachine}}">
+                <a target="_blank" tabindex="-1" href="{{content.urlHypeMachine}}" alt="url Hype Machine"
+                    title="Hype Machine">
+                    <paper-icon-button src="../../img/hypemachine_icon.svg"></paper-icon-button>
+                </a>
+            </template>
+            <!-- urlDiscoveryHub -->
+            <template is="dom-if" if="{{_isEqualTo(type,'artist')}}">
+                <a target="_blank" tabindex="-1" href="{{getURLDiscoveryHub(content.name)}}" alt="url DiscoveryHub"
+                    title="DiscoveryHub">
+                    <paper-icon-button src="../../img/discoveryhub_icon.png"></paper-icon-button>
+                </a>
+            </template>
+            <template is="dom-if" if="{{_isEqualTo(type,'song')}}">
+                <a target="_blank" tabindex="-1" href="{{getURLDiscoveryHub(content.title)}}" alt="url DiscoveryHub"
+                    title="DiscoveryHub">
+                    <paper-icon-button src="../../img/discoveryhub_icon.png"></paper-icon-button>
+                </a>
+            </template>
+            <template is="dom-if" if="{{_isEqualTo(type,'album')}}">
+                <a target="_blank" tabindex="-1" href="{{getURLDiscoveryHub(content.title)}}" alt="url DiscoveryHub"
+                    title="DiscoveryHub">
+                    <paper-icon-button src="../../img/discoveryhub_icon.png"></paper-icon-button>
+                </a>
+            </template>
+            <!-- urlLyricsWikia-->
+            <template is="dom-if" if="{{_isEqualTo(type,'artist')}}">
+                <a target="_blank" tabindex="-1" href="http://lyrics.wikia.com/{{content.urlWikia}}"
+                    alt="url LyricsWikia" title="LyricsWikia">
+                    <paper-icon-button src="../../img/lyricswikia_icon.svg"></paper-icon-button>
+                </a>
+            </template>
+            <template is="dom-if" if="{{_isEqualTo(type,'song')}}">
+                <a target="_blank" tabindex="-1" href="{{content.urlSong}}" alt="url LyricsWikia" title="LyricsWikia">
+                    <paper-icon-button src="../../img/lyricswikia_icon.svg"></paper-icon-button>
+                </a>
+            </template>
+            <template is="dom-if" if="{{_isEqualTo(type,'album')}}">
+                <a target="_blank" tabindex="-1" href="{{content.urlAlbum}}"
+                    alt="url LyricsWikia" title="LyricsWikia">
+                    <paper-icon-button src="../../img/lyricswikia_icon.svg"></paper-icon-button>
+                </a>
+            </template>
+        </nav>
+    </template>
+    <!-- JS -->
+    <script>
+        Polymer({
+            is: "external-links",
+            properties: {
+                content: {
+                    type: String,
+                    value: ""
+                },
+                type: {
+                    type: String,
+                    value: ""
+                }
+            },
+            ready: function (e) { },
+            getURLDiscoveryHub: function (_string) {
+                return `http://discoveryhub.co/#search/wasabi?topic=${this._splitName(_string)}`;
+            },
+            _splitName: function (_string) {
+                if (_string) return _string.split(' ').join('_');
+                else return _string;
+            },
+            _isEqualTo: function (elementA, elementB) {
+                return elementA == elementB;
+            }
+        });
+    </script>
+</dom-module>

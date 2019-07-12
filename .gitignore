@@ -37,3 +37,11 @@ public/my_components/MT5/multitrack/*
 
 routes/conf/confJwt.json
 routes/conf/login.json
+
+# more projects
+public/extras/*
+public/AmpDesigner/*
+public/BackEnd-WASABI/*
+public/WebAudioPluginBank/*
+public/pedalboarddev/*
+public/dynamicPedalboard/*

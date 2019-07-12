@@ -82,7 +82,6 @@ function SongMetadata() {
 			indexOfCurrentSection++;
 			var s = this.sections[indexOfCurrentSection];
 			/*
-			console.log("Reached next section during play");
 			console.log("currentTime : " + currentTime + "section " +
 				s.name + " s.st : " + s.startTime + " s.et : " + s.endTime
 				+ " sb : " + s.startBar + " s.eb : " + s.endBar);
