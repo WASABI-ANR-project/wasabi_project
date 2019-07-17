@@ -269,7 +269,7 @@
 
             <iron-pages selected="{{idxCurrentTab}}">
                 <!-- TAB_home -->
-                <template is="dom-if" if="{{TAB_home}}">
+                <main hidden="{{!TAB_home}}">
                     <div>
                         <template is="dom-if" if="{{auth.isConnected}}">
                             <!-- is user is connected : SHOW RDF -->
@@ -336,7 +336,7 @@
                             </div>
                         </template>
                     </div>
-                </template>
+                </main>
 
                 <!-- TAB_discoveryhub: /extractdiscoveryhub/semreco/{{_splitName(nameSong)}} -->
                 <main hidden="{{!TAB_discoveryhub}}">
@@ -345,8 +345,7 @@
 
                 <!-- TAB_queenmary -->
                 <main hidden="{{!TAB_queenmary}}">
-                    <iframe id='iframe_queenmary' src=''
-                        style="width:100%; height:1000px"></iframe>
+                    <iframe id='iframe_queenmary' src='' style="width:100%; height:1000px"></iframe>
                 </main>
 
                 <!-- TAB_timeside -->
@@ -432,6 +431,10 @@
                     value: 0,
                     observer: '_currentTabSelected'
                 },
+                TAB_home: {
+                    type: Boolean,
+                    value: false
+                },
                 TAB_discoveryhub: {
                     type: Boolean,
                     value: false
@@ -465,20 +468,15 @@
                 }
             },
             ready: function () {
-                var url = new URL(window.location.href);
-                if (url.href.includes('multitrack=true')) {
-                    this.idxCurrentTab = 6;
-                    this.TAB_multitrack = true;
-                }
             },
             handleResponseDH: function (_d) {
                 let _html = '';
-                if (this.recommendationsDH){
+                if (this.recommendationsDH) {
 
                     this.recommendationsDH.forEach(r => {
-                    if (r.label) _html += this._render(r.label, r.results);
-                });
-                }else console.log('this.recommendationsDH',this.recommendationsDH);
+                        if (r.label) _html += this._render(r.label, r.results);
+                    });
+                } else console.log('this.recommendationsDH', this.recommendationsDH);
                 if (!_html) _html = 'Nothing to show';
                 this.$.main.innerHTML = _html;
             },
@@ -540,6 +538,7 @@
                 this.$.put_content.generateRequest();
             },
             _currentTabSelected: function (selectedTab) {
+                // console.log('_currentTabSelected', selectedTab);
                 this.TAB_home = false;
                 this.TAB_discoveryhub = false;
                 this.TAB_queenmary = false; // JSON.stringify(this.chords_metadata)
@@ -589,6 +588,8 @@
                 this.fire('firedataiframe', {
                     song: this.artist.albums.songs
                 });
+                var url = new URL(window.location.href);
+                if (url.href.includes('multitrack=true')) this.idxCurrentTab = 6;
             },
             _availablePreset: function (_artistName) {
                 return ['AC/DC', 'Pink Floyd'].includes(_artistName);
