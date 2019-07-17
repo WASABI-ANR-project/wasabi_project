@@ -473,9 +473,12 @@
             },
             handleResponseDH: function (_d) {
                 let _html = '';
-                this.recommendationsDH.forEach(r => {
+                if (this.recommendationsDH){
+
+                    this.recommendationsDH.forEach(r => {
                     if (r.label) _html += this._render(r.label, r.results);
                 });
+                }else console.log('this.recommendationsDH',this.recommendationsDH);
                 if (!_html) _html = 'Nothing to show';
                 this.$.main.innerHTML = _html;
             },
