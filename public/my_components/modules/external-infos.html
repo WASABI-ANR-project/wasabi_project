@@ -51,9 +51,10 @@
                 display: inline-block;
             }
 
-            .metadata_list li span a:not(:first-child){
+            .metadata_list li span a:not(:first-child) {
                 padding: 5px;
             }
+
             /* ----- #abstract ----- */
             #abstract {
                 background: #fafafa;
@@ -126,6 +127,28 @@
 
             x-album {
                 flex: 1;
+            }
+
+            /** RESPONSIVE */
+            @media screen and (max-width: 800px) {
+                #abstract {
+                    background: #fafafa;
+
+                    padding: 20px 40px;
+                    font-size: 16px;
+
+                    text-align: justify;
+                }
+
+                .metadata_list li span.span_members {
+                    flex-direction: column;
+                }
+
+                #songLyricsSection {
+                    padding: 10px;
+                    font-size: 14px;
+                }
+
             }
         </style>
         <!-- HTML -->

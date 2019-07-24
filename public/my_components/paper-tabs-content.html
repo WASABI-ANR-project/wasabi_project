@@ -22,10 +22,6 @@
                 --paper-tabs-selection-bar-color: #3f51b5;
             }
 
-            paper-button:hover {
-                @apply(--shadow-elevation-6dp);
-            }
-
             paper-button {
                 -o-transition: all 1s linear;
                 -moz-transition: all 1s linear;
@@ -52,23 +48,38 @@
                 @apply(--layout-wrap);
             }
 
-            [id^=alphabet_]>li {
-                padding-left: 0.2%;
-                padding-right: 0.2%;
-                font-size: 20px;
-                display: inline-block;
-            }
-
-            [id^=alphabet_]>li>a {
-                color: #3f51b5;
-                text-decoration: none;
-            }
-
+            /** top */
             [id^=alphabet_] {
                 list-style: none;
-                display: inline-block;
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+                align-items: stretch;
+                width: 70%;
+                margin: auto;
+                padding: 10px 0px;
+            }
+
+            [id^=alphabet_]>li {
+                width: 3%;
+                margin: 0.3%;
+            }
+
+            [id^=alphabet_]>li>a:hover {
+                background: #3f51b5;
+                color: #eee;
+            }
+            [id^=alphabet_]>li>a {
+                color: #3f51b5;
+
+                font-size: 20px;
+                padding: 10px 0px;
                 width: 100%;
-                padding-left: 0px;
+                flex: 1;
+
+                display: inline-block;
+                text-decoration: none;
             }
 
             #nav_alphabet {
@@ -79,36 +90,14 @@
                 text-align: center;
             }
 
-            [id^=alphabet_sub]>li {
-                padding-left: 0.2%;
-                padding-right: 0.2%;
-                font-size: 20px;
-                display: inline-block;
-            }
-
-            [id^=alphabet_sub]>li>a {
-                color: #3f51b5;
-                text-decoration: none;
-            }
-
+            /** bottom */
             [id^=alphabet_sub] {
-                list-style: none;
-                display: inline-block;
                 width: 100%;
-                padding-left: 0px;
             }
 
             paper-fab.blue {
                 --paper-fab-background: #3F51B5;
                 --paper-fab-keyboard-focus-background: var(--paper-light-blue-900);
-            }
-
-            #paginationBottom {
-                margin-bottom: 5%;
-            }
-
-            .listData {
-                padding-bottom: 2%;
             }
 
             .paginationButtons {
@@ -118,6 +107,18 @@
 
             .paginationButtons>a {
                 margin: 10px;
+            }
+
+            /** RESPONSIVE */
+            @media screen and (max-width: 800px) {
+                [id^=alphabet_] {
+                    width: 90%;
+                }
+
+                [id^=alphabet_]>li {
+                    width: 12%;
+                    margin: 0.2%;
+                }
             }
         </style>
 
@@ -186,7 +187,8 @@
                         <ul id="alphabet_sub{{categorie}}">
                             <template is="dom-repeat" items="{{alphabet}}" as="lettreIdx" index-as="idx">
                                 <li>
-                                    <a href="#/search/categorie/{{categorie}}/lettre/{{currentLetter(lettre)}}{{lettreIdx}}/page/0">{{currentLetter(lettre)}}{{lettreIdx}}</a>
+                                    <a
+                                        href="#/search/categorie/{{categorie}}/lettre/{{currentLetter(lettre)}}{{lettreIdx}}/page/0">{{currentLetter(lettre)}}{{lettreIdx}}</a>
                                 </li>
                             </template>
                         </ul>
@@ -211,7 +213,8 @@
                     <paper-material class="listData" elevation="0">
                         <!-- <div>Il y a actuellement {{_getNbCount(dbcount)}} albums commençant par la lettre {{lettre}}</div> -->
                         <template class="flex-wrap" is="dom-repeat" items="{{data.albums}}" as="album">
-                            <paper-button on-tap='doLoadCategorie' id="#/search/artist/{{_encodeUri(album.name)}}/album/{{_encodeUri(album.titleAlbum)}}"
+                            <paper-button on-tap='doLoadCategorie'
+                                id="#/search/artist/{{_encodeUri(album.name)}}/album/{{_encodeUri(album.titleAlbum)}}"
                                 raised>
                                 {{album.titleAlbum}}<br> de: {{album.name}}
                             </paper-button>
@@ -224,7 +227,8 @@
                     <paper-material class="listData" elevation="0">
                         <!-- <div>Il y a actuellement {{_getNbCount(dbcount)}} musiques commençant par la lettre {{lettre}}</div> -->
                         <template class="flex-wrap" is="dom-repeat" items="{{data.songs}}" as="song">
-                            <paper-button on-tap='doLoadCategorie' id="#/search/artist/{{_encodeUri(song.name)}}/album/{{_encodeUri(song.albumTitle)}}/song/{{_encodeUri(song.titleSong)}}"
+                            <paper-button on-tap='doLoadCategorie'
+                                id="#/search/artist/{{_encodeUri(song.name)}}/album/{{_encodeUri(song.albumTitle)}}/song/{{_encodeUri(song.titleSong)}}"
                                 raised>
                                 {{song.titleSong}}<br> de: {{song.name}}
                             </paper-button>

@@ -224,6 +224,18 @@
                 padding: 20px;
                 text-transform: uppercase;
             }
+
+            /** RESPONSIVE */
+            @media screen and (max-width: 800px) {
+                .div_webaudiotools {
+                    flex-direction: column;
+                }
+
+                .a_webaudiotools {
+                    width: 100%;
+                    margin: 2px 0%;
+                }
+            }
         </style>
         <!-- ajax request to get api information about : auth, artist -->
         <iron-ajax auto url="/search/auth" method="GET" headers="[[headers]]" handle-as="json" last-response="{{auth}}">

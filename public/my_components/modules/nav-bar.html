@@ -2,6 +2,7 @@
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/iron-icons/social-icons.html">
 <link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/app-layout/app-drawer/app-drawer.html">
 <!--my_components-->
@@ -11,6 +12,11 @@
         <style>
             app-drawer {
                 z-index: 1;
+            }
+            paper-button {
+                margin: 10px;
+                background-color: #3f51b5;
+                color: white;
             }
 
             a paper-icon-button,
@@ -71,6 +77,7 @@
                 position: fixed;
                 bottom: 60px;
                 right: 0px;
+                z-index: 2;
             }
         </style>
         <paper-toolbar id="top_menu" justify="justified" middleJustify="justified">

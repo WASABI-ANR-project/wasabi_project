@@ -23,6 +23,16 @@
                 font-size: 0;
                 padding: 10px;
             }
+
+            /** RESPONSIVE */
+            @media screen and (max-width: 800px) {
+                #externalLink paper-icon-button {
+                    width: 36px;
+                    height: 36px;
+                    font-size: 0;
+                    padding: 4px;
+                }
+            }
         </style>
         <!-- HTML -->
         <nav id="externalLink">
@@ -192,8 +202,7 @@
                 </a>
             </template>
             <template is="dom-if" if="{{_isEqualTo(type,'album')}}">
-                <a target="_blank" tabindex="-1" href="{{content.urlAlbum}}"
-                    alt="url LyricsWikia" title="LyricsWikia">
+                <a target="_blank" tabindex="-1" href="{{content.urlAlbum}}" alt="url LyricsWikia" title="LyricsWikia">
                     <paper-icon-button src="../../img/lyricswikia_icon.svg"></paper-icon-button>
                 </a>
             </template>

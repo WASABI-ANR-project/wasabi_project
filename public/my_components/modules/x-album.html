@@ -109,6 +109,18 @@
                 justify-content: flex-start;
                 align-items: center;
             }
+
+            /** RESPONSIVE */
+            @media screen and (max-width: 800px) {
+                :host {
+                    padding: 0px;
+                }
+
+                .div_column {
+                    background: #eee;
+                    flex-direction: column;
+                }
+            }
         </style>
         <!-- HTML -->
         <iron-ajax auto url="/search/auth" method="GET" headers="[[headers]]" handle-as="json" last-response="{{auth}}">
@@ -139,8 +151,8 @@
                                 <span>[[addOne(index)]].</span>
 
                                 <edit-field idfield="id-song-{{index}}" field="title" label="" idsong="{{song._id}}"
-                                    value="{{song.title}}" artistname={{album.name}}
-                                    albumtitle="{{album.title}}" songtitle="{{song.title}}" link="{{_getLink(album.name,album.title,song.title)}}">
+                                    value="{{song.title}}" artistname={{album.name}} albumtitle="{{album.title}}"
+                                    songtitle="{{song.title}}" link="{{_getLink(album.name,album.title,song.title)}}">
                                 </edit-field>
                             </li>
                         </template>
@@ -192,8 +204,8 @@
             _encodeUri: function (title) {
                 return encodeURIComponent(title);
             },
-            _getLink:function(artistname,albumtitle,songtitle){
-                return "#/search/artist/"+this._encodeUri(artistname)+"/album/"+this._encodeUri(albumtitle)+"/song/"+this._encodeUri(songtitle);
+            _getLink: function (artistname, albumtitle, songtitle) {
+                return "#/search/artist/" + this._encodeUri(artistname) + "/album/" + this._encodeUri(albumtitle) + "/song/" + this._encodeUri(songtitle);
             }
         });
     </script>
