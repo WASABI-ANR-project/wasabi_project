@@ -129,6 +129,9 @@
                 flex: 1;
             }
 
+            .li_categories{
+                background:#3f50b5;
+            }
             /** RESPONSIVE */
             @media screen and (max-width: 800px) {
                 #abstract {
@@ -401,7 +404,7 @@
                     <show-lyrics lyricsartist="{{contentartist}}" lyricscontent="{{content.lyrics}}" fieldf="lyrics">
                     </show-lyrics>
                 </li>
-                <li>
+                <li class='li_categories'>
                     <show-categories content="{{content}}" category="song"></show-categories>
                 </li>
             </template>
@@ -535,7 +538,7 @@
                         <x-album content={{content}} album="{{album}}"></x-album>
                     </li>
                 </template>
-                <li>
+                <li class="li_categories">
                     <show-categories content="{{content}}" category="artist"></show-categories>
                 </li>
             </template>
