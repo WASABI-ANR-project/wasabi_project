@@ -11,10 +11,15 @@ const getAlbum = (req, res) => {
         let query = "";
 
         // nb Songs with urlYouTube $ne:'' (not null) = 107 976 (db.getCollection('song').find({urlYouTube:{$ne:''}}).count())
+        // query = {
+        //     name: 'Michael Jackson',
+        //     albumTitle: 'Thriller',
+        //     urlYouTube: { $ne: "", $exists: true }
+        // }; 
         query = {
             name: 'Michael Jackson',
             albumTitle: 'Thriller',
-            urlYouTube: { $ne: "", $exists: true }
+            urlDeezer: { $ne: "", $exists: true }
         };
 
         req.db.collection(COLLECTIONSONG).find(query, {
@@ -22,10 +27,9 @@ const getAlbum = (req, res) => {
             name: 1,
             title: 1,
             albumTitle: 1,
-            urlYouTube: 1
+            urlDeezer: 1
         }).toArray((err, tSongs) => {
             if (tSongs.length > 0) {
-                //On resolve le artistName
                 resolve(tSongs);
             } else {
                 reject("ErRoR : " + err);
@@ -33,7 +37,6 @@ const getAlbum = (req, res) => {
         });
     }).then(data => {
         // -------------------- POST TO PYTHON --------------------
-        //start.js
         let py = spawn('python', ['routes/api_python/compute_input.py']);
         let _dataString;
         // in
@@ -42,7 +45,10 @@ const getAlbum = (req, res) => {
         // out
         py.stdout.on('data', function (data) {
             _dataString = data.toString();
+            // console.log(_dataString);
         });
+
+        // OBJECTIF Septembre 2019: enregistrer les UUID en provenance de TimeSide dans la BD wasabi afin de pouvoir afficher l'iframe timeside 'player_url' avec uuid en param
         py.stdout.on('end', function () {
             console.log("-------------------- RESULT FR0M PYTHON --------------------");
             console.log(_dataString);

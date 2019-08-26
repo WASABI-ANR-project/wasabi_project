@@ -11,7 +11,7 @@ api_token_url = 'https://wasabi.telemeta.org/timeside/api-token-auth/'
 api_schema_url = 'https://wasabi.telemeta.org/timeside/api/schema/'
 auth = {'username': 'wasabi', 'password': 'Dywyept_ock0'}
 r = requests.post(api_token_url, data=auth)
-token = '1da6798f2700556e81d9ab32db77e4ea9aa4ca52'
+token = 'ba72b2e2570d61125b33b930aa2a15d7741fd540'
 
 # coreapi client with the right token
 auth = TokenAuthentication(scheme='Token', token=token)
@@ -21,10 +21,11 @@ client = Client(auth=auth)
 schema = client.get(api_schema_url)
 
 # create
-def doCreate(_params):
+def doCreate(_params,_id):
     keys = ['api', 'items', 'create']
     item = client.action(schema, keys, _params)
-    print(item)
+    print({"_id":_id,"uuid":item['uuid']})
+    # print(item)
 
 # read
 def doRead(_uuid):
@@ -96,12 +97,6 @@ def doCreateTask():
         params = {'selection' : '/timeside/api/selections/' + WASABI_selection_uudi + '/', 'experience': '/timeside/api/experiences/' + exp_uuid + '/','status':PENDING}
         task = client.action(schema,keys,params)
 
-#Results
-# - pour récupérer les preset_uuid: https://wasabi.telemeta.org/admin/timeside_server/preset/?q=
-# - exemple pour 'spectrogram_12_12' => preset_uuid = '3d67b9b3-6f27-4fb9-af97-23e67dbd4a6e'
-# - APRES exécution 'doGetResults' on a les infos suivants:
-# - img: https://wasabi.telemeta.org/media/results/d69e9cee-b0f4-4fe4-9776-16ecbeb4def8/33d8be35-e432-4ff9-aa2a-69a6c9ad6b05.png
-# - numérique: https://wasabi.telemeta.org/timeside/results/33d8be35-e432-4ff9-aa2a-69a6c9ad6b05/json/
 def doGetResults(item_uuid,preset_uuid):
         keys = ['api', 'results', 'list']
         params = {'search' : item_uuid + ' , ' + preset_uuid} #uuid separated with a white space or a comma
@@ -109,19 +104,34 @@ def doGetResults(item_uuid,preset_uuid):
         return (result)
 
 
-# deezer: /timeside/api/providers/0d69ea90-a286-4506-985e-2eeb3e2d886c/
+# deezer: /timeside/api/providers/de7b385e-bcbe-41a2-8d56-be9fc9395d37/
 # youtube: /timeside/api/providers/13572f2f-70af-4a81-892b-1f29f0ca98ab/
 
 def main():
     # get our data as an array from read_in()
-    # lines = read_in()
+    lines = read_in()
+    doDelete('085a8f4b-149c-4e40-9c07-62fbbd9d62e5')
+    doDelete('e9f6660e-3e4f-4496-85cb-6fcf3bff544b')
+    doDelete('5ca7060b-d402-48b3-96ca-2bea4390e14d')
     # for station in lines:
-    #     doCreate({
-    #         'title': station['title'],
-    #         'description': 'Music from Michael Jackson',
-    #         'external_uri': 'youtube.com/watch?v='+station['urlYouTube'],
-    #         'provider': '/timeside/api/providers/13572f2f-70af-4a81-892b-1f29f0ca98ab/'
-    #     })
+        # print(station['title'])
+        # print(station['urlDeezer'])
+
+        # deezer - a garder
+        # doCreate({
+        #     'title': station['title'],
+        #     'description': 'Music from '+station['name']+' - '+station['albumTitle'],
+        #     'external_uri': station['urlDeezer'],
+        #     'provider': '/timeside/api/providers/de7b385e-bcbe-41a2-8d56-be9fc9395d37/'
+        # },station['_id'])
+        
+        # youtube - a supprimer
+        # doCreate({
+        #     'title': station['title'],
+        #     'description': 'Music from Michael Jackson',
+        #     'external_uri': 'youtube.com/watch?v='+station['urlYouTube'],
+        #     'provider': '/timeside/api/providers/de7b385e-bcbe-41a2-8d56-be9fc9395d37/'
+        # })
 
     # print(lines)
     # doList()
@@ -129,12 +139,9 @@ def main():
     # doRead('17039105-41c9-4270-ad41-428a7446f568')
     # addWasabiTrack("17039105-41c9-4270-ad41-428a7446f568")
     # doCreateTask()
-
-    print(doGetResults('d69e9cee-b0f4-4fe4-9776-16ecbeb4def8','3d67b9b3-6f27-4fb9-af97-23e67dbd4a6e'))
     
-    #pour des valeurs numériques tu as juste besoin de l'uuid du result et tu passes par l'url 
-    #'https://' + 'wasabi.telemeta.org/timeside/results/' + result[0]['uuid'] + '/json/'
 
+    # print(doGetResults('d69e9cee-b0f4-4fe4-9776-16ecbeb4def8','3d67b9b3-6f27-4fb9-af97-23e67dbd4a6e'))
 
 # start process
 if __name__ == '__main__':
