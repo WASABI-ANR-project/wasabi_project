@@ -21,11 +21,17 @@ client = Client(auth=auth)
 schema = client.get(api_schema_url)
 
 # create
-def doCreate(_params,_id):
+def doCreate(_params):
+    print(_params)
     keys = ['api', 'items', 'create']
-    item = client.action(schema, keys, _params)
-    print({"_id":_id,"uuid":item['uuid']})
-    # print(item)
+    try:
+        item = client.action(schema, keys, _params)
+    except:
+        print("An exception occurred")
+    else:
+        print("A new item "+item['uuid']+" was created")
+    finally:
+        print("The 'try except' is finished")
 
 # read
 def doRead(_uuid):
@@ -38,8 +44,14 @@ def doRead(_uuid):
 def doDelete(_uuid):
     keys = ['api', 'items', 'delete']
     params = {'uuid': _uuid}
-    item = client.action(schema, keys, params)
-    print(_uuid+' was deleted')
+    try:
+        item = client.action(schema, keys, params)
+    except:
+        print("An exception occurred")
+    else:
+        print(_uuid+" was deleted")
+    finally:
+        print("The 'try except' is finished")
 
 # list
 def doList():
@@ -110,20 +122,22 @@ def doGetResults(item_uuid,preset_uuid):
 def main():
     # get our data as an array from read_in()
     lines = read_in()
-    doDelete('085a8f4b-149c-4e40-9c07-62fbbd9d62e5')
-    doDelete('e9f6660e-3e4f-4496-85cb-6fcf3bff544b')
-    doDelete('5ca7060b-d402-48b3-96ca-2bea4390e14d')
-    # for station in lines:
-        # print(station['title'])
+    
+    # print(lines)
+    # doDelete('fcb2e157-7187-49f7-8f2b-1739cf20adfc')
+
+    for station in lines:
+        print(station['title'] + ' - ' + station['_id'])
         # print(station['urlDeezer'])
 
         # deezer - a garder
-        # doCreate({
-        #     'title': station['title'],
-        #     'description': 'Music from '+station['name']+' - '+station['albumTitle'],
-        #     'external_uri': station['urlDeezer'],
-        #     'provider': '/timeside/api/providers/de7b385e-bcbe-41a2-8d56-be9fc9395d37/'
-        # },station['_id'])
+        doCreate({
+            'title': station['title'],
+            'description': 'Music from '+station['name']+' - '+station['albumTitle'],
+            'external_uri': station['urlDeezer'],
+            'provider': '/timeside/api/providers/de7b385e-bcbe-41a2-8d56-be9fc9395d37/'
+        })
+        print('-----')
         
         # youtube - a supprimer
         # doCreate({
@@ -133,13 +147,11 @@ def main():
         #     'provider': '/timeside/api/providers/de7b385e-bcbe-41a2-8d56-be9fc9395d37/'
         # })
 
-    # print(lines)
     # doList()
     # print(doGetUUIDWasabiSelection())
     # doRead('17039105-41c9-4270-ad41-428a7446f568')
     # addWasabiTrack("17039105-41c9-4270-ad41-428a7446f568")
     # doCreateTask()
-    
 
     # print(doGetResults('d69e9cee-b0f4-4fe4-9776-16ecbeb4def8','3d67b9b3-6f27-4fb9-af97-23e67dbd4a6e'))
 
