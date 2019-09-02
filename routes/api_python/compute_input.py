@@ -20,18 +20,18 @@ client = Client(auth=auth)
 # testing several request to the TimeSide core API
 schema = client.get(api_schema_url)
 
+arrayItems=[]
 # create
-def doCreate(_params):
-    print(_params)
+def doCreate(_id,_params):
     keys = ['api', 'items', 'create']
     try:
         item = client.action(schema, keys, _params)
     except:
-        print("An exception occurred")
+        arrayItems.append({"msg":"Error, an exception occurred"})
     else:
-        print("A new item "+item['uuid']+" was created")
-    finally:
-        print("The 'try except' is finished")
+        arrayItems.append({"_id":_id.encode("utf-8"),"uuid":item['uuid'].encode("utf-8")})
+    # finally:
+        # print("The 'try except' is finished")
 
 # read
 def doRead(_uuid):
@@ -127,17 +127,17 @@ def main():
     # doDelete('fcb2e157-7187-49f7-8f2b-1739cf20adfc')
 
     for station in lines:
-        print(station['title'] + ' - ' + station['_id'])
+        # print(station['title'] + ' - ' + station['_id'])
         # print(station['urlDeezer'])
 
         # deezer - a garder
-        doCreate({
+        doCreate(station['_id'],{
             'title': station['title'],
             'description': 'Music from '+station['name']+' - '+station['albumTitle'],
             'external_uri': station['urlDeezer'],
             'provider': '/timeside/api/providers/de7b385e-bcbe-41a2-8d56-be9fc9395d37/'
         })
-        print('-----')
+        # print('-----')
         
         # youtube - a supprimer
         # doCreate({
@@ -146,7 +146,7 @@ def main():
         #     'external_uri': 'youtube.com/watch?v='+station['urlYouTube'],
         #     'provider': '/timeside/api/providers/de7b385e-bcbe-41a2-8d56-be9fc9395d37/'
         # })
-
+    print(json.dumps(arrayItems))
     # doList()
     # print(doGetUUIDWasabiSelection())
     # doRead('17039105-41c9-4270-ad41-428a7446f568')

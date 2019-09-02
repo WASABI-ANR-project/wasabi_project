@@ -105,6 +105,7 @@ var songSchema = new mongoose.Schema({
     urlLastFm: stringSchema,
     urlHypeMachine: stringSchema,
     urlPandora: stringSchema,
+    uuid: stringSchema,
     //liste des champs pouvant ne pas exister dans un document album
 }, {
     collection: 'song',

@@ -366,6 +366,7 @@
 
                 <!-- TAB_timeside -->
                 <main hidden="{{!TAB_timeside}}">
+                    <main id='maintimeside'></main>
                     <iframe id='iframe_timeside' class='iframe_src' src='' style="width:100%; height:1000px"></iframe>
                 </main>
 
@@ -493,7 +494,6 @@
             handleResponseDH: function (_d) {
                 let _html = '';
                 if (this.recommendationsDH) {
-
                     this.recommendationsDH.forEach(r => {
                         if (r.label) _html += this._render(r.label, r.results);
                     });
@@ -582,8 +582,21 @@
                     }
                     case 3:
                         this.TAB_timeside = true;
-                        this.$.iframe_timeside.src = `https://wasabi.telemeta.org/timeside/player/#item/b8321c6a-8322-488b-9477-619277e335b0/`;
-                        // src from 'player_url' + uuid (see python)
+                        if (this.artist.albums.songs.urlDeezer) {
+                            if (this.artist.albums.songs.uuid) this.$.iframe_timeside.src = `https://wasabi.telemeta.org/timeside/player/#item/${this.artist.albums.songs.uuid}`;
+                            else {
+                                fetch(`python/${this.artist.albums.songs._id}`).
+                                    then(response => {
+                                        response.json().then(res => {
+                                            console.log('res', res);
+                                            if (res.timeside) {
+                                                this.$.maintimeside.innerHTML = ``;
+                                                this.$.iframe_timeside.src = `https://wasabi.telemeta.org/timeside/player/#item/${res.timeside.uuid}`;
+                                            } this.$.maintimeside.innerHTML = `Nothing to show`;
+                                        })
+                                    })
+                            }
+                        }
                         break;
                     case 4: {
                         this.TAB_webaudiotools = true;

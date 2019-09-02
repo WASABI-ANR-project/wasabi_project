@@ -58,6 +58,7 @@ class Song {
         this.subject = "";
         this.writer = "";
         this.runtime = "";
+        this.uuid = "";
     }
 }
 module.exports = Song;
