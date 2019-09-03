@@ -587,12 +587,11 @@
                             else {
                                 fetch(`python/${this.artist.albums.songs._id}`).
                                     then(response => {
-                                        response.json().then(res => {
-                                            console.log('res', res);
-                                            if (res.timeside) {
+                                        response.json().then(jsonDATA => {
+                                            if (jsonDATA.uuid) {
                                                 this.$.maintimeside.innerHTML = ``;
-                                                this.$.iframe_timeside.src = `https://wasabi.telemeta.org/timeside/player/#item/${res.timeside.uuid}`;
-                                            } this.$.maintimeside.innerHTML = `Nothing to show`;
+                                                this.$.iframe_timeside.src = `https://wasabi.telemeta.org/timeside/player/#item/${jsonDATA.uuid}`;
+                                            } else this.$.maintimeside.innerHTML = `Nothing to show`;
                                         })
                                     })
                             }

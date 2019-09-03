@@ -30,16 +30,10 @@ const getAlbum = (req, res) => {
         py.stdout.on('end', function () {
             // console.log("-------------------- ON END --------------------");
             let _jsonItems = JSON.parse(_dataString);
-            // console.log('get', _jsonItems);
             if (_jsonItems[0].uuid) {
                 //req.db.collection(COLLECTIONSONG).update({ _id: new ObjectId(_jsonItems[0]._id) }, { $set: { "uuid": _jsonItems[0].uuid } });
-                res.json({
-                    res: {
-                        wasabi: data,
-                        timeside: _jsonItems[0]
-                    }
-                });
-            } res.json(_jsonItems[0]);
+            }
+            res.json(_jsonItems[0]);
         });
     })
 };
