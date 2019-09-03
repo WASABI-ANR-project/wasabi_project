@@ -585,7 +585,7 @@
                         if (this.artist.albums.songs.urlDeezer) {
                             if (this.artist.albums.songs.uuid) this.$.iframe_timeside.src = `https://wasabi.telemeta.org/timeside/player/#item/${this.artist.albums.songs.uuid}`;
                             else {
-                                fetch(`python/${this.artist.albums.songs._id}`).
+                                fetch(`/python/${this.artist.albums.songs._id}`).
                                     then(response => {
                                         response.json().then(jsonDATA => {
                                             if (jsonDATA.uuid) {
