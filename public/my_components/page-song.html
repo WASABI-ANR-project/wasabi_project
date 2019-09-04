@@ -249,7 +249,7 @@
             url="/search/album/song/{{_encodeUri(nameArtist)}}/{{_encodeUri(nameSong)}}" last-response="{{albumSong}}"
             handle-as="json"> </iron-ajax>
         <iron-ajax id="get_artistDH" auto url="/extractdiscoveryhub/semreco/{{_splitName(nameSong)}}"
-            last-response="{{recommendationsDH}}" headers="[[headers]]" handle-as='json' on-response='handleResponseDH'>
+            last-response="{{recommendationsDH}}" headers="[[headers]]" handle-as='json' on-response='handleResponseDH' method="GET" content-type='application/json'>
         </iron-ajax>
         <!--permet de lancer automatiquement la requête get chargeant la page-->
         <iron-ajax id="get_content_auto" auto headers="[[headers]]"
