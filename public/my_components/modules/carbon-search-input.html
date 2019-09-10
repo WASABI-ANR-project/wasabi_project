@@ -763,10 +763,18 @@
                 }
             },
             putPictureArtist: function (suggestion) {
-                return suggestion.picture || "../img/band_search_bar.svg";
+                let urlPicture = suggestion.picture;
+                if (urlPicture) urlPicture = this._toHttps(suggestion.picture);
+                return urlPicture || "../img/band_search_bar.svg";
             },
             putPictureSong: function (suggestion) {
-                return suggestion.picture || "../img/song_search_bar.svg";
+                let urlPicture = suggestion.picture;
+                if (urlPicture) urlPicture = this._toHttps(suggestion.picture);
+                return urlPicture || "../img/song_search_bar.svg";
+            },
+            _toHttps: function (_string) {
+                if (_string.includes(`http://`)) _string=_string.replace('http://', 'https://');
+                return _string;
             }
         });
     </script>
