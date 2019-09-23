@@ -764,12 +764,12 @@
             },
             putPictureArtist: function (suggestion) {
                 let urlPicture = suggestion.picture;
-                if (urlPicture) urlPicture = this._toHttps(suggestion.picture);
+                //if (urlPicture) urlPicture = this._toHttps(suggestion.picture);
                 return urlPicture || "../img/band_search_bar.svg";
             },
             putPictureSong: function (suggestion) {
                 let urlPicture = suggestion.picture;
-                if (urlPicture) urlPicture = this._toHttps(suggestion.picture);
+                //if (urlPicture) urlPicture = this._toHttps(suggestion.picture);
                 return urlPicture || "../img/song_search_bar.svg";
             },
             _toHttps: function (_string) {

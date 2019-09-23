@@ -66,6 +66,7 @@ var getCommonalities = (req, res) => {
     `;
 
     client.query(query, (err, results) => {
+        console.log(results);
         let bindings = results.results.bindings;
         for (var k in bindings) {
             same = bindings[k].k.value.split('/').pop();
