@@ -615,13 +615,18 @@
                         if (this.artist.albums.songs.urlDeezer) {
                             if (this.artist.albums.songs.uuid) this.$.iframe_timeside.src = `https://wasabi.telemeta.org/timeside/player/#item/${this.artist.albums.songs.uuid}`;
                             else {
+                                console.log(`/python/${this.artist.albums.songs._id}`);
                                 fetch(`/python/${this.artist.albums.songs._id}`).
                                     then(response => {
                                         response.json().then(jsonDATA => {
                                             if (jsonDATA.uuid) {
+                                                console.log(`ok uuid: ${jsonDATA.uuid}`);
                                                 this.$.maintimeside.innerHTML = ``;
                                                 this.$.iframe_timeside.src = `https://wasabi.telemeta.org/timeside/player/#item/${jsonDATA.uuid}`;
-                                            } else this.$.maintimeside.innerHTML = `Nothing to show`;
+                                            } else {
+                                                console.log(`Nothing to show`);
+                                                this.$.maintimeside.innerHTML = `Nothing to show`;
+                                            }
                                         })
                                     })
                             }
@@ -661,10 +666,13 @@
             _isEqualTo: function (elementA) {
                 if (elementA) return true;
                 else return false;
-            }, 
+            },
             _isNotEmpty: function (element) {
-                console.log(`_isNotEmpty`,element.length);
-                return (element.length>1);
+                console.log(`_isNotEmpty`);
+                if (element != null) {
+                    console.log(`_isNotEmpty`, element.length);
+                    return (element.length > 1);
+                } else return false;
             }
         });
     </script>

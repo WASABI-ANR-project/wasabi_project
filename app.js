@@ -159,10 +159,10 @@ if (process.env.NODE_ENV === config.launch.env.dev) {
 }
 // catch 404 and forward to error handler
 //Return page-404.html 
-// app.get('*', (req, res) => {
-//     //We return the path wrote by the user. this path will be not recognize by <app-router> which will display a 404 page
-//     res.status(404).redirect('/#/page-404.html');
-// });
+app.get('*', (req, res) => {
+    //We return the path wrote by the user. this path will be not recognize by <app-router> which will display a 404 page
+    res.status(404).redirect('/#/page-404.html');
+});
 // error handlers
 app.use((req, res, next) => {
     var err = new Error('Not Found');
