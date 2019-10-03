@@ -326,9 +326,16 @@
                                     to: https://wasabi.i3s.unice.fr/dynamicPedalboard/?bank=Rock&preset=Angus%20and%20Malcolm#
                                 -->
                                 <template is="dom-if" if="{{_availablePreset(artist.name)}}">
-                                    <a class='link_pedalboard'
-                                        href='https://wasabi.i3s.unice.fr/dynamicPedalboard/?bank=Michel&preset=Vampires'
-                                        target='_blank'>WebAudio Applications<br>for this song</a>
+                                    <template is="dom-if" if="{{_CompateTo(artist.albums.songs.title,'Back In Black')}}">
+                                        <a class='link_pedalboard'
+                                            href='https://wasabi.i3s.unice.fr/dynamicPedalboard/?bank=Rock&preset=Angus%20and%20Malcolm'
+                                            target='_blank'>WebAudio Applications<br>for this song</a>
+                                    </template>
+                                    <template is="dom-if" if="{{!_CompateTo(artist.albums.songs.title,'Back In Black')}}">
+                                        <a class='link_pedalboard'
+                                            href='https://wasabi.i3s.unice.fr/dynamicPedalboard/?bank=Michel&preset=Vampires'
+                                            target='_blank'>WebAudio Applications<br>for this song</a>
+                                    </template>
                                 </template>
                             </div>
 
@@ -666,6 +673,10 @@
             _isEqualTo: function (elementA) {
                 if (elementA) return true;
                 else return false;
+            },
+            _CompateTo: function (elementA,elementB) {
+                console.log(elementA,elementB);
+                return elementA===elementB;
             },
             _isNotEmpty: function (element) {
                 console.log(`_isNotEmpty`);
