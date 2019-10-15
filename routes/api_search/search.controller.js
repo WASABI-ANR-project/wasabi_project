@@ -819,7 +819,7 @@ const get_cover_song = (req, res) => {
         }).sort({
             preview: -1
         }).skip(skip).limit(limit).toArray((err, tSongs) => {
-            if (tSongs.length > 0) resolve(tSongs);
+            if (tSongs != undefined && tSongs.length > 0) resolve(tSongs);
             else reject("ErRoR : " + err);
         });
     }).then(data => {

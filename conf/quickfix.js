@@ -22,7 +22,7 @@ if (data.length < 190) {
     )
     let text = data.join('\n')
 
-    fs.writeFile(file, text, function(err) {
+    fs.writeFile(file, text, function (err) {
         if (err) return console.log(err)
     })
 }
