@@ -620,9 +620,12 @@
                     case 3:
                         this.TAB_timeside = true;
                         if (this.artist.albums.songs.urlDeezer) {
-                            if (this.artist.albums.songs.uuid) this.$.iframe_timeside.src = `https://wasabi.telemeta.org/timeside/player/#item/${this.artist.albums.songs.uuid}`;
-                            else {
-                                console.log(`/python/${this.artist.albums.songs._id}`);
+                            console.log('1/ this.artist.albums.songs.urlDeezer',this.artist.albums.songs.urlDeezer);
+                            if (this.artist.albums.songs.uuid) {
+                                console.log('2/a this.artist.albums.songs.uuid',this.artist.albums.songs.uuid);
+                                this.$.iframe_timeside.src = `https://wasabi.telemeta.org/timeside/player/#item/${this.artist.albums.songs.uuid}`;
+                            } else {
+                                console.log(`2/b /python/${this.artist.albums.songs._id}`);
                                 fetch(`/python/${this.artist.albums.songs._id}`).
                                     then(response => {
                                         response.json().then(jsonDATA => {
@@ -633,6 +636,7 @@
                                             } else {
                                                 console.log(`Nothing to show`);
                                                 this.$.maintimeside.innerHTML = `Nothing to show`;
+                                                this.$.iframe_timeside.src = ``;
                                             }
                                         })
                                     })

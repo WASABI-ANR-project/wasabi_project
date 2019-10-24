@@ -28,11 +28,10 @@ const getAlbum = (req, res) => {
             _dataString = data.toString();
         });
         py.stdout.on('end', function () {
-            // console.log("-------------------- ON END --------------------");
+            console.log("-------------------- ON END --------------------");
             let _jsonItems = JSON.parse(_dataString);
-            if (_jsonItems[0].uuid) {
-                //req.db.collection(COLLECTIONSONG).update({ _id: new ObjectId(_jsonItems[0]._id) }, { $set: { "uuid": _jsonItems[0].uuid } });
-            }
+            console.log('_jsonItems',_jsonItems);
+            if (_jsonItems[0].uuid) req.db.collection(COLLECTIONSONG).update({ _id: new ObjectId(_jsonItems[0]._id) }, { $set: { "uuid": _jsonItems[0].uuid } });
             res.json(_jsonItems[0]);
         });
     })
