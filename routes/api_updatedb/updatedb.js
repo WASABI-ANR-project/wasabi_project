@@ -661,8 +661,6 @@ router.get('/create_stats/properties/song/count', statsController.updateProperti
  */
 router.get('/lyricswikia', lyricsWikiaController.startExtraction);
 router.get('/lyricswikia/try_tor', lyricsWikiaController.tryTor);
-router.get('/ektest', lyricsWikiaController.elmahdiTestPromise);
-router.get('/ektestjoin', lyricsWikiaController.elmahdiTestJoin);
 
 
 

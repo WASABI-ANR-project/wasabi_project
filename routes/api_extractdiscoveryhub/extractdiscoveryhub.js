@@ -14,4 +14,10 @@ router.get('/suggestions/:element', extractDiscoveryhubController.getSuggestions
 // API listant les recommendations discoveryhub
 router.get('/semreco/:element', extractDiscoveryhubController.getRecommendations);
 
+// API id line repeatedness
+router.get('/repeatedness/', extractDiscoveryhubController.getRepeatedness);
+
+// API id line summary
+router.get('/summary/', extractDiscoveryhubController.getSummary);
+
 export default router;

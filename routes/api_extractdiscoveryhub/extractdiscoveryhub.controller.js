@@ -1,6 +1,16 @@
+// for discoveryhub
 import request from 'request';
-import xml from 'xml';
 import sparql from 'sparql';
+
+// for song field "repeatedness"
+import {
+    ObjectId
+} from 'mongoskin';
+import config from '../conf/conf';
+import fs from 'fs';
+import readline from 'readline';
+import _stream from 'stream';
+const COLLECTIONSONG = config.database.collection_song;
 
 /**
  * http://semreco.inria.fr/semreco?node=http://dbpedia.org/resource/Michael_Jackson
@@ -13,11 +23,13 @@ import sparql from 'sparql';
  * @param {*} res 
  */
 var getInfos = (req, res) => {
-    res.json({ services: [
-        '/link/:elementA/:elementB',
-        '/suggestions/:element',
-        '/semreco/:element'
-    ] });
+    res.json({
+        services: [
+            '/link/:elementA/:elementB',
+            '/suggestions/:element',
+            '/semreco/:element'
+        ]
+    });
 }
 
 /**
@@ -96,13 +108,165 @@ var requestDH = (urlDH) => {
             if (!err && resp.statusCode == 200) {
                 resolve(body);
             } else {
-                reject(err);
+                resolve(err);
             }
         });
     })
 };
 
+// ------------------------------------------------------------
+
+// - SUMMARY
+var getSummary= (req, res) => {
+    res.json({ msg: 'getSummary' });
+    processFileSummary(req, './public/extras/data/pickle_original_michael/id_to_summary_lines.json');
+}
+/**
+ * Permet de parcourir le fichier "id_to_line_repeatedness.json" afin de mettre à jour le champs song "repeatedness"
+ * @param {*} req 
+ * @param {*} inputFile 
+ */
+let processFileSummary = async (req, inputFile) => {
+    let instream = fs.createReadStream(inputFile);
+    let outstream = new (_stream)();
+    let _result;
+    let _result_b;
+    let _stringReaded= ``;
+    let rl = readline.createInterface(instream, outstream);
+    // line per line
+    rl.on('line', (_line) => {
+        _stringReaded = _line;
+    });
+    rl.on('close', async (line) => {
+        let _json = JSON.parse(_stringReaded);
+        // console.log(Object.keys(_json).length); // => 53124 songs
+
+        // key: ObjectID song, _json[key]: summary JSON
+        for (const key in _json) {
+            _result = await get_song_wasabi_summary(req, key);
+            if (!_result) console.log(`${key}> idSong (objectID) NOT EXIST IN DB`);
+            // if summary not exist
+            else if (!_result.summary) {
+                // update song to add summary
+                _result_b = await update_summary_wasabi(req, _result._id, _json[_result._id]);
+                if (!_result_b) {
+                    console.log(`${key}> ERROR when update`);
+                    // console.log(_json[key]);
+                }
+                else console.log(`${key}:${_result._id}> OK update: ${_result_b}`);
+            } 
+            // else console.log(`${key}:${_result._id}> OK summary already exist`);
+        }
+    });
+}
+/**
+ * Permet de vérifier si le song correspondant à idSong existe
+ * @param {*} req 
+ * @param {*} _idSong 
+ */
+const get_song_wasabi_summary = (req, _idSong) => {
+    return new Promise(resolve => {
+        req.db.collection(COLLECTIONSONG).findOne({ _id: new ObjectId(_idSong) }, { title: 1, summary: 1 }, (err, objSong) => {
+            if (!objSong || err) resolve(false);
+            else resolve(objSong);
+        });
+    });
+}
+/**
+ * Permet de mettre à jour le champs song "summary"
+ * @param {*} req 
+ * @param {*} _idSong 
+ * @param {*} _summary
+ */
+const update_summary_wasabi = (req, _idSong, _summary) => {
+    return new Promise(resolve => {
+        req.db.collection(COLLECTIONSONG).update({ _id: new ObjectId(_idSong) }, { $set: { summary: _summary } }, (err, song) => {
+            if (err) resolve(false);
+            else resolve(true);
+        });
+    });
+}
+
+
+
+// ------------------------------------------------------------
+
+
+// - REPEATEDNESS
+var getRepeatedness = (req, res) => {
+    res.json({ msg: 'getRepeatedness' });
+    processFile(req, './public/extras/data/pickle_original_michael/id_to_line_repeatedness.json');
+}
+
+/**
+ * Permet de parcourir le fichier "id_to_line_repeatedness.json" afin de mettre à jour le champs song "repeatedness"
+ * @param {*} req 
+ * @param {*} inputFile 
+ */
+let processFile = async (req, inputFile) => {
+    let instream = fs.createReadStream(inputFile);
+    let outstream = new (_stream)();
+    let _result;
+    let _result_b;
+    let _stringRepeatedness = ``;
+    let rl = readline.createInterface(instream, outstream);
+    // line per line
+    rl.on('line', (_line) => {
+        _stringRepeatedness = _line;
+    });
+    rl.on('close', async (line) => {
+        let _json = JSON.parse(_stringRepeatedness);
+        // console.log(Object.keys(_json).length); // => 53124 songs
+
+        // key: ObjectID song, _json[key]: repeatedness JSON
+        for (const key in _json) {
+            _result = await get_song_wasabi(req, key);
+            if (!_result) console.log(`${key}> idSong (objectID) NOT EXIST IN DB`);
+            // if repeatedness not exist
+            else if (!_result.repeatedness) {
+                // update song to add repeatedness
+                _result_b = await update_repeatedness_wasabi(req, _result._id, _json[_result._id]);
+                if (!_result_b) {
+                    console.log(`${key}> ERROR when update`);
+                    // console.log(_json[key]);
+                }
+                else console.log(`${key}:${_result._id}> OK update: ${_result_b}`);
+            } else console.log(`${key}:${_result._id}> OK repeatedness already exist`);
+        }
+    });
+}
+/**
+ * Permet de vérifier si le song correspondant à idSong existe
+ * @param {*} req 
+ * @param {*} _idSong 
+ */
+const get_song_wasabi = (req, _idSong) => {
+    return new Promise(resolve => {
+        req.db.collection(COLLECTIONSONG).findOne({ _id: new ObjectId(_idSong) }, { title: 1, repeatedness: 1 }, (err, objSong) => {
+            if (!objSong || err) resolve(false);
+            else resolve(objSong);
+        });
+    });
+}
+/**
+ * Permet de mettre à jour le champs song "repeatedness"
+ * @param {*} req 
+ * @param {*} _idSong 
+ * @param {*} _repeatedness 
+ */
+const update_repeatedness_wasabi = (req, _idSong, _repeatedness) => {
+    return new Promise(resolve => {
+        req.db.collection(COLLECTIONSONG).update({ _id: new ObjectId(_idSong) }, { $set: { repeatedness: _repeatedness } }, (err, song) => {
+            if (err) resolve(false);
+            else resolve(true);
+        });
+    });
+}
+
 exports.getInfos = getInfos;
 exports.getCommonalities = getCommonalities;
 exports.getSuggestions = getSuggestions;
 exports.getRecommendations = getRecommendations;
+
+exports.getRepeatedness = getRepeatedness;
+exports.getSummary = getSummary;

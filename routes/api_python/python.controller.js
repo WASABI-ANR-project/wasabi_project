@@ -33,6 +33,11 @@ const getAlbum = (req, res) => {
             console.log('_jsonItems',_jsonItems);
             if (_jsonItems[0].uuid) req.db.collection(COLLECTIONSONG).update({ _id: new ObjectId(_jsonItems[0]._id) }, { $set: { "uuid": _jsonItems[0].uuid } });
             res.json(_jsonItems[0]);
+
+            /**
+             * See
+             * db.getCollection('song').find({name:'Michael Jackson',title:'Billie Jean',albumTitle:'The Ultimate Collection'},{name:1,title:1,uuid:1})
+             */
         });
     })
 };

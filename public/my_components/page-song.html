@@ -326,12 +326,12 @@
                                     to: https://wasabi.i3s.unice.fr/dynamicPedalboard/?bank=Rock&preset=Angus%20and%20Malcolm#
                                 -->
                                 <template is="dom-if" if="{{_availablePreset(artist.name)}}">
-                                    <template is="dom-if" if="{{_CompateTo(artist.albums.songs.title,'Back In Black')}}">
+                                    <template is="dom-if" if="{{_CompareTo(artist.albums.songs.title,'Back In Black')}}">
                                         <a class='link_pedalboard'
                                             href='https://wasabi.i3s.unice.fr/dynamicPedalboard/?bank=Rock&preset=Angus%20and%20Malcolm'
                                             target='_blank'>WebAudio Applications<br>for this song</a>
                                     </template>
-                                    <template is="dom-if" if="{{!_CompateTo(artist.albums.songs.title,'Back In Black')}}">
+                                    <template is="dom-if" if="{{!_CompareTo(artist.albums.songs.title,'Back In Black')}}">
                                         <a class='link_pedalboard'
                                             href='https://wasabi.i3s.unice.fr/dynamicPedalboard/?bank=Michel&preset=Vampires'
                                             target='_blank'>WebAudio Applications<br>for this song</a>
@@ -620,17 +620,18 @@
                     case 3:
                         this.TAB_timeside = true;
                         if (this.artist.albums.songs.urlDeezer) {
-                            console.log('1/ this.artist.albums.songs.urlDeezer',this.artist.albums.songs.urlDeezer);
+                            // console.log('1/ this.artist.albums.songs.urlDeezer',this.artist.albums.songs.urlDeezer);
                             if (this.artist.albums.songs.uuid) {
-                                console.log('2/a this.artist.albums.songs.uuid',this.artist.albums.songs.uuid);
+                                // console.log('2/a this.artist.albums.songs.uuid',this.artist.albums.songs.uuid);
                                 this.$.iframe_timeside.src = `https://wasabi.telemeta.org/timeside/player/#item/${this.artist.albums.songs.uuid}`;
                             } else {
-                                console.log(`2/b /python/${this.artist.albums.songs._id}`);
+                                // console.log(`2/b /python/${this.artist.albums.songs._id}`);
                                 fetch(`/python/${this.artist.albums.songs._id}`).
                                     then(response => {
+                                        console.log(`response`,response);
                                         response.json().then(jsonDATA => {
                                             if (jsonDATA.uuid) {
-                                                console.log(`ok uuid: ${jsonDATA.uuid}`);
+                                                // console.log(`ok uuid: ${jsonDATA.uuid}`);
                                                 this.$.maintimeside.innerHTML = ``;
                                                 this.$.iframe_timeside.src = `https://wasabi.telemeta.org/timeside/player/#item/${jsonDATA.uuid}`;
                                             } else {
@@ -678,14 +679,13 @@
                 if (elementA) return true;
                 else return false;
             },
-            _CompateTo: function (elementA,elementB) {
-                console.log(elementA,elementB);
+            _CompareTo: function (elementA,elementB) {
+                // console.log(elementA,elementB);
                 return elementA===elementB;
             },
             _isNotEmpty: function (element) {
-                console.log(`_isNotEmpty`);
                 if (element != null) {
-                    console.log(`_isNotEmpty`, element.length);
+                    //console.log(`_isNotEmpty`, element.length);
                     return (element.length > 1);
                 } else return false;
             }

@@ -59,6 +59,8 @@ class Song {
         this.writer = "";
         this.runtime = "";
         this.uuid = "";
+        this.repeatedness = [];
+        this.summary = [];
     }
 }
 module.exports = Song;
