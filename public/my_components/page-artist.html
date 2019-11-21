@@ -83,7 +83,7 @@
         </iron-ajax>
 
         <paper-material elevation="0">
-            <paper-tabs selected="{{idxCurrentTab}}">
+            <paper-tabs selected="{{idxCurrentTab}}" id='paper_tabs' hidden=true>
                 <paper-tab>Artist</paper-tab>
                 <paper-tab>DiscoveryHub</paper-tab>
             </paper-tabs>
@@ -141,11 +141,15 @@
                 document.querySelector(`#search`).value = `${this.artist.name}`;
             },
             handleResponseDH: function (_d) {
-                let _html = '';
-                this.recommendationsDH.forEach(r => {
-                    if (r.label) _html += this._render(r.label, r.results);
-                });
-                this.$.main.innerHTML = _html;
+                if (this.recommendationsDH) {
+                    this.$.paper_tabs.hidden = false;
+
+                    let _html = '';
+                    this.recommendationsDH.forEach(r => {
+                        if (r.label) _html += this._render(r.label, r.results);
+                    });
+                    this.$.main.innerHTML = _html;
+                } else this.$.paper_tabs.hidden = true;
             },
             _getIMG: function (_img) {
                 let _image;
