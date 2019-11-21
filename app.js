@@ -34,7 +34,7 @@ import jwt_api from './routes/api_jwt/jwt';
 import updatedb from './routes/api_updatedb/updatedb';
 import extractdiscoveryhub from './routes/api_extractdiscoveryhub/extractdiscoveryhub';
 import extractdeezer from './routes/api_extractdeezer/extractdeezer';
-import python from './routes/api_python/python';
+import extracttimeside from './routes/api_extracttimeside/extracttimeside';
 
 import mergedb from './routes/api_mergedb/mergedb';
 import createdb from './routes/api_createdb/createdb';
@@ -151,7 +151,7 @@ if (process.env.NODE_ENV === config.launch.env.dev) {
     app.use('/createdb', createdb);
     app.use('/extractdbpedia', extractdbpedia);
     app.use('/extractdeezer', extractdeezer);
-    app.use('/python', python);
+    app.use('/extracttimeside', extracttimeside);
     
     // development error handler
     // will print stacktrace

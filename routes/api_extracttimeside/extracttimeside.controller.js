@@ -6,7 +6,7 @@ const COLLECTIONSONG = config.database.collection_song;
 var spawn = require('child_process').spawn;
 var _dataString = "";
 
-const getAlbum = (req, res) => {
+const getAnalysis = (req, res) => {
     return new Promise(function (resolve, reject) {
         // nb Songs with urlYouTube $ne:'' (not null) = 107 976 (db.getCollection('song').find({urlYouTube:{$ne:''}}).count())
         let query = { _id: new ObjectId(req.params.idSong), urlDeezer: { $ne: "", $exists: true } };
@@ -17,7 +17,7 @@ const getAlbum = (req, res) => {
     }).then(data => {
         // console.log('post', data);
         // -------------------- POST TO PYTHON --------------------
-        let py = spawn('python', ['./routes/api_python/compute_input.py']);
+        let py = spawn('python', ['./routes/api_extracttimeside/compute_input.py']);
 
         // in
         py.stdin.write(JSON.stringify(data));
@@ -41,4 +41,4 @@ const getAlbum = (req, res) => {
         });
     })
 };
-exports.getAlbum = getAlbum;
+exports.getAnalysis = getAnalysis;

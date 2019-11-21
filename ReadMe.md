@@ -300,7 +300,13 @@ Une collection artist une collection album et une collection song, il faudra don
 #### routes/api_jwt/     
 	Contient les APIs utilisées l'authentification à wasabi
 #### routes/api_extractdbpedia/   
-	Contient les APIs utilisées extraire les données de DBpedia
+	Contient les APIs utilisées pour extraire les données de DBpedia
+#### routes/api_extractdeezer/   
+	Contient les APIs utilisées pour extraire les données de Deezer
+#### routes/api_extractdiscoveryhub/   
+	Contient les APIs utilisées pour extraire les données de Discoveryhub
+#### routes/api_extracttimeside/   
+	Contient les APIs utilisées pour extraire les données de Timeside
 
 ## app.js
 	C'est le fichier qui sera appelé par la commande node bin/www. C'est ici qu'on appellera les nouvelles routes de l'application et qu'on configurera certaines parties de l'application  
