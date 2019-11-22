@@ -1,7 +1,6 @@
 # compute_input.py
 import sys
 import json
-import numpy as np
 import requests
 from coreapi import Client
 from coreapi.auth import TokenAuthentication
