@@ -134,7 +134,6 @@ app.use('/api/v1', new RateLimit(config.http.limit_request.api), api_v1);
 app.use('/jwt', jwt_api);
 app.use('/apidoc', express.static(path.join(__dirname, 'apidoc')));
 app.use('/extractdiscoveryhub', extractdiscoveryhub);
-app.use('/extracttimeside', extracttimeside);
 
 //Allows the authentication, at the moment the /download api have to stay private
 //app.use(basicAuth(configLogin.login, configLogin.password));
@@ -152,6 +151,7 @@ if (process.env.NODE_ENV === config.launch.env.dev) {
     app.use('/createdb', createdb);
     app.use('/extractdbpedia', extractdbpedia);
     app.use('/extractdeezer', extractdeezer);
+    app.use('/extracttimeside', extracttimeside);
     
     // development error handler
     // will print stacktrace

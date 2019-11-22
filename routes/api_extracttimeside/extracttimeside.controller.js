@@ -17,8 +17,7 @@ const getAnalysis = (req, res) => {
     }).then(data => {
         // console.log('post', data);
         // -------------------- POST TO PYTHON --------------------
-        // let py = spawn('python', ['./routes/api_extracttimeside/compute_input.py']);
-        let py = spawn('python', ['/extracttimeside/compute_input.py']);
+        let py = spawn('python', ['./routes/api_extracttimeside/compute_input.py']);
 
         // in
         py.stdin.write(JSON.stringify(data));
