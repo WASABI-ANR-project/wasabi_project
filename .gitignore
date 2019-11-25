@@ -6,16 +6,6 @@ public/bower_components/*
 
 # misc
 .DS_Store
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-.history
 .vscode/*
 
 # protected
@@ -34,14 +24,12 @@ public/AmpSimFA/*
 public/download/*
 public/TER-Pedalboard-creation/*
 public/my_components/MT5/multitrack/*
-
-routes/conf/confJwt.json
-routes/conf/login.json
-
-# more projects
-public/extras/*
 public/AmpDesigner/*
 public/BackEnd-WASABI/*
 public/WebAudioPluginBank/*
 public/pedalboarddev/*
 public/dynamicPedalboard/*
+public/extras/*
+
+routes/conf/confJwt.json
+routes/conf/login.json
