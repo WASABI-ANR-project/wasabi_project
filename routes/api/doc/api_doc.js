@@ -260,6 +260,12 @@ const router = express.Router();
  * 
  * @apiSuccess {String} multitrack_file Song multitrack_file
  * @apiSuccess {String} multitrack_path Song multitrack_path
+ * @apiSuccess {String} notes More informations about a song
+ * @apiSuccess {Number} explicit_content_lyrics [Source : Deezer]
+ * @apiSuccess {String[]} summary Summary of lyrics in a few lines
+ * @apiSuccess {Object} repeatedness Contains most repeated sentences of a song from lyrics
+ * @apiSuccess {Object} chords_metadata Chords metadata of a song [Source: JAM project API from Queen Mary University of London]
+ * @apiSuccess {Number} uuid UUID of a song generate by TimeSide API [Source : TimeSide]
  */
 
 export default router;
