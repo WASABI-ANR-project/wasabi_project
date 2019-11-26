@@ -28,7 +28,7 @@ def doCreate(_id,_params):
     except:
         arrayItems.append({"msg":"Error, an exception occurred"})
     else:
-        arrayItems.append({"_id":_id.encode("utf-8"),"uuid":item['uuid'].encode("utf-8")})
+        arrayItems.append({"_id":_id,"uuid":item['uuid']})
     # finally:
         # print("The 'try except' is finished")
 
