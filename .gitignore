@@ -29,6 +29,12 @@ public/BackEnd-WASABI/*
 public/WebAudioPluginBank/*
 public/pedalboarddev/*
 public/dynamicPedalboard/*
+node_modules_old/
+package_old.json
+public/_old_dynamicPedalboard/*
+public/dev/*
+public/pedalboard/*
+public/wapguibuilder/*
 public/extras/*
 
 routes/conf/confJwt.json
